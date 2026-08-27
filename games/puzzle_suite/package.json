@@ -1,0 +1,13 @@
+{
+  "name": "longpuzzlebench-puzzle-suite",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Bundled Cocos Creator environments for LongPuzzleBench",
+  "scripts": {
+    "test": "node --loader ./tools/ts-extension-loader.mjs --test ./tools/*.test.mjs"
+  },
+  "creator": {
+    "version": "3.8.8"
+  },
+  "type": "module"
+}

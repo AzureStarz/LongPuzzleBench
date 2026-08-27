@@ -1,0 +1,15 @@
+LongPuzzleBench
+Copyright 2026 LongPuzzleBench contributors
+
+The evaluation harness contains code adapted from MobileWorld
+(https://github.com/Tongyi-MAI/MobileWorld), revision
+e222907a5709ed20053847a2dca5f63c283177cc, under the Apache License 2.0.
+LongPuzzleBench adds the browser-game runtime, puzzle task catalog, progressive
+execution protocol, benchmark scoring, result aggregation, and bundled puzzle
+environments. The upstream Android environments, private evaluation services,
+and deployment infrastructure are not included.
+
+The bundled puzzle suite was integrated from the hongbin branch of the
+Bolt_Unscrew project (https://github.com/adf1178/Bolt_Unscrew/tree/hongbin),
+based on revision 282ad0b, and extended for benchmark use.
+See games/puzzle_suite/NOTICE.md and THIRD_PARTY_NOTICES.md.
