@@ -1,0 +1,66 @@
+"""Evaluation, scoring, and result contracts for LongPuzzleBench."""
+
+from mobile_world.benchmarks.catalog import MiniGameCatalog, filter_tasks, load_catalog
+from mobile_world.benchmarks.evaluator import MiniGameEvaluator, normalize_score
+from mobile_world.benchmarks.models import (
+    HARNESS_TERMINATION_REASONS,
+    BenchmarkExecutionConfig,
+    CycleDetectionConfig,
+    EnvironmentConfig,
+    EpisodeResult,
+    ExperimentSettings,
+    GameScoringConfig,
+    GameViewportConfig,
+    MetricConfig,
+    MiniGameTaskSpec,
+    ScoreBreakdown,
+    TerminationReason,
+    is_harness_termination,
+    stable_task_id,
+)
+from mobile_world.benchmarks.results import ResultWriter, aggregate_results, load_results
+from mobile_world.benchmarks.scoring import (
+    BoltUnscrewScorer,
+    ColorConnectScorer,
+    GameScorer,
+    MazePaintScorer,
+    NutAndBoltScorer,
+    RushHour2Scorer,
+    TruckEscapeScorer,
+    score_episode,
+    scorer_for_task,
+)
+
+__all__ = [
+    "EnvironmentConfig",
+    "BenchmarkExecutionConfig",
+    "CycleDetectionConfig",
+    "EpisodeResult",
+    "ExperimentSettings",
+    "GameScorer",
+    "GameScoringConfig",
+    "GameViewportConfig",
+    "HARNESS_TERMINATION_REASONS",
+    "MetricConfig",
+    "MiniGameCatalog",
+    "MiniGameEvaluator",
+    "MiniGameTaskSpec",
+    "ScoreBreakdown",
+    "BoltUnscrewScorer",
+    "ColorConnectScorer",
+    "MazePaintScorer",
+    "RushHour2Scorer",
+    "NutAndBoltScorer",
+    "TruckEscapeScorer",
+    "TerminationReason",
+    "ResultWriter",
+    "aggregate_results",
+    "filter_tasks",
+    "is_harness_termination",
+    "load_catalog",
+    "load_results",
+    "normalize_score",
+    "score_episode",
+    "scorer_for_task",
+    "stable_task_id",
+]

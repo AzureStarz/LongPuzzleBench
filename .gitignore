@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+.envrc
+.direnv/
+.sesskey
+.netrc
+.npmrc
+.pypirc
+.aws/
+.config/gcloud/
+.secrets/
+id_rsa
+id_ed25519
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+*credentials*.json
+
+# Benchmark outputs
+results/
+artifacts/
+traj_logs/
+playwright-report/
+test-results/
+
+# Cocos Creator / Node local state
+**/node_modules/
+**/library/
+**/temp/
+**/local/
+**/profiles/
+**/.creator/cache/
+
+# OMX / editor state
+.omx/
+.cursor/
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db

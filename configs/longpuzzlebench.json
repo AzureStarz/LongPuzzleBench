@@ -1,0 +1,589 @@
+{
+  "benchmark": "longpuzzlebench",
+  "metadata": {
+    "schema_version": 2,
+    "truck_escape_2_catalog_version": "solver-depth-calibrated-v2",
+    "description": "Long-horizon visual puzzle-game evaluation for GUI and computer-use agents.",
+    "score_policy": "Formal evaluation runs one complete game × difficulty cell. Level scores are normalized to 0–100; sequentially locked levels not run after a failure contribute zero to the complete configured denominator.",
+    "benchmark_name": "LongPuzzleBench",
+    "environment_count": 6,
+    "level_count": 114,
+    "evaluation_cell_count": 16
+  },
+  "experiment": {
+    "prompt_setting": "full",
+    "eval_mode": "progressive"
+  },
+  "benchmark_execution": {
+    "progression_mode": "sequential_unlock",
+    "stop_on_failure": true,
+    "eval_mode": "progressive"
+  },
+  "environment": {
+    "type": "web_game",
+    "base_url": null,
+    "viewport_width": 1080,
+    "viewport_height": 1920,
+    "game_viewport_selector": "#GameCanvas",
+    "per_game_viewport_selectors": {
+      "bolt_unscrew": "#GameCanvas",
+      "color_connect": "#GameCanvas",
+      "maze_paint": "#GameCanvas",
+      "truck_escape": "#GameCanvas",
+      "rush_hour_2": "#GameCanvas",
+      "nut_and_bolt": "#GameCanvas"
+    },
+    "device_scale_factor": 1.0,
+    "headless": true,
+    "project_path": "games/puzzle_suite",
+    "build_directory": "build/web-mobile",
+    "auto_build": false,
+    "cocos_creator_binary": null,
+    "server_command": null,
+    "server_ready_timeout_seconds": 60.0,
+    "step_wait_time": 0.05,
+    "action_effect_timeout_seconds": 0.75,
+    "visual_stability_timeout_seconds": 0.35,
+    "visual_poll_interval_seconds": 0.05,
+    "visual_change_threshold": 0.0001,
+    "no_progress_recovery_steps": 3,
+    "no_progress_termination_steps": 8,
+    "no_progress_max_cycle_length": 4,
+    "no_progress_perceptual_hash_threshold": 0,
+    "no_progress_mean_color_threshold": 3,
+    "invalid_action_limit": 3,
+    "wall_clock_timeout_slack_seconds": 7200.0,
+    "cycle_detection": {
+      "enabled": true,
+      "action_window_size": 12,
+      "min_cycle_length": 1,
+      "max_cycle_length": 4,
+      "required_repetitions": 3,
+      "no_progress_steps": 8,
+      "coordinate_tolerance_px": 8
+    }
+  },
+  "defaults": {
+    "max_steps": 150,
+    "timeout_seconds": 7200.0,
+    "seeds": [
+      0
+    ],
+    "success_condition": "The evaluator-only benchmark bridge reports status=success.",
+    "metric_config": {
+      "normalization": "binary",
+      "score_field": "score",
+      "normalized_score_field": null,
+      "success_field": "success",
+      "failure_field": "failure",
+      "status_field": "status",
+      "metrics_field": "raw_metrics",
+      "invalid_actions_field": "invalid_actions",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "higher_is_better": true,
+      "existing_score_scale": 100.0,
+      "success_statuses": [
+        "success",
+        "completed",
+        "complete",
+        "won"
+      ],
+      "failure_statuses": [
+        "failure",
+        "failed",
+        "lost",
+        "game_over"
+      ]
+    }
+  },
+  "games": [
+    {
+      "game_id": "bolt_unscrew",
+      "instructions": {
+        "minimal": "目标：把支撑木条的螺丝挪开，让所有木条掉出游戏区；全部木条离开游戏区即通关。每轮只做一个动作，并在当前截图上点击目标中心，再根据新截图继续。只操作关卡内的螺丝和空孔；若出现通关弹窗，说明本关已完成，不要点重开、返回、下一关、主菜单或无关按钮。",
+        "full": "目标：把支撑木条的螺丝挪开，让所有木条掉出游戏区。银色带十字的圆片是已占用锚点上的螺丝，黑色圆孔是空锚点。每轮只做一个动作，并在当前截图上点击目标中心，再根据新截图继续。交互：若画面没有黄色选中环（或底部文字未提示已选中螺丝），先点击仍在木条上的螺丝中心；螺丝抬起并出现黄色选中环后本轮结束。若已有螺丝被选中，下一轮应点击未被木条遮挡、也未被螺丝占据的黑色空锚点中心完成转移；不要反复点击同一颗已选中的螺丝。转移成功后选中环消失，下次移动必须重新选螺丝。再次点击同一颗已选中螺丝会取消选择。点击无效且画面无变化时，不要重复同一点击，重新判断螺丝、空孔和选中状态。全部木条离开游戏区即通关。只操作关卡内的螺丝和空孔；若出现通关弹窗，说明本关已完成，不要点重开、返回、下一关、主菜单或无关按钮。"
+      },
+      "tags": [
+        "tap",
+        "physics",
+        "planning"
+      ],
+      "defaults": {
+        "max_steps": 150,
+        "timeout_seconds": 300.0
+      },
+      "difficulties": [
+        {
+          "name": "easy",
+          "levels": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ]
+        },
+        {
+          "name": "hard",
+          "levels": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ]
+        }
+      ]
+    },
+    {
+      "game_id": "rush_hour_2",
+      "instructions": {
+        "minimal": "目标：把红色目标车辆从棋盘出口驶出，红车完全驶出即成功。只拖动车辆(不是click, 是drag)，不使用提示、撤销、重开、返回或下一关按钮。默认合法操作会被环境正确执行；若操作后画面与预期不符，应优先根据新画面重新判断自己的操作、状态理解或策略，仅在观察中有明确证据时才认为操作可能未生效。",
+        "full": "目标：清理通道并把红色目标车辆从棋盘出口驶出。车辆只能沿自身长轴水平或垂直拖动，不能越界、穿过其他车辆或穿过固定障碍；一次拖动只能沿当前长轴滑动，无法斜移。通过拖拽重新排列车辆，为红车建立通往出口的连续空路；红车完全驶出即成功。只拖动车辆(不是click, 是drag)，不使用提示、撤销、重开、返回或下一关按钮。默认合法操作会被环境正确执行；若操作后画面与预期不符，应优先根据新画面重新判断自己的操作、状态理解或策略，仅在观察中有明确证据时才认为操作可能未生效。"
+      },
+      "tags": [
+        "drag",
+        "spatial",
+        "planning"
+      ],
+      "defaults": {
+        "max_steps": 200,
+        "timeout_seconds": 360.0
+      },
+      "metric_config": {
+        "normalization": "existing_score",
+        "score_field": "raw_metrics.score.abilityScore",
+        "normalized_score_field": null,
+        "metrics_field": "raw_metrics.metrics",
+        "invalid_actions_field": "raw_metrics.metrics.invalidOperations",
+        "existing_score_scale": 100.0
+      },
+      "difficulties": [
+        {
+          "name": "easy",
+          "levels": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        },
+        {
+          "name": "medium",
+          "levels": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        },
+        {
+          "name": "hard",
+          "levels": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        }
+      ],
+      "launch_parameters": {
+        "game_id": "truck_escape_2"
+      }
+    },
+    {
+      "game_id": "nut_and_bolt",
+      "instructions": {
+        "minimal": "目标：把彩色螺帽整理到螺栓上。当所有非空螺栓都装满且仅包含一种颜色时，即可通关！可点击螺栓和左下角撤销按钮；不可点击右上角重开、返回或下一关。",
+        "full": "点击一根螺栓选中螺帽，再点击另一根螺栓进行移动。螺帽只能移到相同颜色的螺帽上方，且目标螺栓需有空位；目标螺栓为空时也可放入，来源螺栓顶部连续的同色螺帽会一起移动。当所有非空螺栓都装满且仅包含一种颜色时，即可通关！可点击螺栓和左下角撤销按钮；不可点击右上角重开、返回或下一关。"
+      },
+      "tags": [
+        "tap",
+        "sorting",
+        "planning"
+      ],
+      "defaults": {
+        "max_steps": 250,
+        "timeout_seconds": 420.0
+      },
+      "difficulties": [
+        {
+          "name": "easy",
+          "levels": [
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "name": "medium",
+          "levels": [
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "name": "hard",
+          "levels": [
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "name": "extreme",
+          "levels": [
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "name": "nightmare",
+          "levels": [
+            1
+          ]
+        }
+      ],
+      "launch_parameters": {
+        "game_id": "nuts_bolts"
+      }
+    },
+    {
+      "game_id": "truck_escape",
+      "instructions": {
+        "minimal": "目标：清空场上所有卡车。每轮只点击一辆卡车；只有前进方向没有其他车辆阻挡的卡车才能驶出。全部卡车离场即通关。不要使用提示、道具、重玩、返回或下一关按钮。",
+        "full": "目标：按正确顺序清空场上所有卡车。每辆卡车只能沿车头朝向直线驶出；如果前方路径与其他未离场卡车相交，该车会被阻挡。每轮只点击一辆当前可驶出的卡车中心，再根据新截图继续。优先清除无遮挡车辆以逐步解锁被挡车辆。全部卡车离场即通关。不要使用提示、Remove、Shuffle、Flip、重玩、返回、下一关或主菜单按钮。"
+      },
+      "tags": [
+        "tap",
+        "ordering",
+        "planning"
+      ],
+      "defaults": {
+        "max_steps": 120,
+        "timeout_seconds": 300.0
+      },
+      "difficulties": [
+        {
+          "name": "default",
+          "levels": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        }
+      ]
+    },
+    {
+      "game_id": "maze_paint",
+      "instructions": {
+        "minimal": "目标：让小球涂满所有可通行方格。使用上下左右 swipe；每次滑动后小球会一直前进到墙或边界，不能中途停下。全部可通行方格被涂色即通关。不要点重开、返回、下一关或无关按钮。",
+        "full": "目标：规划滑行顺序，让小球涂满所有深色可通行方格。只能使用上、下、左、右 swipe；小球每次会沿该方向一直滑到墙或棋盘边界，经过的格子都会永久涂色，不能中途停下。已涂格可以再次经过，但不会增加进度。每轮只执行一次 swipe，再根据新截图继续。全部可通行方格被涂色即通关。不要点重开、返回、下一关或无关按钮。"
+      },
+      "tags": [
+        "swipe",
+        "coverage",
+        "planning"
+      ],
+      "defaults": {
+        "max_steps": 150,
+        "timeout_seconds": 300.0
+      },
+      "metric_config": {
+        "normalization": "existing_score",
+        "score_field": "score",
+        "metrics_field": "raw_metrics",
+        "invalid_actions_field": "raw_metrics.invalid_move_count",
+        "existing_score_scale": 100.0
+      },
+      "difficulties": [
+        {
+          "name": "easy",
+          "levels": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        },
+        {
+          "name": "medium",
+          "levels": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        },
+        {
+          "name": "hard",
+          "levels": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        }
+      ]
+    },
+    {
+      "game_id": "color_connect",
+      "instructions": {
+        "minimal": "目标：用直线路径段连接每一对同色端点。先点击彩色端点；被选中的起点会持续显示明显的白色双环。再依次点击路径的每个拐点，最后点击对应的同色端点。连续两次点击必须同行或同列，经过的每个格子都会按规则检查。不同颜色不能重叠或交叉；所有颜色都连接完成即通关。不要点重开、返回、下一关或无关按钮。",
+        "full": "目标：为每种颜色绘制一条连接两个同色圆点的路径。点击彩色端点开始；被选中的起点会持续显示明显的白色光晕和双环，确认当前活动路径。然后只需点击路径的各个拐点，最后点击对应同色端点；同一直线段不需要逐格点击。连续两次点击必须同行或同列，游戏会逐格填充并检查中间路径，不能通过点击远处来跳过障碍、其他颜色端点或已有路径。路径不能重叠、交叉或自交。点击当前直线段上较早的格子可回退；路径只剩起点时再次点击起点可取消。若需重画已完成路径，可点击其任一端点取消后重新绘制。所有颜色对均连接完成即通关；不要求填满棋盘。不要点重开、返回、下一关或无关按钮。"
+      },
+      "tags": [
+        "click",
+        "routing",
+        "planning"
+      ],
+      "defaults": {
+        "max_steps": 250,
+        "timeout_seconds": 420.0
+      },
+      "metric_config": {
+        "normalization": "existing_score",
+        "score_field": "score",
+        "metrics_field": "raw_metrics",
+        "invalid_actions_field": "raw_metrics.invalid_gesture_count",
+        "existing_score_scale": 100.0
+      },
+      "difficulties": [
+        {
+          "name": "easy",
+          "levels": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        },
+        {
+          "name": "hard",
+          "levels": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        }
+      ]
+    }
+  ],
+  "scoring": {
+    "version": "1.3",
+    "games": {
+      "bolt_unscrew": {
+        "mode": "composite",
+        "success_threshold": 60.0,
+        "failure_score_cap": 59.0,
+        "time_budget_seconds": 300.0,
+        "components": {
+          "success_base": 60.0,
+          "step_efficiency": 20.0,
+          "action_quality": 10.0,
+          "time_efficiency": 10.0,
+          "failure_progress": 45.0,
+          "failure_action_quality": 8.0,
+          "failure_efficiency": 3.0
+        },
+        "penalties": {
+          "no_available_hole_deadlock": 8.0,
+          "repeated_action_cycle": 6.0,
+          "no_progress": 5.0,
+          "max_steps": 4.0,
+          "timeout": 4.0,
+          "game_failure": 6.0,
+          "invalid_action_limit": 3.0,
+          "agent_terminated": 4.0,
+          "agent_error": 4.0
+        }
+      },
+      "rush_hour_2": {
+        "mode": "composite",
+        "success_threshold": 60.0,
+        "failure_score_cap": 59.0,
+        "time_budget_seconds": 360.0,
+        "components": {
+          "success_base": 60.0,
+          "step_efficiency": 25.0,
+          "action_quality": 10.0,
+          "time_efficiency": 5.0,
+          "failure_progress": 45.0,
+          "failure_action_quality": 8.0,
+          "failure_efficiency": 3.0
+        },
+        "penalties": {
+          "repeated_action_cycle": 6.0,
+          "no_progress": 5.0,
+          "max_steps": 4.0,
+          "timeout": 4.0,
+          "game_failure": 6.0,
+          "invalid_action_limit": 3.0,
+          "game_deadlock": 8.0,
+          "agent_terminated": 4.0,
+          "agent_error": 4.0
+        }
+      },
+      "nut_and_bolt": {
+        "mode": "composite",
+        "success_threshold": 60.0,
+        "failure_score_cap": 59.0,
+        "time_budget_seconds": 420.0,
+        "components": {
+          "success_base": 60.0,
+          "step_efficiency": 20.0,
+          "action_quality": 10.0,
+          "time_efficiency": 10.0,
+          "failure_progress": 45.0,
+          "failure_action_quality": 8.0,
+          "failure_efficiency": 3.0
+        },
+        "penalties": {
+          "repeated_action_cycle": 6.0,
+          "no_progress": 5.0,
+          "max_steps": 4.0,
+          "timeout": 4.0,
+          "game_failure": 6.0,
+          "invalid_action_limit": 3.0,
+          "agent_terminated": 4.0,
+          "agent_error": 4.0
+        }
+      },
+      "truck_escape": {
+        "mode": "composite",
+        "success_threshold": 60.0,
+        "failure_score_cap": 59.0,
+        "time_budget_seconds": 300.0,
+        "components": {
+          "success_base": 60.0,
+          "step_efficiency": 20.0,
+          "action_quality": 10.0,
+          "time_efficiency": 10.0,
+          "failure_progress": 45.0,
+          "failure_action_quality": 8.0,
+          "failure_efficiency": 3.0
+        },
+        "penalties": {
+          "repeated_action_cycle": 6.0,
+          "no_progress": 5.0,
+          "max_steps": 4.0,
+          "timeout": 4.0,
+          "game_failure": 6.0,
+          "invalid_action_limit": 3.0,
+          "agent_terminated": 4.0,
+          "agent_error": 4.0
+        }
+      },
+      "maze_paint": {
+        "mode": "composite",
+        "success_threshold": 60.0,
+        "failure_score_cap": 59.0,
+        "time_budget_seconds": 300.0,
+        "components": {
+          "success_base": 60.0,
+          "step_efficiency": 20.0,
+          "action_quality": 10.0,
+          "time_efficiency": 10.0,
+          "failure_progress": 45.0,
+          "failure_action_quality": 8.0,
+          "failure_efficiency": 3.0
+        },
+        "penalties": {
+          "repeated_action_cycle": 6.0,
+          "no_progress": 5.0,
+          "max_steps": 4.0,
+          "timeout": 4.0,
+          "game_failure": 6.0,
+          "invalid_action_limit": 3.0,
+          "agent_terminated": 4.0,
+          "agent_error": 4.0
+        }
+      },
+      "color_connect": {
+        "mode": "composite",
+        "success_threshold": 60.0,
+        "failure_score_cap": 59.0,
+        "time_budget_seconds": 420.0,
+        "components": {
+          "success_base": 60.0,
+          "step_efficiency": 20.0,
+          "action_quality": 10.0,
+          "time_efficiency": 10.0,
+          "failure_progress": 45.0,
+          "failure_action_quality": 8.0,
+          "failure_efficiency": 3.0
+        },
+        "penalties": {
+          "repeated_action_cycle": 6.0,
+          "no_progress": 5.0,
+          "max_steps": 4.0,
+          "timeout": 4.0,
+          "game_failure": 6.0,
+          "invalid_action_limit": 3.0,
+          "agent_terminated": 4.0,
+          "agent_error": 4.0
+        }
+      }
+    }
+  }
+}
