@@ -255,6 +255,34 @@
     });
   }
 
+  function hydrateProjectLinks() {
+    const sourcePreview = /\/blog\/longpuzzlebench-agents\/(?:index\.html)?$/.test(window.location.pathname);
+    document.querySelectorAll("[data-project-href]").forEach((link) => {
+      const projectHref = link.dataset.projectHref;
+      const sourceHref = link.dataset.sourceHref;
+      if (projectHref) link.setAttribute("href", sourcePreview && sourceHref ? sourceHref : projectHref);
+    });
+  }
+
+  function setupArticleNavigation() {
+    const links = [...document.querySelectorAll('.article-nav a[href^="#"]')];
+    const sections = links
+      .map((link) => document.querySelector(link.getAttribute("href")))
+      .filter(Boolean);
+    if (!links.length || !sections.length || !("IntersectionObserver" in window)) return;
+
+    const linkById = new Map(links.map((link) => [link.getAttribute("href").slice(1), link]));
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((left, right) => left.boundingClientRect.top - right.boundingClientRect.top)[0];
+      if (!visible) return;
+      links.forEach((link) => link.removeAttribute("aria-current"));
+      linkById.get(visible.target.id)?.setAttribute("aria-current", "location");
+    }, { rootMargin: "-18% 0px -68% 0px", threshold: 0.01 });
+    sections.forEach((section) => observer.observe(section));
+  }
+
   function readingProgress() {
     const indicator = document.querySelector(".reading-progress span");
     if (!indicator) return;
@@ -275,6 +303,8 @@
   }
 
   async function init() {
+    hydrateProjectLinks();
+    setupArticleNavigation();
     readingProgress();
     try {
       let data = window[EMBEDDED_DATA_KEY];

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Audit the assembled static playground and its least-privilege runtime surface."""
+"""Audit the assembled public site and its least-privilege Playground runtime."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ import json
 import re
 from html.parser import HTMLParser
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_RUNTIME_IDS = {
@@ -19,21 +19,40 @@ EXPECTED_RUNTIME_IDS = {
     "maze_paint",
     "color_connect",
 }
+SHARED_ASSET_NAMES = {"site.css", "site.js"}
+HOMEPAGE_ASSET_NAMES = SHARED_ASSET_NAMES | {"home.css", "home.js"}
 
 
 class ReferenceParser(HTMLParser):
     def __init__(self) -> None:
         super().__init__()
-        self.references: list[str] = []
+        self.references: list[tuple[str, str, str]] = []
+        self.tags: list[str] = []
+        self.text: list[str] = []
+        self.skip_depth = 0
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        self.tags.append(tag)
         attributes = dict(attrs)
-        for name in ("src", "href"):
+        for name in ("src", "href", "poster"):
             value = attributes.get(name)
-            if value and not value.startswith(("#", "mailto:")):
-                parsed = urlparse(value)
-                if not parsed.scheme and not parsed.netloc:
-                    self.references.append(parsed.path)
+            if value:
+                self.references.append((tag, name, value))
+        if srcset := attributes.get("srcset"):
+            for candidate in srcset.split(","):
+                reference = candidate.strip().split(maxsplit=1)[0]
+                if reference:
+                    self.references.append((tag, "srcset", reference))
+        if tag in {"script", "style"}:
+            self.skip_depth += 1
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag in {"script", "style"} and self.skip_depth:
+            self.skip_depth -= 1
+
+    def handle_data(self, data: str) -> None:
+        if not self.skip_depth:
+            self.text.append(data)
 
 
 def parse_args() -> argparse.Namespace:
@@ -43,10 +62,155 @@ def parse_args() -> argparse.Namespace:
 
 
 def resolve_reference(page: Path, reference: str) -> Path:
+    if not reference:
+        return page
     path = (page.parent / reference).resolve()
     if path.is_dir():
         path /= "index.html"
     return path
+
+
+def parse_page(path: Path) -> ReferenceParser:
+    parser = ReferenceParser()
+    parser.feed(path.read_text(encoding="utf-8"))
+    return parser
+
+
+def verify_page_references(site: Path, page: Path) -> tuple[ReferenceParser, set[Path]]:
+    parser = parse_page(page)
+    local_targets: set[Path] = set()
+    for _tag, _attribute, reference in parser.references:
+        if reference.startswith(("#", "mailto:", "tel:", "data:")):
+            continue
+        parsed = urlparse(reference)
+        if parsed.scheme or parsed.netloc:
+            continue
+        assert not parsed.path.startswith("/"), f"Root-relative Pages path in {page}: {reference}"
+        target = resolve_reference(page, parsed.path)
+        assert target == site or target.is_relative_to(site), (reference, target)
+        assert target.is_file(), (reference, target)
+        local_targets.add(target)
+
+    for stylesheet in (target for target in local_targets if target.suffix == ".css"):
+        css = stylesheet.read_text(encoding="utf-8")
+        for reference in re.findall(r'url\(["\']?([^"\')]+)', css):
+            reference = reference.strip()
+            if reference.startswith("data:"):
+                continue
+            parsed = urlparse(reference)
+            if parsed.scheme or parsed.netloc:
+                continue
+            assert not parsed.path.startswith("/"), (
+                f"Root-relative CSS path in {stylesheet}: {reference}"
+            )
+            target = resolve_reference(stylesheet, parsed.path)
+            assert target == site or target.is_relative_to(site), (reference, target)
+            assert target.is_file(), (reference, target)
+    return parser, local_targets
+
+
+def assert_asset_links(targets: set[Path], site: Path, names: set[str]) -> None:
+    expected = {site / "assets" / name for name in names}
+    assert expected <= targets, f"Missing page asset links: {sorted(map(str, expected - targets))}"
+
+
+def visible_text(parser: ReferenceParser) -> str:
+    return " ".join(" ".join(parser.text).split())
+
+
+def verify_homepage_facts(home_parser: ReferenceParser) -> None:
+    config = json.loads((ROOT / "configs" / "longpuzzlebench.json").read_text())
+    results = json.loads((ROOT / "leaderboard" / "results.json").read_text())
+    findings = json.loads(
+        (ROOT / "blog" / "longpuzzlebench-agents" / "data" / "findings.json").read_text()
+    )
+
+    environment_count = len(config["games"])
+    level_count = sum(
+        len(difficulty["levels"]) for game in config["games"] for difficulty in game["difficulties"]
+    )
+    cell_count = sum(len(game["difficulties"]) for game in config["games"])
+    ranked_runs = len(results["results"])
+    top_run = min(results["results"], key=lambda run: run["rank"])
+    bolt_deadlocks = findings["findings"]["future_actionability"]["no_available_hole_deadlocks"]
+
+    assert (environment_count, level_count, cell_count) == (6, 114, 16)
+    assert results["evaluation_setting"]["ranked_runs"] == ranked_runs == 18
+    assert bolt_deadlocks == 13
+
+    text = visible_text(home_parser).casefold()
+    factual_patterns = {
+        "environment count": rf"\b(?:{environment_count}|six)\b.{{0,45}}\b(?:games|environments|families)\b",
+        "level count": rf"\b{level_count}\b.{{0,35}}\blevels\b",
+        "cell count": rf"\b{cell_count}\b.{{0,45}}\b(?:cells|game\s*[\u00d7x]\s*difficulty)\b",
+        "complete run count": rf"\b{ranked_runs}\b.{{0,45}}\b(?:complete\s+)?(?:runs|configurations)\b",
+        "Bolt recurrence": rf"\b{bolt_deadlocks}\b\s*(?:/|of)\s*{ranked_runs}\b",
+    }
+    for claim, pattern in factual_patterns.items():
+        assert re.search(pattern, text), f"Homepage is missing the verified {claim}"
+    assert any(
+        score in text
+        for score in (f"{top_run['benchmark_score']:.3f}", f"{top_run['benchmark_score']:.1f}")
+    )
+    assert not re.search(r"\b18\s+(?:unique\s+)?models\b", text)
+
+
+def verify_homepage_links(site: Path, parser: ReferenceParser) -> None:
+    catalog_source = (site / "play" / "catalog.js").read_text(encoding="utf-8")
+    expected_slugs = set(re.findall(r'^\s+slug:\s*"([^"]+)"', catalog_source, re.MULTILINE))
+    assert len(expected_slugs) == 6
+
+    game_links: set[str] = set()
+    play_links = 0
+    research_links = 0
+    for tag, attribute, reference in parser.references:
+        if tag != "a" or attribute != "href":
+            continue
+        parsed = urlparse(reference)
+        if parsed.scheme or parsed.netloc or parsed.path.startswith("/"):
+            continue
+        target = resolve_reference(site / "index.html", parsed.path)
+        if target == site / "play" / "index.html":
+            play_links += 1
+            game_links.update(parse_qs(parsed.query).get("game", []))
+        if target == site / "research" / "index.html":
+            research_links += 1
+
+    assert play_links, "Homepage has no relative Playground link"
+    assert research_links, "Homepage has no relative Research link"
+    assert game_links == expected_slugs, {
+        "missing_game_links": sorted(expected_slugs - game_links),
+        "unknown_game_links": sorted(game_links - expected_slugs),
+    }
+
+
+def verify_homepage_runtime_boundary(site: Path, parser: ReferenceParser) -> None:
+    assert "iframe" not in parser.tags, "Homepage must not embed the Playground runtime"
+    for path in (
+        site / "index.html",
+        *(site / "assets" / name for name in sorted(HOMEPAGE_ASSET_NAMES)),
+    ):
+        source = path.read_text(encoding="utf-8")
+        assert not re.search(r"(?:runtime/index|[\"\']/runtime/|[\"\']runtime/)", source), path
+
+
+def verify_legacy_game_redirect(home_html: str) -> None:
+    assert not re.search(r'<meta[^>]+http-equiv=["\']refresh["\']', home_html, re.IGNORECASE)
+    assert "noindex" not in home_html.casefold()
+    inline_scripts = re.findall(
+        r"<script(?![^>]*\bsrc=)[^>]*>(.*?)</script>", home_html, flags=re.DOTALL | re.IGNORECASE
+    )
+    redirect_scripts = [script for script in inline_scripts if "window.location.replace" in script]
+    assert len(redirect_scripts) == 1, "Homepage must have one inline legacy game-link redirect"
+    script = redirect_scripts[0]
+    game_gate = re.search(r"\bif\s*\([^)]*\.\s*(?:get|has)\(\s*[\"\']game[\"\']\s*\)", script)
+    assert game_gate, "Legacy redirect must be gated on the game query parameter"
+    redirect_index = script.index("window.location.replace")
+    assert game_gate.start() < redirect_index
+    assert re.search(r"new\s+URL\(\s*[\"\']play/[\"\']\s*,\s*window\.location\.href\s*\)", script)
+    assert "window.location.search" in script
+    assert "window.location.hash" in script
+    assert re.search(r"window\.location\.replace\([^)]*\.href\)", script)
 
 
 def catalog_level_total() -> int:
@@ -65,6 +229,7 @@ def main() -> int:
         site / "index.html",
         site / "404.html",
         site / ".nojekyll",
+        *(site / "assets" / name for name in sorted(HOMEPAGE_ASSET_NAMES)),
         site / "play" / "index.html",
         site / "play" / "app.js",
         site / "play" / "catalog.js",
@@ -91,14 +256,19 @@ def main() -> int:
         path = resolve_reference(site / "play" / "index.html", preview)
         assert path.is_file() and path.stat().st_size > 1_000, path
 
+    home_html_path = site / "index.html"
     play_html_path = site / "play" / "index.html"
-    play_html = play_html_path.read_text(encoding="utf-8")
-    parser = ReferenceParser()
-    parser.feed(play_html)
-    for reference in parser.references:
-        assert not reference.startswith("/"), f"Root-relative Pages path: {reference}"
-        target = resolve_reference(play_html_path, reference)
-        assert target.is_file(), (reference, target)
+    research_html_path = site / "research" / "index.html"
+    home_parser, home_targets = verify_page_references(site, home_html_path)
+    _play_parser, play_targets = verify_page_references(site, play_html_path)
+    _research_parser, research_targets = verify_page_references(site, research_html_path)
+    assert_asset_links(home_targets, site, HOMEPAGE_ASSET_NAMES)
+    assert_asset_links(play_targets, site, SHARED_ASSET_NAMES)
+    assert_asset_links(research_targets, site, SHARED_ASSET_NAMES)
+    verify_homepage_facts(home_parser)
+    verify_homepage_links(site, home_parser)
+    verify_homepage_runtime_boundary(site, home_parser)
+    verify_legacy_game_redirect(home_html_path.read_text(encoding="utf-8"))
 
     app_source = (site / "play" / "app.js").read_text(encoding="utf-8")
     assert 'new URL("../runtime/index.html", window.location.href)' in app_source
@@ -110,9 +280,7 @@ def main() -> int:
     runtime_html = (site / "runtime" / "index.html").read_text(encoding="utf-8")
     assert "LongPuzzleBench game runtime" in runtime_html
     assert 'src="/' not in runtime_html and 'href="/' not in runtime_html
-    runtime_bundle = (site / "runtime" / "assets" / "main" / "index.js").read_text(
-        encoding="utf-8"
-    )
+    runtime_bundle = (site / "runtime" / "assets" / "main" / "index.js").read_text(encoding="utf-8")
     assert "__LONGPUZZLEBENCH_PLAY__" in runtime_bundle
     assert "playground" in runtime_bundle
 
@@ -120,21 +288,28 @@ def main() -> int:
     assert sum(path.is_file() for path in native_assets) >= 19
     assert (site / "runtime" / "cocos-js" / "assets" / "spine-CC34fKUR.wasm").is_file()
 
-    game_main = (ROOT / "games" / "puzzle_suite" / "assets" / "scripts" / "game" / "GameMain.ts").read_text()
+    game_main = (
+        ROOT / "games" / "puzzle_suite" / "assets" / "scripts" / "game" / "GameMain.ts"
+    ).read_text()
     assert "GameInspector.instance.install(!benchmark.playground)" in game_main
     assert "installPlaygroundBridge" in game_main
     assert "setDirectLaunchMode(directLaunchMode)" in game_main
     assert "setAutoHintEnabled(!disableAutoHint)" in game_main
 
-    root_redirect = (site / "index.html").read_text(encoding="utf-8")
-    assert 'new URL("play/", window.location.href)' in root_redirect
-    assert "target.search = window.location.search" in root_redirect
+    not_found = (site / "404.html").read_text(encoding="utf-8")
+    assert 'const projectSlug = "LongPuzzleBench"' in not_found
+    assert 'const route = routeParts.join("/")' in not_found
+    assert 'new Set(["play", "research"])' in not_found
+    assert "missingSlashRoutes.has(route)" in not_found
+    assert 'document.querySelector("#home-link").href = home.href' in not_found
+    assert not_found.count("window.location.replace") == 1
 
     total_bytes = sum(path.stat().st_size for path in site.rglob("*") if path.is_file())
     assert total_bytes < 12 * 1024 * 1024, total_bytes
     print(
-        "Verified playground: 6 games, 12 curated levels, 114-level disclosure, "
-        f"complete runtime assets, relative Pages paths, {total_bytes / 1024 / 1024:.1f} MiB."
+        "Verified public site: factual homepage, 6 linked games, 12 curated levels, "
+        "114-level disclosure, research and Playground routes, complete runtime assets, "
+        f"relative Pages paths, {total_bytes / 1024 / 1024:.1f} MiB."
     )
     return 0
 

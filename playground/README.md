@@ -108,14 +108,15 @@ Do not introduce a common adapter unless it removes real duplication across game
 `.github/workflows/pages.yml` builds `dist/pages`, verifies it, uploads that directory, and deploys it on pushes to `main`. The artifact contains:
 
 ```text
+/             research-project homepage
 /play/       human exhibit
 /runtime/    canonical Cocos web build
 /research/   trajectory-analysis article
-/assets/     optimized gallery previews
+/assets/     shared site shell and optimized previews
 /notices/    license and attribution notices
 ```
 
-All internal URLs are relative, so assets resolve at `https://<username>.github.io/<repo>/`. The root redirects to `play/` while preserving query parameters and fragments.
+All internal URLs are relative, so assets resolve at `https://<username>.github.io/<repo>/`. The root is the project homepage; legacy root links that contain a `game` query still forward to `play/` while preserving query parameters and fragments.
 
 ## Redistribution notice
 

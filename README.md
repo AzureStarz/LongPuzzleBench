@@ -10,9 +10,9 @@
 [![Environments](https://img.shields.io/badge/Environments-6-0f766e.svg)](#game-environments)
 [![Levels](https://img.shields.io/badge/Levels-114-7c3aed.svg)](#game-environments)
 
-[Play in browser](https://azurestarz.github.io/LongPuzzleBench/play/) · [Research note](https://azurestarz.github.io/LongPuzzleBench/research/) · [Quick start](#quick-start) · [Leaderboard](#leaderboard) · [Evaluation protocol](#evaluation-protocol)
+[Project homepage](https://azurestarz.github.io/LongPuzzleBench/) · [Play in browser](https://azurestarz.github.io/LongPuzzleBench/play/) · [Research note](https://azurestarz.github.io/LongPuzzleBench/research/) · [Quick start](#quick-start) · [Leaderboard](#leaderboard) · [Evaluation protocol](#evaluation-protocol)
 
-<img src="assets/longpuzzlebench-hero.png" alt="A GUI agent reasoning across a long sequence of visual puzzle states" width="920" />
+<img src="assets/longpuzzlebench-hero.webp" alt="LongPuzzleBench homepage with three real puzzle states connected as a long-horizon sequence" width="920" />
 
 </div>
 
@@ -267,7 +267,10 @@ This refresh adds complete `gpt-5.6-terra` (`high`) and `kimi-k3` (`high`) runs 
 
 ```text
 .
-├── assets/                  # Hero artwork and real game previews
+├── index.html               # Static research-project homepage
+├── assets/                  # Shared site shell, homepage code, and real game previews
+├── blog/                    # Trajectory-analysis research story
+├── playground/              # Human-facing game gallery and launcher
 ├── configs/longpuzzlebench.json # Versioned task catalog and protocol
 ├── games/puzzle_suite/      # Cocos source, prebuilt web bundle, game tests
 ├── leaderboard/             # Sanitized public benchmark results

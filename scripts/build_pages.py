@@ -9,31 +9,17 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT = ROOT / "dist" / "pages"
+HOMEPAGE = ROOT / "index.html"
+SITE_ASSETS = (
+    ROOT / "assets" / "site.css",
+    ROOT / "assets" / "site.js",
+    ROOT / "assets" / "home.css",
+    ROOT / "assets" / "home.js",
+)
 PLAYGROUND = ROOT / "playground"
 RUNTIME = ROOT / "games" / "puzzle_suite" / "build" / "web-mobile"
 RESEARCH = ROOT / "blog" / "longpuzzlebench-agents"
 PREVIEWS = RESEARCH / "assets" / "games"
-
-ROOT_REDIRECT = """<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex">
-  <title>Play LongPuzzleBench</title>
-  <meta http-equiv="refresh" content="0; url=play/">
-</head>
-<body>
-  <p>Opening the <a href="play/">LongPuzzleBench playground</a>…</p>
-  <script>
-    const target = new URL("play/", window.location.href);
-    target.search = window.location.search;
-    target.hash = window.location.hash;
-    window.location.replace(target.href);
-  </script>
-</body>
-</html>
-"""
 
 NOT_FOUND = """<!doctype html>
 <html lang="en">
@@ -41,18 +27,59 @@ NOT_FOUND = """<!doctype html>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
-  <title>LongPuzzleBench</title>
+  <meta name="theme-color" content="#f2eee5">
+  <title>Page not found · LongPuzzleBench</title>
+  <style>
+    :root { color-scheme: light; font-family: ui-sans-serif, system-ui, sans-serif; }
+    * { box-sizing: border-box; }
+    body {
+      display: grid;
+      min-height: 100svh;
+      margin: 0;
+      padding: 2rem;
+      place-items: center;
+      background: #f2eee5;
+      color: #16272e;
+    }
+    main { width: min(100%, 38rem); }
+    p:first-child {
+      margin: 0 0 1rem;
+      color: #a7442d;
+      font: 700 0.75rem/1 ui-monospace, monospace;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    h1 { margin: 0; font: 700 clamp(2.5rem, 9vw, 5rem)/0.98 Georgia, serif; }
+    p { max-width: 34rem; margin: 1.35rem 0; line-height: 1.65; }
+    a { color: inherit; font-weight: 700; text-underline-offset: 0.22em; }
+    a:focus-visible { outline: 3px solid #bf9140; outline-offset: 4px; }
+  </style>
 </head>
 <body>
-  <p>Returning to the <a id="playground" href="./play/">LongPuzzleBench playground</a>…</p>
+  <main>
+    <p>LongPuzzleBench · 404</p>
+    <h1>This path is not part of the puzzle.</h1>
+    <p>The page may have moved. Return to the project homepage to explore the benchmark, research note, and playable games.</p>
+    <p><a id="home-link" href="https://azurestarz.github.io/LongPuzzleBench/">Return to LongPuzzleBench</a></p>
+  </main>
   <script>
-    const first = window.location.pathname.split("/").filter(Boolean)[0];
-    const base = first ? `/${first}/` : "/";
-    const target = new URL(`${base}play/`, window.location.origin);
-    target.search = window.location.search;
-    target.hash = window.location.hash;
-    document.querySelector("#playground").href = target.href;
-    window.location.replace(target.href);
+    const projectSlug = "LongPuzzleBench";
+    const pathParts = window.location.pathname.split("/").filter(Boolean);
+    const projectIndex = pathParts.indexOf(projectSlug);
+    const baseParts = projectIndex >= 0 ? pathParts.slice(0, projectIndex + 1) : [];
+    const routeParts = projectIndex >= 0 ? pathParts.slice(projectIndex + 1) : pathParts;
+    const basePath = `/${baseParts.join("/")}${baseParts.length ? "/" : ""}`;
+    const route = routeParts.join("/");
+    const home = new URL(basePath, window.location.origin);
+    document.querySelector("#home-link").href = home.href;
+
+    const missingSlashRoutes = new Set(["play", "research"]);
+    if (missingSlashRoutes.has(route)) {
+      const target = new URL(`${basePath}${route}/`, window.location.origin);
+      target.search = window.location.search;
+      target.hash = window.location.hash;
+      window.location.replace(target.href);
+    }
   </script>
 </body>
 </html>
@@ -84,11 +111,13 @@ def paths_overlap(left: Path, right: Path) -> bool:
 def main() -> int:
     args = parse_args()
     output = args.output.expanduser().resolve()
-    source_roots = (PLAYGROUND, RUNTIME, RESEARCH)
+    source_roots = (ROOT / "assets", PLAYGROUND, RUNTIME, RESEARCH)
     if any(paths_overlap(output, source) for source in source_roots):
         raise ValueError(f"Refusing to replace a source directory: {output}")
 
     for required in (
+        HOMEPAGE,
+        *SITE_ASSETS,
         PLAYGROUND / "index.html",
         PLAYGROUND / "app.js",
         PLAYGROUND / "catalog.js",
@@ -110,6 +139,9 @@ def main() -> int:
     copy_tree(RUNTIME, output / "runtime")
     copy_tree(RESEARCH, output / "research")
     copy_tree(PREVIEWS, output / "assets" / "games")
+    shutil.copy2(HOMEPAGE, output / "index.html")
+    for asset in SITE_ASSETS:
+        shutil.copy2(asset, output / "assets" / asset.name)
 
     runtime_index = output / "runtime" / "index.html"
     runtime_html = runtime_index.read_text(encoding="utf-8")
@@ -129,7 +161,6 @@ def main() -> int:
         notices / "PUZZLE_SUITE_NOTICE.md",
     )
 
-    (output / "index.html").write_text(ROOT_REDIRECT, encoding="utf-8")
     (output / "404.html").write_text(NOT_FOUND, encoding="utf-8")
     (output / ".nojekyll").touch()
 

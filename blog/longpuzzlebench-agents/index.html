@@ -11,11 +11,14 @@
     <link rel="canonical" href="https://azurestarz.github.io/LongPuzzleBench/research/" />
     <title>The Move Was Legal. The Puzzle Was Already Lost.</title>
     <link rel="preload" href="assets/trajectories/bolt_immediate-008-post.webp" as="image" />
+    <link rel="stylesheet" href="../assets/site.css" />
     <link rel="stylesheet" href="styles.css" />
+    <script src="../assets/site.js" defer></script>
     <script src="data/findings.js" defer></script>
     <script src="article.js" defer></script>
   </head>
   <body>
+    <a class="skip-link" href="#article-content">Skip to research story</a>
     <div class="reading-progress" aria-hidden="true"><span></span></div>
     <noscript>
       <div class="noscript-note">
@@ -24,20 +27,64 @@
       </div>
     </noscript>
 
-    <header class="hero">
-      <nav class="hero-nav" aria-label="Article navigation">
-        <a class="wordmark" href="https://github.com/AzureStarz/LongPuzzleBench">LongPuzzleBench</a>
-        <div class="hero-links">
-          <a href="https://azurestarz.github.io/LongPuzzleBench/play/">Play</a>
-          <a href="#findings">Findings</a>
-          <a href="#method">Method</a>
-          <a href="data/findings.json">Evidence</a>
-        </div>
-      </nav>
+    <header class="global-header" data-menu-open="false">
+      <div class="site-container global-header__inner">
+        <a class="project-brand" href="../" aria-label="LongPuzzleBench home">
+          <span class="project-brand__mark" aria-hidden="true"></span>
+          <span class="project-brand__copy">
+            <strong>LongPuzzleBench</strong>
+            <small>Long-horizon puzzle benchmark</small>
+          </span>
+        </a>
 
-      <div class="hero-layout">
+        <nav class="global-nav" id="project-navigation" aria-label="Project navigation">
+          <a href="../">Home</a>
+          <a href="./" aria-current="page">Research</a>
+          <a
+            href="https://azurestarz.github.io/LongPuzzleBench/play/"
+            data-project-href="../play/"
+            data-source-href="../../playground/"
+          >Playground</a>
+          <a href="../#benchmark">Benchmark</a>
+          <a href="../#updates">Updates</a>
+          <a class="global-nav__mobile-external" href="https://github.com/AzureStarz/LongPuzzleBench">GitHub ↗</a>
+        </nav>
+
+        <div class="global-header__actions">
+          <a
+            class="global-header__github"
+            href="https://github.com/AzureStarz/LongPuzzleBench"
+          >GitHub <span aria-hidden="true">↗</span></a>
+          <button
+            class="nav-toggle"
+            type="button"
+            data-nav-toggle
+            aria-controls="project-navigation"
+            aria-expanded="false"
+            aria-label="Open project navigation"
+          >
+            <span class="nav-toggle__lines" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="article-nav-bar">
+      <nav class="site-container article-nav" aria-label="Research story sections">
+        <span class="article-nav__label">In this story</span>
+        <a href="#overview">Overview</a>
+        <a href="#method">Method</a>
+        <a href="#findings">Five findings</a>
+        <a href="#model-delta">Model delta</a>
+        <a href="#future">Next steps</a>
+        <a href="data/findings.json">Evidence <span aria-hidden="true">↗</span></a>
+      </nav>
+    </div>
+
+    <header class="hero">
+      <div class="hero-layout site-container">
         <div class="hero-copy">
-          <p class="eyebrow">Inside the trajectories</p>
+          <p class="eyebrow">LongPuzzleBench research · Inside the trajectories</p>
           <h1>The move was legal.<br />The puzzle was already lost.</h1>
           <p class="dek">
             LongPuzzleBench reveals failures that a score cannot: agents lose interaction mode,
@@ -68,9 +115,9 @@
       </div>
     </header>
 
-    <main>
+    <main id="article-content">
       <article>
-        <section class="opening prose">
+        <section class="opening prose" id="overview">
           <p class="lead">
             At action ten, the agent clicks a black anchor that is visibly empty. The game accepts
             the move. A plank falls. Evaluator progress rises from 20.8% to 29.2%. Then the level
@@ -216,6 +263,20 @@
             <p>Agents often test whether a move is legal now without testing whether the post-physics state remains controllable.</p>
           </aside>
 
+          <aside class="research-play-bridge breakout" aria-label="Try the Bolt Unscrew example">
+            <div>
+              <span>Research → Play</span>
+              <strong>Can you preserve an exposed anchor?</strong>
+              <p>Try Bolt Unscrew hard level 1 in the human playground. The board will accept legal moves without warning you when one destroys every future action.</p>
+            </div>
+            <a
+              class="project-button project-button--primary"
+              href="https://azurestarz.github.io/LongPuzzleBench/play/?game=bolt-unscrew&amp;difficulty=hard&amp;level=1"
+              data-project-href="../play/?game=bolt-unscrew&amp;difficulty=hard&amp;level=1"
+              data-source-href="../../playground/?game=bolt-unscrew&amp;difficulty=hard&amp;level=1"
+            >Play Bolt hard-1 <span aria-hidden="true">→</span></a>
+          </aside>
+
           <section class="finding prose" id="finding-2">
             <div class="finding-index" aria-hidden="true">02</div>
             <p class="section-kicker">Postcondition drift</p>
@@ -327,6 +388,20 @@
           <aside class="finding-sentence breakout">
             <span>The finding</span>
             <p>Early paths must preserve cells that later paths require; noticing the conflict after deletion is useless if reconstruction repeats the same occupancy.</p>
+          </aside>
+
+          <aside class="research-play-bridge breakout" aria-label="Try the Color Connect example">
+            <div>
+              <span>Research → Play</span>
+              <strong>Which empty cell belongs to a future path?</strong>
+              <p>Try Color Connect hard level 1, where a finished path can still occupy the only corridor another color needs.</p>
+            </div>
+            <a
+              class="project-button project-button--primary"
+              href="https://azurestarz.github.io/LongPuzzleBench/play/?game=color-connect&amp;difficulty=hard&amp;level=1"
+              data-project-href="../play/?game=color-connect&amp;difficulty=hard&amp;level=1"
+              data-source-href="../../playground/?game=color-connect&amp;difficulty=hard&amp;level=1"
+            >Play Color Connect hard-1 <span aria-hidden="true">→</span></a>
           </aside>
 
           <section class="finding prose" id="finding-4">
@@ -514,18 +589,47 @@
       </article>
     </main>
 
-    <footer class="site-footer">
-      <div>
-        <a href="https://github.com/AzureStarz/LongPuzzleBench">Benchmark</a>
-        <a href="https://github.com/AzureStarz/LongPuzzleBench/blob/main/leaderboard/results.json">Leaderboard</a>
-        <a href="https://github.com/AzureStarz/LongPuzzleBench/blob/main/scripts/analyze_blog_trajectories.py">Analysis script</a>
-        <a href="data/findings.json">Evidence bundle</a>
+    <footer class="global-footer">
+      <div class="site-container">
+        <div class="global-footer__grid">
+          <div class="global-footer__intro">
+            <a class="project-brand" href="../" aria-label="LongPuzzleBench home">
+              <span class="project-brand__mark" aria-hidden="true"></span>
+              <span class="project-brand__copy">
+                <strong>LongPuzzleBench</strong>
+                <small>Long-horizon puzzle benchmark</small>
+              </span>
+            </a>
+            <p>
+              Interactive puzzles expose whether an agent can carry object identity, spatial state,
+              and future constraints through long chains of consequential actions.
+            </p>
+          </div>
+
+          <nav class="global-footer__links" aria-label="Project resources">
+            <a href="../" data-local>Project home</a>
+            <a
+              href="https://azurestarz.github.io/LongPuzzleBench/play/"
+              data-project-href="../play/"
+              data-source-href="../../playground/"
+              data-local
+            >Playground</a>
+            <a href="data/findings.json" data-local>Evidence bundle</a>
+            <a href="https://github.com/AzureStarz/LongPuzzleBench">GitHub repository</a>
+            <a href="https://github.com/AzureStarz/LongPuzzleBench/blob/main/leaderboard/results.json">Results data</a>
+            <a href="https://github.com/AzureStarz/LongPuzzleBench/blob/main/scripts/analyze_blog_trajectories.py">Analysis script</a>
+          </nav>
+        </div>
+
+        <div class="global-footer__meta">
+          <p>
+            Empirical visuals use recorded LongPuzzleBench screenshots. Game assets follow the bundled
+            puzzle suite’s <a href="https://github.com/AzureStarz/LongPuzzleBench/blob/main/games/puzzle_suite/NOTICE.md">notice</a>.
+            The final conceptual illustration was generated with OpenAI image generation and is labeled accordingly.
+          </p>
+          <span>LongPuzzleBench · 2026</span>
+        </div>
       </div>
-      <p>
-        Empirical visuals use recorded LongPuzzleBench screenshots. Game assets follow the bundled
-        puzzle suite’s <a href="https://github.com/AzureStarz/LongPuzzleBench/blob/main/games/puzzle_suite/NOTICE.md">notice</a>. The final conceptual
-        illustration was generated with OpenAI image generation and is labeled accordingly.
-      </p>
     </footer>
   </body>
 </html>

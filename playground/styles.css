@@ -1,23 +1,3 @@
-:root {
-  --paper: #f2eee5;
-  --paper-deep: #e8e1d5;
-  --surface: #fbf9f4;
-  --ink: #16272e;
-  --muted: #5e6a6e;
-  --line: #cdc5b7;
-  --navy: #173f56;
-  --blue: #2d6b8b;
-  --terracotta: #a7442d;
-  --sage: #617d6d;
-  --gold: #bf9140;
-  --danger: #a73e2d;
-  --good: #426e5a;
-  --shadow: 0 22px 65px rgb(22 39 46 / 11%);
-  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Baskerville, Georgia, serif;
-  --sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-}
-
 * { box-sizing: border-box; }
 
 html {
@@ -51,47 +31,6 @@ a:focus-visible, button:focus-visible, select:focus-visible, iframe:focus-visibl
   outline-offset: 4px;
 }
 
-.skip-link {
-  position: fixed;
-  z-index: 1000;
-  top: 0.75rem;
-  left: 0.75rem;
-  padding: 0.65rem 0.9rem;
-  border-radius: 0.25rem;
-  background: var(--ink);
-  color: white;
-  transform: translateY(-160%);
-}
-.skip-link:focus { transform: translateY(0); }
-
-.site-header {
-  position: relative;
-  z-index: 20;
-  display: flex;
-  width: min(calc(100% - 3rem), 1360px);
-  min-height: 72px;
-  margin: 0 auto;
-  align-items: center;
-  justify-content: space-between;
-  gap: 2rem;
-  border-bottom: 1px solid rgb(22 39 46 / 17%);
-  font-size: 0.72rem;
-  font-weight: 780;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-.site-header a { text-decoration: none; }
-.site-header nav { display: flex; gap: clamp(0.8rem, 2vw, 1.6rem); }
-.wordmark { display: inline-flex; align-items: center; gap: 0.65rem; }
-.wordmark > span {
-  width: 0.95rem;
-  height: 0.95rem;
-  border: 2px solid var(--ink);
-  border-radius: 50%;
-  box-shadow: inset 0 0 0 3px var(--paper);
-  background: var(--terracotta);
-}
-
 .hero {
   position: relative;
   display: grid;
@@ -99,7 +38,10 @@ a:focus-visible, button:focus-visible, select:focus-visible, iframe:focus-visibl
   min-height: calc(min(900px, 100svh) - 72px);
   margin: 0 auto;
   padding: clamp(3.5rem, 8vh, 7rem) 0 5rem;
-  grid-template-columns: minmax(0, 0.86fr) minmax(480px, 1.14fr);
+  /* Keep the unbroken project name inside the copy column. The former
+     0.86/1.14 split let the heading spill into (and behind) the first card
+     once the type reached its desktop maximum. */
+  grid-template-columns: minmax(0, 1fr) minmax(480px, 1fr);
   gap: clamp(3rem, 7vw, 8rem);
   align-items: center;
 }
@@ -207,7 +149,7 @@ a:focus-visible, button:focus-visible, select:focus-visible, iframe:focus-visibl
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
-.exhibit-card-a { z-index: 1; top: 4%; left: 1%; transform: rotate(-5deg); }
+.exhibit-card-a { z-index: 1; top: 4%; left: 5%; transform: rotate(-5deg); }
 .exhibit-card-b { z-index: 3; top: 18%; left: 34%; transform: rotate(3deg); }
 .exhibit-card-c { z-index: 2; top: 35%; right: 0; transform: rotate(-2deg); }
 .exhibit-line {
@@ -555,17 +497,6 @@ a:focus-visible, button:focus-visible, select:focus-visible, iframe:focus-visibl
 .completion-toast .button { min-height: 39px; border-color: rgb(255 255 255 / 35%); color: white; white-space: nowrap; }
 @keyframes toast-in { from { opacity: 0; transform: translateY(12px); } }
 
-footer {
-  display: flex;
-  padding: 1.4rem max(1.5rem, calc((100vw - 1360px) / 2));
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  border-top: 1px solid var(--line);
-  color: var(--muted);
-  font-family: var(--mono);
-  font-size: 0.62rem;
-}
 .noscript-note { position: fixed; z-index: 1000; right: 1rem; bottom: 1rem; left: 1rem; padding: 1rem; background: var(--danger); color: white; text-align: center; }
 
 @media (max-width: 1080px) {
@@ -578,11 +509,9 @@ footer {
 }
 
 @media (max-width: 820px) {
-  .site-header { width: min(calc(100% - 2rem), 1360px); }
-  .site-header nav a:first-child { display: none; }
   .hero { width: min(calc(100% - 2rem), 1360px); min-height: auto; padding: 4.5rem 0 3rem; grid-template-columns: 1fr; }
   .hero::before { top: 52%; left: calc(50% - 50vw); }
-  .hero h1 { font-size: clamp(4rem, 16vw, 7rem); }
+  .hero h1 { font-size: clamp(3.25rem, 10.5vw, 5.6rem); }
   .hero-exhibit { min-height: 590px; }
   .exhibit-card { width: min(40vw, 215px); }
   .exhibit-card-a { left: 2%; }
@@ -609,11 +538,8 @@ footer {
 }
 
 @media (max-width: 560px) {
-  .site-header { min-height: 62px; }
-  .site-header nav { gap: 0.85rem; }
-  .site-header nav a:nth-child(2) { display: none; }
   .hero { padding-top: 3.2rem; }
-  .hero h1 { font-size: clamp(3.8rem, 20vw, 5.8rem); }
+  .hero h1 { font-size: clamp(2.5rem, 12.4vw, 4.3rem); }
   .hero-actions { align-items: stretch; flex-direction: column; }
   .hero-actions .button { width: 100%; }
   .hero-exhibit { min-height: 420px; }
@@ -631,7 +557,6 @@ footer {
   .viewport-note { padding-inline: 0.5rem; }
   .completion-toast { right: 0.5rem; bottom: 0.5rem; left: 0.5rem; width: auto; align-items: stretch; flex-direction: column; }
   .completion-toast .button { width: 100%; }
-  footer { align-items: flex-start; flex-direction: column; }
 }
 
 @media (max-height: 620px) and (orientation: landscape) {

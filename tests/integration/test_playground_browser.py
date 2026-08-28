@@ -37,7 +37,9 @@ def _serve(directory: Path) -> Iterator[str]:
         thread.join(timeout=2)
 
 
-def _wait_for_public_state(page: object, game_id: str, difficulty: str, level: int) -> dict[str, object]:
+def _wait_for_public_state(
+    page: object, game_id: str, difficulty: str, level: int
+) -> dict[str, object]:
     page.wait_for_function(
         """([gameId, difficulty, level]) => {
           const state = document.querySelector('#gameRuntime')?.contentWindow
@@ -104,9 +106,10 @@ def test_static_playground_deep_links_gameplay_reset_and_mobile(tmp_path: Path) 
     )
 
     with _serve(tmp_path) as origin, sync_playwright() as playwright:
-        if not playwright.chromium.executable_path or not Path(
-            playwright.chromium.executable_path
-        ).exists():
+        if (
+            not playwright.chromium.executable_path
+            or not Path(playwright.chromium.executable_path).exists()
+        ):
             pytest.skip("Playwright Chromium is unavailable; run `playwright install chromium`.")
         browser = playwright.chromium.launch(headless=True)
         page = browser.new_page(viewport={"width": 1280, "height": 900})
@@ -120,18 +123,89 @@ def test_static_playground_deep_links_gameplay_reset_and_mobile(tmp_path: Path) 
         )
         page.on(
             "console",
-            lambda message: console_errors.append(message.text) if message.type == "error" else None,
+            lambda message: console_errors.append(message.text)
+            if message.type == "error"
+            else None,
         )
 
-        base = f"{origin}/LongPuzzleBench/play/"
+        project_base = f"{origin}/LongPuzzleBench/"
+        base = f"{project_base}play/"
+
+        page.goto(project_base, wait_until="networkidle")
+        assert page.locator("#home-title").is_visible()
+        assert page.locator(".hero-sequence").is_visible()
+        assert page.locator(".showcase-card").count() == 6
+        assert page.locator(".updates-list > li").count() == 4
+        assert page.locator("#benchmark").is_visible()
+        assert "54.796" in (page.locator("#benchmark").text_content() or "")
+        assert page.locator("iframe").count() == 0
+        assert not page.evaluate(
+            "performance.getEntriesByType('resource').some((entry) => entry.name.includes('/runtime/'))"
+        )
+
+        page.locator("[data-trajectory-range]").evaluate(
+            """(range) => {
+              range.value = "3";
+              range.dispatchEvent(new Event("input", { bubbles: true }));
+            }"""
+        )
+        assert page.locator("[data-trajectory-output]").text_content() == "State 4 of 4"
+
+        page.set_viewport_size({"width": 390, "height": 844})
+        assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth + 1")
+        home_menu = page.locator("[data-nav-toggle]")
+        home_menu.click()
+        assert home_menu.get_attribute("aria-expanded") == "true"
+        assert page.locator("#project-navigation").is_visible()
+        assert page.locator(".global-nav__mobile-external").is_visible()
+        page.keyboard.press("Escape")
+        assert home_menu.get_attribute("aria-expanded") == "false"
+
+        page.goto(f"{project_base}research/", wait_until="networkidle")
+        assert page.locator(".hero h1").is_visible()
+        assert page.locator(".trajectory-comparison").count() == 5
+        assert page.locator(".research-play-bridge").count() == 2
+        assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth + 1")
+        research_menu = page.locator("[data-nav-toggle]")
+        research_menu.click()
+        assert research_menu.get_attribute("aria-expanded") == "true"
+        assert page.locator("#project-navigation").is_visible()
+        assert page.locator(".global-nav__mobile-external").is_visible()
+        page.keyboard.press("Escape")
+        assert research_menu.get_attribute("aria-expanded") == "false"
+
+        page.goto(base, wait_until="networkidle")
+        assert page.locator("#landingView").is_visible()
+        assert page.locator("#hero-title").is_visible()
+        assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth + 1")
+        play_menu = page.locator("[data-nav-toggle]")
+        play_menu.click()
+        assert play_menu.get_attribute("aria-expanded") == "true"
+        assert page.locator("#project-navigation").is_visible()
+        assert page.locator(".global-nav__mobile-external").is_visible()
+        page.keyboard.press("Escape")
+        assert play_menu.get_attribute("aria-expanded") == "false"
+
+        page.set_viewport_size({"width": 1455, "height": 717})
         page.goto(base)
         page.wait_for_function("window.scrollY < 2")
         assert page.locator("#landingView").is_visible()
         assert page.locator("#hero-title").is_visible()
-
-        page.goto(
-            f"{origin}/LongPuzzleBench/?game=maze-paint&difficulty=easy&level=01"
+        title_and_card = page.evaluate(
+            """() => {
+              const heading = document.querySelector('.hero h1');
+              const productName = heading.lastChild;
+              const range = document.createRange();
+              range.selectNodeContents(productName);
+              const title = range.getBoundingClientRect();
+              const card = document.querySelector('.exhibit-card-a').getBoundingClientRect();
+              return { titleRight: title.right, cardLeft: card.left };
+            }"""
         )
+        assert title_and_card["titleRight"] + 16 <= title_and_card["cardLeft"]
+
+        page.set_viewport_size({"width": 1280, "height": 900})
+        page.goto(f"{origin}/LongPuzzleBench/?game=maze-paint&difficulty=easy&level=01")
         page.wait_for_url(re.compile(r"/LongPuzzleBench/play/\?game=maze-paint"))
         state = _wait_for_public_state(page, "maze_paint", "easy", 1)
         assert state["step_count"] == 0
@@ -145,10 +219,15 @@ def test_static_playground_deep_links_gameplay_reset_and_mobile(tmp_path: Path) 
             "terminal",
             "step_count",
         }
-        page.wait_for_function("document.querySelector('#statusText').textContent === 'Puzzle ready'")
+        page.wait_for_function(
+            "document.querySelector('#statusText').textContent === 'Puzzle ready'"
+        )
         assert page.locator("#statusText").text_content() == "Puzzle ready"
         assert page.locator("#gameGrid .game-card").count() == 6
-        assert re.search(r"/LongPuzzleBench/runtime/index\.html", page.locator("#gameRuntime").get_attribute("src") or "")
+        assert re.search(
+            r"/LongPuzzleBench/runtime/index\.html",
+            page.locator("#gameRuntime").get_attribute("src") or "",
+        )
 
         frame = page.frame(url=re.compile(r"/LongPuzzleBench/runtime/index\.html"))
         assert frame is not None
@@ -195,7 +274,11 @@ def test_static_playground_deep_links_gameplay_reset_and_mobile(tmp_path: Path) 
         page.locator("#levelSelect").select_option("hard-4")
         hard_state = _wait_for_public_state(page, "maze_paint", "hard", 4)
         assert hard_state["step_count"] == 0
-        assert "game=maze-paint" in page.url and "difficulty=hard" in page.url and "level=4" in page.url
+        assert (
+            "game=maze-paint" in page.url
+            and "difficulty=hard" in page.url
+            and "level=4" in page.url
+        )
 
         page.locator("#tryAnother").click()
         assert page.locator("#landingView").is_visible()
@@ -210,7 +293,9 @@ def test_static_playground_deep_links_gameplay_reset_and_mobile(tmp_path: Path) 
         page.set_viewport_size({"width": 390, "height": 844})
         page.goto(f"{base}?game=car-escape&difficulty=easy&level=1")
         _wait_for_public_state(page, "truck_escape_2", "easy", 1)
-        page.wait_for_function("document.querySelector('#statusText').textContent === 'Puzzle ready'")
+        page.wait_for_function(
+            "document.querySelector('#statusText').textContent === 'Puzzle ready'"
+        )
         assert page.locator("#runtimeFrame").is_visible()
         assert page.locator("#mobilePlayTitle").text_content() == "Rush Hour"
         assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth + 1")

@@ -10,23 +10,51 @@
     <meta name="theme-color" content="#f2eee5" />
     <title>Play LongPuzzleBench</title>
     <link rel="canonical" href="https://azurestarz.github.io/LongPuzzleBench/play/" />
+    <link rel="stylesheet" href="../assets/site.css" />
     <link rel="stylesheet" href="styles.css" />
+    <script src="../assets/site.js" defer></script>
     <script src="catalog.js" defer></script>
     <script src="app.js" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to puzzles</a>
 
-    <header class="site-header">
-      <a class="wordmark" href="./" aria-label="LongPuzzleBench playground home">
-        <span aria-hidden="true"></span>
-        LongPuzzleBench
-      </a>
-      <nav aria-label="Project navigation">
-        <a href="#games">Games</a>
-        <a href="../research/">Research note</a>
-        <a href="https://github.com/AzureStarz/LongPuzzleBench">GitHub</a>
-      </nav>
+    <header class="global-header" data-menu-open="false">
+      <div class="site-container global-header__inner">
+        <a class="project-brand" href="../" aria-label="LongPuzzleBench home">
+          <span class="project-brand__mark" aria-hidden="true"></span>
+          <span class="project-brand__copy">
+            <strong>LongPuzzleBench</strong>
+            <small>Long-horizon puzzle agents</small>
+          </span>
+        </a>
+        <nav class="global-nav" id="project-navigation" aria-label="Project navigation">
+          <a href="../">Home</a>
+          <a href="../research/">Research</a>
+          <a href="./" aria-current="page">Playground</a>
+          <a href="../#benchmark">Benchmark</a>
+          <a href="../#updates">Updates</a>
+          <a class="global-nav__mobile-external" href="https://github.com/AzureStarz/LongPuzzleBench">GitHub ↗</a>
+        </nav>
+        <div class="global-header__actions">
+          <a
+            class="global-header__github"
+            href="https://github.com/AzureStarz/LongPuzzleBench"
+          >
+            GitHub <span aria-hidden="true">↗</span>
+          </a>
+          <button
+            class="nav-toggle"
+            type="button"
+            aria-controls="project-navigation"
+            aria-expanded="false"
+            aria-label="Open project navigation"
+            data-nav-toggle
+          >
+            <span class="nav-toggle__lines" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
     </header>
 
     <main id="main-content">
@@ -195,9 +223,39 @@
       </section>
     </main>
 
-    <footer>
-      <span>LongPuzzleBench · Human Playground</span>
-      <span>Static by design. Canonical evaluation remains in the repository.</span>
+    <footer class="global-footer">
+      <div class="site-container">
+        <div class="global-footer__grid">
+          <div class="global-footer__intro">
+            <a class="project-brand" href="../" aria-label="LongPuzzleBench home">
+              <span class="project-brand__mark" aria-hidden="true"></span>
+              <span class="project-brand__copy">
+                <strong>LongPuzzleBench</strong>
+                <small>Long-horizon puzzle agents</small>
+              </span>
+            </a>
+            <p>
+              Six interactive puzzle families for studying whether GUI agents can preserve state,
+              strategy, and future options across long action sequences.
+            </p>
+          </div>
+          <nav class="global-footer__links" aria-label="Project resources">
+            <a href="../research/" data-local>Trajectory research</a>
+            <a href="./" data-local>Human playground</a>
+            <a href="https://github.com/AzureStarz/LongPuzzleBench#evaluation-protocol">
+              Evaluation protocol
+            </a>
+            <a href="https://github.com/AzureStarz/LongPuzzleBench">Source on GitHub</a>
+          </nav>
+        </div>
+        <div class="global-footer__meta">
+          <p>
+            This is a curated human exhibit, not the agent evaluator. The canonical 114-level
+            benchmark, scoring code, and third-party notices remain in the repository.
+          </p>
+          <span>LongPuzzleBench · 2026</span>
+        </div>
+      </div>
     </footer>
 
     <noscript>

@@ -4,15 +4,20 @@ on:
   push:
     branches: [main]
     paths:
+      - "index.html"
+      - "assets/**"
       - "playground/**"
       - "games/puzzle_suite/assets/**"
       - "games/puzzle_suite/build/web-mobile/**"
       - "games/puzzle_suite/NOTICE.md"
       - "blog/longpuzzlebench-agents/**"
       - "configs/longpuzzlebench.json"
+      - "leaderboard/**"
       - "scripts/build_pages.py"
       - "scripts/verify_blog.py"
       - "scripts/verify_playground.py"
+      - "README.md"
+      - "DESIGN.md"
       - "LICENSE"
       - "NOTICE"
       - "THIRD_PARTY_NOTICES.md"
@@ -45,7 +50,7 @@ jobs:
         run: python3 scripts/verify_blog.py
       - name: Build Pages artifact
         run: python3 scripts/build_pages.py
-      - name: Verify browser playground
+      - name: Verify public site
         run: python3 scripts/verify_playground.py
       - name: Configure Pages
         uses: actions/configure-pages@v6.0.0

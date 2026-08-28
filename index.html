@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="LongPuzzleBench tests GUI agents on interactive visual puzzles where early decisions shape every move that remains. Explore results, trajectories, and playable games."
+    />
+    <meta name="theme-color" content="#f2eee5" />
+    <link rel="canonical" href="https://azurestarz.github.io/LongPuzzleBench/" />
+    <title>LongPuzzleBench · Long-horizon visual puzzle agents</title>
+    <script>
+      (() => {
+        const params = new URLSearchParams(window.location.search);
+        if (!params.has("game")) return;
+        const target = new URL("play/", window.location.href);
+        target.search = window.location.search;
+        target.hash = window.location.hash;
+        window.location.replace(target.href);
+      })();
+    </script>
+    <link rel="preload" href="assets/games/bolt_unscrew.webp" as="image" />
+    <link rel="preload" href="assets/games/rush_hour_2.webp" as="image" />
+    <link rel="stylesheet" href="assets/site.css" />
+    <link rel="stylesheet" href="assets/home.css" />
+    <script src="assets/site.js" defer></script>
+    <script src="assets/home.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to project overview</a>
+
+    <header class="global-header" data-menu-open="false">
+      <div class="site-container global-header__inner">
+        <a class="project-brand" href="./" aria-label="LongPuzzleBench home">
+          <span class="project-brand__mark" aria-hidden="true"></span>
+          <span class="project-brand__copy">
+            <strong>LongPuzzleBench</strong>
+            <small>Visual agent benchmark</small>
+          </span>
+        </a>
+
+        <nav class="global-nav" id="project-navigation" aria-label="Project navigation">
+          <a href="./" aria-current="page">Home</a>
+          <a href="research/">Research</a>
+          <a href="play/">Playground</a>
+          <a href="#benchmark">Benchmark</a>
+          <a href="#updates">Updates</a>
+          <a class="global-nav__mobile-external" href="https://github.com/AzureStarz/LongPuzzleBench">GitHub ↗</a>
+        </nav>
+
+        <div class="global-header__actions">
+          <a class="global-header__github" href="https://github.com/AzureStarz/LongPuzzleBench">
+            GitHub <span aria-hidden="true">↗</span>
+          </a>
+          <button
+            class="nav-toggle"
+            type="button"
+            aria-controls="project-navigation"
+            aria-expanded="false"
+            aria-label="Open project navigation"
+            data-nav-toggle
+          >
+            <span class="nav-toggle__lines" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <section class="home-hero" aria-labelledby="home-title">
+        <div class="site-container home-hero__layout">
+          <div class="home-hero__copy">
+            <p class="home-kicker">Long-horizon visual puzzle environments</p>
+            <h1 id="home-title"><span>Long</span><span>PuzzleBench</span></h1>
+            <p class="home-hero__claim">
+              Interactive puzzles where one legal move can decide whether dozens of future moves
+              still exist.
+            </p>
+            <p class="home-hero__dek">
+              LongPuzzleBench evaluates GUI agents across six stateful browser games and 114
+              levels—then opens their trajectories to inspection.
+            </p>
+            <div class="home-hero__actions" aria-label="Primary project actions">
+              <a class="project-button project-button--primary" href="research/">
+                Explore research <span aria-hidden="true">→</span>
+              </a>
+              <a class="project-button project-button--secondary" href="play/">
+                Play the games <span aria-hidden="true">→</span>
+              </a>
+            </div>
+            <div class="home-hero__text-links">
+              <a href="https://github.com/AzureStarz/LongPuzzleBench">View on GitHub ↗</a>
+              <a href="https://github.com/AzureStarz/LongPuzzleBench#evaluation-protocol">Evaluation protocol ↗</a>
+            </div>
+            <dl class="home-hero__facts" aria-label="Benchmark scope">
+              <div><dt>Games</dt><dd>6</dd></div>
+              <div><dt>Levels</dt><dd>114</dd></div>
+              <div><dt>Evaluation cells</dt><dd>16</dd></div>
+            </dl>
+          </div>
+
+          <div class="hero-sequence" aria-label="Three representative LongPuzzleBench puzzle states">
+            <svg class="hero-sequence__path" viewBox="0 0 720 420" aria-hidden="true">
+              <path d="M52 225 C 150 118, 238 320, 344 211 S 542 104, 672 218" />
+              <circle cx="52" cy="225" r="5" />
+              <circle cx="344" cy="211" r="5" />
+              <circle cx="672" cy="218" r="5" />
+            </svg>
+
+            <figure class="hero-state hero-state--access">
+              <div class="hero-state__image">
+                <img
+                  src="assets/games/bolt_unscrew.webp"
+                  width="360"
+                  height="640"
+                  alt="Bolt Unscrew board with one plank, screws, and an open destination"
+                  fetchpriority="high"
+                  decoding="async"
+                />
+                <span>01</span>
+              </div>
+              <figcaption><strong>Access</strong><small>What stays reachable?</small></figcaption>
+            </figure>
+
+            <figure class="hero-state hero-state--identity">
+              <div class="hero-state__image">
+                <img
+                  src="assets/games/rush_hour_2.webp"
+                  width="360"
+                  height="640"
+                  alt="Rush Hour board with independently moving vehicles"
+                  fetchpriority="high"
+                  decoding="async"
+                />
+                <span>19</span>
+              </div>
+              <figcaption><strong>Identity</strong><small>Which object moved?</small></figcaption>
+            </figure>
+
+            <figure class="hero-state hero-state--space">
+              <div class="hero-state__image">
+                <img
+                  src="assets/games/color_connect.webp"
+                  width="360"
+                  height="640"
+                  alt="Color Connect board with colored endpoints sharing a small grid"
+                  decoding="async"
+                />
+                <span>42</span>
+              </div>
+              <figcaption><strong>Shared space</strong><small>What must remain free?</small></figcaption>
+            </figure>
+
+            <p class="hero-sequence__note"><span aria-hidden="true">↳</span> Same action space. A different future after every move.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="home-section updates-section" id="updates" aria-labelledby="updates-title">
+        <div class="site-container">
+          <div class="home-section-heading home-section-heading--compact reveal">
+            <div>
+              <p class="home-kicker">Recent updates</p>
+              <h2 id="updates-title">The project is moving.</h2>
+            </div>
+            <p>Four concrete releases from the benchmark’s first public week.</p>
+          </div>
+
+          <ol class="updates-list reveal">
+            <li>
+              <time datetime="2026-08-28">28 Aug 2026</time>
+              <h3><a href="play/">Browser playground released</a></h3>
+              <p>Twelve curated levels across all six game families are now playable without an install.</p>
+            </li>
+            <li>
+              <time datetime="2026-08-28">28 Aug 2026</time>
+              <h3><a href="research/">Trajectory research note published</a></h3>
+              <p>Five recurring failures are reconstructed from real model actions and board states.</p>
+            </li>
+            <li>
+              <time datetime="2026-08-28">28 Aug 2026</time>
+              <h3><a href="https://github.com/AzureStarz/LongPuzzleBench/blob/main/leaderboard/results.json">Leaderboard refreshed ↗</a></h3>
+              <p>Eighteen complete configurations now cover every evaluation cell.</p>
+            </li>
+            <li>
+              <time datetime="2026-08-27">27 Aug 2026</time>
+              <h3><a href="https://github.com/AzureStarz/LongPuzzleBench">Initial benchmark release ↗</a></h3>
+              <p>Six deterministic browser puzzle environments and 114 levels were opened.</p>
+            </li>
+          </ol>
+          <a class="home-text-action" href="https://github.com/AzureStarz/LongPuzzleBench/commits/main/">
+            View project history <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="home-section benchmark-intro" id="what-it-tests" aria-labelledby="tests-title">
+        <div class="site-container benchmark-intro__layout">
+          <div class="benchmark-intro__lead reveal">
+            <p class="home-kicker">What LongPuzzleBench tests</p>
+            <h2 id="tests-title">A puzzle is not a question.</h2>
+            <p>
+              A static answer can be right once. Here, an agent must keep its account of the world
+              right after every click, drag, swipe, collision, and state change.
+            </p>
+          </div>
+
+          <ol class="property-list reveal">
+            <li>
+              <span>01</span>
+              <div><h3>Interactive</h3><p>The board changes after every action. Observation and planning repeat until the level ends.</p></div>
+              <small>observe → act → rebuild</small>
+            </li>
+            <li>
+              <span>02</span>
+              <div><h3>Stateful</h3><p>Objects, selected sources, stopping positions, occupied cells, and exposed holes must persist.</p></div>
+              <small>pixels + memory</small>
+            </li>
+            <li>
+              <span>03</span>
+              <div><h3>Consequential</h3><p>A move can be legal now and still cover the only hole or consume the only route needed later.</p></div>
+              <small>local move ≠ safe move</small>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="home-section games-section" id="games" aria-labelledby="games-title">
+        <div class="site-container">
+          <div class="home-section-heading reveal">
+            <div>
+              <p class="home-kicker">Explore the suite</p>
+              <h2 id="games-title">Small interfaces. Long consequences.</h2>
+            </div>
+            <p>Six game families expose different failures in access, identity, ordering, coverage, workspace, and shared space.</p>
+          </div>
+
+          <ul class="game-showcase reveal">
+            <li>
+              <a class="showcase-card" href="play/?game=bolt-unscrew&amp;difficulty=hard&amp;level=1" style="--game-accent: #a7442d">
+                <span class="showcase-card__image">
+                  <img src="assets/games/bolt_unscrew.webp" width="360" height="640" alt="Bolt Unscrew hard puzzle board" loading="lazy" decoding="async" />
+                  <span>Two taps</span>
+                </span>
+                <div class="showcase-card__body">
+                  <small>Irreversible access</small>
+                  <h3>Bolt Unscrew</h3>
+                  <span>Move screws without letting physics cover every future hole.</span>
+                  <b>Play hard 1 <i aria-hidden="true">→</i></b>
+                </div>
+              </a>
+            </li>
+            <li>
+              <a class="showcase-card" href="play/?game=rush-hour&amp;difficulty=hard&amp;level=6" style="--game-accent: #b56574">
+                <span class="showcase-card__image">
+                  <img src="assets/games/rush_hour_2.webp" width="360" height="640" alt="Rush Hour hard puzzle board" loading="lazy" decoding="async" />
+                  <span>Drag</span>
+                </span>
+                <div class="showcase-card__body">
+                  <small>Object identity</small>
+                  <h3>Rush Hour</h3>
+                  <span>Preserve vehicle identity while the target temporarily moves away from the exit.</span>
+                  <b>Play hard 6 <i aria-hidden="true">→</i></b>
+                </div>
+              </a>
+            </li>
+            <li>
+              <a class="showcase-card" href="play/?game=nut-and-bolt&amp;difficulty=hard&amp;level=2" style="--game-accent: #76528d">
+                <span class="showcase-card__image">
+                  <img src="assets/games/nut_and_bolt.webp" width="360" height="640" alt="Nut and Bolt hard puzzle board" loading="lazy" decoding="async" />
+                  <span>Two taps</span>
+                </span>
+                <div class="showcase-card__body">
+                  <small>Temporary workspace</small>
+                  <h3>Nut and Bolt</h3>
+                  <span>Sort 56 nuts while preserving enough room for later transfers.</span>
+                  <b>Play hard 2 <i aria-hidden="true">→</i></b>
+                </div>
+              </a>
+            </li>
+            <li>
+              <a class="showcase-card" href="play/?game=truck-escape&amp;difficulty=default&amp;level=5" style="--game-accent: #617d6d">
+                <span class="showcase-card__image">
+                  <img src="assets/games/truck_escape.webp" width="360" height="640" alt="Truck Escape puzzle board with many vehicles" loading="lazy" decoding="async" />
+                  <span>Tap</span>
+                </span>
+                <div class="showcase-card__body">
+                  <small>Dependency ordering</small>
+                  <h3>Truck Escape</h3>
+                  <span>Clear a 50-truck field in an order that keeps each heading open.</span>
+                  <b>Play level 5 <i aria-hidden="true">→</i></b>
+                </div>
+              </a>
+            </li>
+            <li>
+              <a class="showcase-card" href="play/?game=maze-paint&amp;difficulty=hard&amp;level=4" style="--game-accent: #2d6b8b">
+                <span class="showcase-card__image">
+                  <img src="assets/games/maze_paint.webp" width="360" height="640" alt="Maze Paint hard puzzle board" loading="lazy" decoding="async" />
+                  <span>Swipe</span>
+                </span>
+                <div class="showcase-card__body">
+                  <small>Persistent localization</small>
+                  <h3>Maze Paint</h3>
+                  <span>Cover every cell when the ball can stop only at a wall or edge.</span>
+                  <b>Play hard 4 <i aria-hidden="true">→</i></b>
+                </div>
+              </a>
+            </li>
+            <li>
+              <a class="showcase-card" href="play/?game=color-connect&amp;difficulty=hard&amp;level=1" style="--game-accent: #c3697f">
+                <span class="showcase-card__image">
+                  <img src="assets/games/color_connect.webp" width="360" height="640" alt="Color Connect hard puzzle board" loading="lazy" decoding="async" />
+                  <span>Click path</span>
+                </span>
+                <div class="showcase-card__body">
+                  <small>Shared space</small>
+                  <h3>Color Connect</h3>
+                  <span>Route eight pairs without consuming another color’s only corridor.</span>
+                  <b>Play hard 1 <i aria-hidden="true">→</i></b>
+                </div>
+              </a>
+            </li>
+          </ul>
+
+          <a class="project-button project-button--secondary games-section__action" href="play/">
+            Open the full playground <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="home-section research-feature" aria-labelledby="research-title">
+        <div class="site-container research-feature__layout">
+          <div class="research-feature__copy reveal">
+            <p class="home-kicker">Latest research · trajectory analysis</p>
+            <h2 id="research-title">The move was legal. The puzzle was already lost.</h2>
+            <p>
+              In Bolt Unscrew, 13 of 18 complete runs reach a state with no available hole. Twelve
+              make progress on the transfer that creates the deadlock.
+            </p>
+            <p>
+              The matched traces show why final scores are not enough: one source disappears under
+              the falling board; another preserves three more transfers.
+            </p>
+            <div class="research-feature__actions">
+              <a class="project-button project-button--light" href="research/">Read the research <span aria-hidden="true">→</span></a>
+              <a class="research-feature__try" href="play/?game=bolt-unscrew&amp;difficulty=hard&amp;level=1">Try this puzzle ↗</a>
+            </div>
+          </div>
+
+          <figure class="trajectory-preview reveal" data-trajectory-preview>
+            <div class="trajectory-preview__panels">
+              <section class="trajectory-branch trajectory-branch--failure" aria-labelledby="trajectory-failure-title">
+                <header>
+                  <span id="trajectory-failure-title">Salient source</span>
+                  <small>Sol · medium</small>
+                </header>
+                <div class="trajectory-branch__frame">
+                  <img
+                    src="research/assets/trajectories/bolt_immediate-008-post.webp"
+                    width="360"
+                    height="640"
+                    alt="Bolt board before the branch that immediately loses all legal moves"
+                    loading="lazy"
+                    decoding="async"
+                    data-trajectory-image="failure"
+                  />
+                </div>
+                <div class="trajectory-branch__copy">
+                  <strong data-trajectory-fact="failure">Same state · 20.8% progress</strong>
+                  <span data-trajectory-description="failure">One uncovered destination remains.</span>
+                </div>
+              </section>
+
+              <section class="trajectory-branch trajectory-branch--preserved" aria-labelledby="trajectory-preserved-title">
+                <header>
+                  <span id="trajectory-preserved-title">Deeper source</span>
+                  <small>Qwen 3.8 · 27B</small>
+                </header>
+                <div class="trajectory-branch__frame">
+                  <img
+                    src="research/assets/trajectories/bolt_deeper-010-post.webp"
+                    width="360"
+                    height="640"
+                    alt="The byte-identical Bolt board before a branch that preserves mobility"
+                    loading="lazy"
+                    decoding="async"
+                    data-trajectory-image="preserved"
+                  />
+                </div>
+                <div class="trajectory-branch__copy">
+                  <strong data-trajectory-fact="preserved">Same state · 20.8% progress</strong>
+                  <span data-trajectory-description="preserved">The same destination is open.</span>
+                </div>
+              </section>
+            </div>
+
+            <div class="trajectory-preview__controls">
+              <button type="button" data-trajectory-toggle aria-pressed="true">Pause preview</button>
+              <label for="trajectory-state">Trajectory state</label>
+              <input id="trajectory-state" type="range" min="0" max="3" step="1" value="0" data-trajectory-range />
+              <output for="trajectory-state" data-trajectory-output>State 1 of 4</output>
+            </div>
+            <figcaption>
+              Same board, same open destination, different source screw. Recorded evaluator frames;
+              neither branch is reconstructed.
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="home-section play-invitation" aria-labelledby="play-title">
+        <div class="site-container play-invitation__layout">
+          <div class="play-window reveal" aria-label="Maze Paint playground preview">
+            <div class="play-window__bar">
+              <span><i aria-hidden="true"></i> Human playground</span>
+              <small>Runtime loads after launch</small>
+            </div>
+            <div class="play-window__body">
+              <img src="assets/games/maze_paint.webp" width="360" height="640" alt="Maze Paint playable puzzle preview" loading="lazy" decoding="async" />
+              <div>
+                <p class="home-kicker">Suggested first puzzle</p>
+                <h3>Maze Paint · Easy 1</h3>
+                <p>Seven optimal swipes. The ball cannot stop midway.</p>
+                <span>Mouse + touch</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="play-invitation__copy reveal">
+            <p class="home-kicker">Playground</p>
+            <h2 id="play-title">Think the puzzles look easy? Try one.</h2>
+            <p>
+              The public playground uses the same checked-in game runtime and mechanics as the
+              benchmark, without evaluator state, agent time limits, or diagnostic hints.
+            </p>
+            <ul aria-label="Playground features">
+              <li>12 curated demo levels</li>
+              <li>All six game families</li>
+              <li>No install or account</li>
+            </ul>
+            <div class="play-invitation__actions">
+              <a class="project-button project-button--primary" href="play/?game=maze-paint&amp;difficulty=easy&amp;level=1">
+                Play LongPuzzleBench <span aria-hidden="true">→</span>
+              </a>
+              <a class="home-text-action" href="play/">Browse all games <span aria-hidden="true">→</span></a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="home-section results-section" id="benchmark" aria-labelledby="benchmark-title">
+        <div class="site-container">
+          <div class="home-section-heading reveal">
+            <div>
+              <p class="home-kicker">Benchmark snapshot</p>
+              <h2 id="benchmark-title">The frontier clears only about half the benchmark.</h2>
+            </div>
+            <p>All ranked configurations cover the complete 16-cell evaluation plan under the released progressive protocol.</p>
+          </div>
+
+          <div class="results-snapshot reveal">
+            <div class="best-result">
+              <p>Best LongPuzzleBench score</p>
+              <strong>54.796<small>/100</small></strong>
+              <span>gpt-5.6-sol · medium reasoning</span>
+              <div class="score-track" aria-label="Best score 54.796 out of 100"><i style="--score: 54.796%"></i></div>
+              <dl>
+                <div><dt>Success rate</dt><dd>55.42%</dd></div>
+                <div><dt>Complete configurations</dt><dd>18</dd></div>
+              </dl>
+            </div>
+
+            <div class="result-context">
+              <div class="result-scope" aria-label="Evaluation scope">
+                <div><strong>6</strong><span>games</span></div>
+                <div><strong>114</strong><span>levels</span></div>
+                <div><strong>16</strong><span>cells</span></div>
+              </div>
+              <ol class="top-configurations" aria-label="Top three configurations">
+                <li><span><b>01</b> gpt-5.6-sol · medium</span><strong>54.796</strong></li>
+                <li><span><b>02</b> gpt-5.6-sol · low</span><strong>54.142</strong></li>
+                <li><span><b>03</b> gpt-5.6-sol · high</span><strong>49.968</strong></li>
+              </ol>
+              <p class="human-baseline-note"><strong>Human baseline</strong> Not reported in this release.</p>
+              <div class="result-links">
+                <a href="https://github.com/AzureStarz/LongPuzzleBench#leaderboard">Open leaderboard ↗</a>
+                <a href="https://github.com/AzureStarz/LongPuzzleBench/blob/main/leaderboard/results.json">Download results JSON ↗</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="home-section resources-section" aria-labelledby="resources-title">
+        <div class="site-container">
+          <div class="home-section-heading home-section-heading--compact reveal">
+            <div>
+              <p class="home-kicker">Project resources</p>
+              <h2 id="resources-title">Inspect the artifact.</h2>
+            </div>
+            <p>Source, protocol, results, and trajectory evidence remain public and reproducible.</p>
+          </div>
+
+          <ul class="resource-grid reveal">
+            <li>
+              <a href="https://github.com/AzureStarz/LongPuzzleBench">
+                <span>01 · Source</span><strong>GitHub repository</strong><small>Harness, environment source, configs, and tests.</small><i aria-hidden="true">↗</i>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/AzureStarz/LongPuzzleBench#evaluation-protocol">
+                <span>02 · Method</span><strong>Evaluation protocol</strong><small>Observation, action, scoring, and progression rules.</small><i aria-hidden="true">↗</i>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/AzureStarz/LongPuzzleBench/blob/main/leaderboard/results.json">
+                <span>03 · Results</span><strong>Machine-readable leaderboard</strong><small>Per-game and per-cell scores for all complete runs.</small><i aria-hidden="true">↗</i>
+              </a>
+            </li>
+            <li>
+              <a href="research/data/findings.json">
+                <span>04 · Evidence</span><strong>Trajectory findings bundle</strong><small>Claims, source hashes, story frames, and annotations.</small><i aria-hidden="true">→</i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer class="global-footer">
+      <div class="site-container">
+        <div class="global-footer__grid">
+          <div class="global-footer__intro">
+            <a class="project-brand" href="./" aria-label="LongPuzzleBench home">
+              <span class="project-brand__mark" aria-hidden="true"></span>
+              <span class="project-brand__copy">
+                <strong>LongPuzzleBench</strong>
+                <small>Visual agent benchmark</small>
+              </span>
+            </a>
+            <p>Interactive visual puzzles for studying whether GUI agents can preserve a coherent plan across long, consequential trajectories.</p>
+          </div>
+          <nav class="global-footer__links" aria-label="Footer navigation">
+            <a href="research/" data-local>Research story</a>
+            <a href="play/" data-local>Playground</a>
+            <a href="#benchmark" data-local>Benchmark snapshot</a>
+            <a href="#updates" data-local>Recent updates</a>
+            <a href="https://github.com/AzureStarz/LongPuzzleBench">GitHub</a>
+            <a href="https://github.com/AzureStarz/LongPuzzleBench#evaluation-protocol">Evaluation protocol</a>
+          </nav>
+        </div>
+        <div class="global-footer__meta">
+          <p>
+            LongPuzzleBench-authored material is available under Apache-2.0. Imported game material
+            and runtime components remain subject to their respective notices.
+          </p>
+          <span><a href="notices/NOTICE">Notices</a> · 2026 public release</span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
