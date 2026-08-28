@@ -291,6 +291,19 @@ New environments should remain long-horizon interactive games with deterministic
 
 LongPuzzleBench will scale with additional long-horizon interactive game environments. Planned dimensions include more puzzle families, longer trajectories, richer visual dynamics, higher interaction complexity, more diverse reasoning patterns, and stronger generalization across unseen layouts and mechanics.
 
+## Research note
+
+**[Read: “The Move Was Legal. The Puzzle Was Already Lost.”](https://azurestarz.github.io/LongPuzzleBench/)**
+
+The interactive research note analyzes 782 executed trajectories across the 18 complete public
+runs. It reconstructs environment-level failures: irreversible loss of future actions, sticky
+selection after rejected destinations, cross-path corridor conflicts, stale maze localization, and
+part–whole vehicle confusion. Its figures and trace frames are reproducible with
+[`scripts/analyze_blog_trajectories.py`](scripts/analyze_blog_trajectories.py).
+
+The self-contained article source and sanitized evidence bundle are available under
+[`blog/longpuzzlebench-agents/`](blog/longpuzzlebench-agents/).
+
 ## Technical report
 
 **Technical report coming soon.**

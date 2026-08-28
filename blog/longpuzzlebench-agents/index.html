@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A trajectory-grounded analysis of how AI agents misunderstand LongPuzzleBench: irreversible moves, stale interaction state, corridor conflicts, localization errors, and split object identities."
+    />
+    <meta name="theme-color" content="#f2eee5" />
+    <link rel="canonical" href="https://azurestarz.github.io/LongPuzzleBench/" />
+    <title>The Move Was Legal. The Puzzle Was Already Lost.</title>
+    <link rel="preload" href="assets/trajectories/bolt_immediate-008-post.webp" as="image" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="data/findings.js" defer></script>
+    <script src="article.js" defer></script>
+  </head>
+  <body>
+    <div class="reading-progress" aria-hidden="true"><span></span></div>
+    <noscript>
+      <div class="noscript-note">
+        Interactive trajectory players require JavaScript. The article and captions remain readable;
+        the reproducible evidence bundle is available as <a href="data/findings.json">JSON</a>.
+      </div>
+    </noscript>
+
+    <header class="hero">
+      <nav class="hero-nav" aria-label="Article navigation">
+        <a class="wordmark" href="https://github.com/AzureStarz/LongPuzzleBench">LongPuzzleBench</a>
+        <div class="hero-links">
+          <a href="#findings">Findings</a>
+          <a href="#method">Method</a>
+          <a href="data/findings.json">Evidence</a>
+        </div>
+      </nav>
+
+      <div class="hero-layout">
+        <div class="hero-copy">
+          <p class="eyebrow">Inside the trajectories</p>
+          <h1>The move was legal.<br />The puzzle was already lost.</h1>
+          <p class="dek">
+            LongPuzzleBench reveals failures that a score cannot: agents lose interaction mode,
+            occupy cells that future routes need, preserve stale coordinates, and sometimes split
+            one car into two.
+          </p>
+          <div class="byline">
+            <span>LongPuzzleBench research note</span>
+            <span>August 2026</span>
+            <span>14 min read</span>
+          </div>
+        </div>
+
+        <figure class="hero-evidence" aria-labelledby="hero-evidence-title">
+          <div
+            class="trajectory-comparison hero-comparison"
+            data-left="bolt_immediate"
+            data-right="bolt_deeper"
+          >
+            <p class="visual-loading">Interactive matched Bolt trajectories (JavaScript required).</p>
+          </div>
+          <figcaption id="hero-evidence-title">
+            <strong>Same board, same empty hole, different source screw.</strong>
+            One branch ends immediately; the other preserves a move. Frames are real evaluator
+            trajectories, not a reconstruction.
+          </figcaption>
+        </figure>
+      </div>
+    </header>
+
+    <main>
+      <article>
+        <section class="opening prose">
+          <p class="lead">
+            At action ten, the agent clicks a black anchor that is visibly empty. The game accepts
+            the move. A plank falls. Evaluator progress rises from 20.8% to 29.2%. Then the level
+            reports zero legal actions.
+          </p>
+          <p>
+            The click was not inaccurate, illegal, or pointless. It was fatal because the selected
+            screw came from the wrong support. Once the board settled, planks covered every empty
+            source hole and the screw occupied the last exposed destination. The agent had improved
+            the board and destroyed its ability to touch it again.
+          </p>
+          <p>
+            A lower-ranked run reaches the byte-identical state and uses the same destination. It
+            chooses a deeper source screw, whose vacated hole remains usable after physics. That run
+            continues for three more transfers. The first meaningful model difference is not the
+            final score. It is which future action survives one apparently good move.
+          </p>
+          <p>
+            We found four more boundaries like this by reading actions against the board they
+            changed. Together they show that current agents often perceive the immediate move
+            correctly while carrying the wrong object, coordinate, interaction mode, or future
+            constraint into the next state.
+          </p>
+        </section>
+
+        <aside class="stat-band breakout" aria-label="Analysis corpus">
+          <div><strong data-metric="public-runs">18</strong><span>complete public runs</span></div>
+          <div><strong data-metric="executed-trajectories">782</strong><span>executed trajectories</span></div>
+          <div><strong>6</strong><span>interactive puzzle families</span></div>
+          <div><strong data-metric="failed-trajectories">237</strong><span>failed trajectories in corpus</span></div>
+        </aside>
+
+        <section id="method" class="prose section-block">
+          <p class="section-kicker">What we evaluated</p>
+          <h2>A final answer hides the state transition that produced it.</h2>
+          <p>
+            LongPuzzleBench is a local browser benchmark for GUI agents. An episode supplies a
+            screenshot, a game instruction, and feedback from the previous interaction. The agent
+            clicks, drags, or swipes through a changing board. The benchmark evaluator records exact
+            object state, coverage, path occupancy, legal moves, deadlocks, and completion.
+          </p>
+          <p>
+            This analysis uses the 782 episodes actually executed by the 18 complete public runs.
+            The models include GPT-5.6 Sol, Terra, and Luna at several reasoning efforts, Kimi K3
+            and K2.5, six Qwen configurations, and GLM-4.6V. Progressive levels skipped after an
+            earlier failure have no trajectory and are excluded.
+          </p>
+          <p>
+            For every finding, we reconstructed a local causal chain: visible state, emitted
+            description, chosen action, evaluator transition, and later consequence. We then looked
+            for recurrence and counterexamples. The synchronized comparisons below use the same
+            task and, where possible, the exact same evaluator state.
+          </p>
+        </section>
+
+        <figure class="game-atlas breakout" aria-labelledby="game-atlas-title">
+          <figcaption>
+            <span class="figure-number">Figure 1</span>
+            <strong id="game-atlas-title">Six games, six kinds of state that must survive interaction.</strong>
+          </figcaption>
+          <div class="game-grid">
+            <article><img src="assets/games/bolt_unscrew.webp" alt="Bolt Unscrew board" /><div><strong>Bolt Unscrew</strong><span>exposed anchors after physics</span></div></article>
+            <article><img src="assets/games/nut_and_bolt.webp" alt="Nut and Bolt board" /><div><strong>Nut and Bolt</strong><span>selected source and stack capacity</span></div></article>
+            <article><img src="assets/games/color_connect.webp" alt="Color Connect board" /><div><strong>Color Connect</strong><span>shared routing cells</span></div></article>
+            <article><img src="assets/games/maze_paint.webp" alt="Maze Paint board" /><div><strong>Maze Paint</strong><span>ball position and residual mask</span></div></article>
+            <article><img src="assets/games/rush_hour_2.webp" alt="Rush Hour board" /><div><strong>Rush Hour</strong><span>object boundaries and swept volume</span></div></article>
+            <article><img src="assets/games/truck_escape.webp" alt="Truck Escape board" /><div><strong>Truck Escape</strong><span>heading, blockers, and recentering</span></div></article>
+          </div>
+        </figure>
+
+        <div class="causal-unit breakout" aria-label="Trajectory unit of analysis">
+          <div><span>01</span><strong>See</strong><small>objects and open cells</small></div>
+          <i aria-hidden="true">→</i>
+          <div><span>02</span><strong>Represent</strong><small>identity, position, constraints</small></div>
+          <i aria-hidden="true">→</i>
+          <div><span>03</span><strong>Act</strong><small>one legal interaction</small></div>
+          <i aria-hidden="true">→</i>
+          <div><span>04</span><strong>Rebuild</strong><small>what changed, not just what moved</small></div>
+        </div>
+
+        <section class="prose section-block landscape-intro">
+          <p class="section-kicker">Behavioral landscape</p>
+          <h2>The failures originate at different layers of the world model.</h2>
+          <p>
+            None of the five findings below can be recovered from a benchmark CSV. Each requires a
+            comparison between what the board contained, what the agent said it contained, and what
+            the next action actually did.
+          </p>
+        </section>
+
+        <figure class="behavior-map breakout" aria-labelledby="behavior-map-title">
+          <figcaption>
+            <span class="figure-number">Figure 2</span>
+            <strong id="behavior-map-title">A map of the five trajectory signatures.</strong>
+            Counts are supporting recurrence evidence, not comparable rates across games.
+          </figcaption>
+          <div class="behavior-cards">
+            <article><span>Future state</span><strong>A legal transfer removes every exposed anchor.</strong><small><b>13 / 18</b> matched Bolt runs reach the explicit no-hole deadlock.</small></article>
+            <article><span>Interaction state</span><strong>A rejected destination leaves the source selected.</strong><small><b>15 / 18</b> hard-1 Nut runs repeat an identical illegal pair.</small></article>
+            <article><span>Constraint state</span><strong>A finished path occupies a cell another color needs.</strong><small><b>32 / 33</b> failed Color traces revisit an exact occupancy state.</small></article>
+            <article><span>Spatial state</span><strong>The target cell is right; the ball’s row is wrong.</strong><small><b>28 / 41</b> failed Maze traces contain a blocked swipe.</small></article>
+            <article><span>Object state</span><strong>One articulated sprite becomes two imagined cars.</strong><small><b>5 episodes</b> across four model configurations were hand-verified.</small></article>
+          </div>
+        </figure>
+
+        <section id="findings" class="findings">
+          <section class="finding prose" id="finding-1">
+            <div class="finding-index" aria-hidden="true">01</div>
+            <p class="section-kicker">Irreversible-state blindness</p>
+            <h2>A legal move can erase the rest of the game.</h2>
+            <p>
+              Bolt Unscrew starts this level with three empty destinations. Every transfer consumes
+              one, but removing a screw may expose its former anchor for reuse. The catch is physics:
+              a falling plank can cover that source before the next turn. Legality is therefore a
+              property of the current board state; controllability is a property of the state after
+              the board settles.
+            </p>
+            <p>
+              Thirteen of the 18 public runs on hard level 1 end in the evaluator’s
+              <code>no_available_hole_deadlock</code>. In 12 of those 13, the terminal transfer
+              increases progress. All ten top-ranked runs deadlock at action ten, after five
+              transfers—ten source and destination clicks. Immediate reward points in exactly the
+              wrong direction.
+            </p>
+            <p>
+              Sol-medium and Qwen 3.8 reach the same evaluator hash and byte-identical screenshot,
+              then choose different sources for the same hole. Sol’s mid-right source disappears
+              under the falling plank; Qwen’s deeper source remains exposed. Qwen later deadlocks
+              too, but after twice as many boards have exited (10 versus 5), reaching 50.0% rather
+              than 29.2% progress.
+            </p>
+          </section>
+
+          <div class="mechanism-strip breakout" aria-label="Bolt deadlock causal chain">
+            <div><strong>Visible fact</strong><span>one empty anchor</span></div><i>→</i>
+            <div><strong>Local inference</strong><span>either source can move there</span></div><i>→</i>
+            <div><strong>Missed counterfactual</strong><span>which source stays exposed?</span></div><i>→</i>
+            <div class="danger"><strong>Consequence</strong><span>zero future actions</span></div>
+          </div>
+
+          <aside class="finding-sentence breakout">
+            <span>The finding</span>
+            <p>Agents often test whether a move is legal now without testing whether the post-physics state remains controllable.</p>
+          </aside>
+
+          <section class="finding prose" id="finding-2">
+            <div class="finding-index" aria-hidden="true">02</div>
+            <p class="section-kicker">Postcondition drift</p>
+            <h2>One nut moved. The target is already full.</h2>
+            <p>
+              Nut and Bolt moves a same-color run from one bolt to another, but only as many nuts as
+              the target can hold. An agent can select two yellow nuts and legally move just one. A
+              second rule compounds the error: if the next target is full or mismatched, the source
+              remains selected. The following click is still a destination attempt, even if the
+              agent narrates it as selecting something new.
+            </p>
+          </section>
+
+          <figure class="comparison-figure breakout" aria-labelledby="nut-comparison-title">
+            <div class="figure-heading">
+              <span class="figure-number">Figure 3</span>
+              <h3 id="nut-comparison-title">The same partial transfer: one loop, one repair.</h3>
+              <p>Advance the synchronized frames to follow interaction mode, not just stack color.</p>
+            </div>
+            <div class="trajectory-comparison" data-left="nut_repeat" data-right="nut_repair">
+              <p class="visual-loading">Interactive matched Nut and Bolt traces (JavaScript required).</p>
+            </div>
+            <figcaption>
+              On the left, the evaluator move count remains unchanged from action 4 through action
+              10. On the right, the agent cancels the sticky source, reverses the transfer direction,
+              and completes the purple stack three actions after the warning.
+            </figcaption>
+          </figure>
+
+          <div class="prose evidence-after">
+            <p>
+              On the hard-1 board, 15 of 18 runs repeat at least one identical illegal
+              source-to-target pair on consecutive actions. Seventeen runs fail; the only success
+              makes two illegal target attempts but repeats neither. The matched traces show why:
+              Qwen 3.8 keeps sending the remaining yellow to an already full bolt, while Sol-medium
+              experiences the same truncated transfer with purple, notices the failed postcondition,
+              cancels selection, and moves the three-purple stack in the opposite direction.
+            </p>
+            <p>
+              The positive trace rules out a blanket endurance explanation for this model. On hard
+              level 2, Sol-medium fills both empty buffers after four actions, then executes 26
+              valid transfers with no empty bolt before reopening workspace. The brittle step in
+              the matched failure is checking what a transfer actually did and updating interaction
+              mode.
+            </p>
+          </div>
+
+          <figure class="capability-proof breakout" aria-labelledby="nut-capability-title">
+            <div class="trajectory-player-shell" data-story="nut_dependency">
+              <p class="visual-loading">Interactive recorded Nut and Bolt trajectory (JavaScript required).</p>
+            </div>
+            <figcaption>
+              <span class="figure-number">Figure 4</span>
+              <strong id="nut-capability-title">A positive result: 26 valid transfers with no empty buffer.</strong>
+              The board is constrained, but each exposed color preserves the next legal dependency.
+            </figcaption>
+          </figure>
+
+          <aside class="finding-sentence breakout">
+            <span>The finding</span>
+            <p>A rejected move becomes a long failure when the agent changes its prose but not the environment’s still-active source selection.</p>
+          </aside>
+
+          <section class="finding prose" id="finding-3">
+            <div class="finding-index" aria-hidden="true">03</div>
+            <p class="section-kicker">Cross-path constraint failure</p>
+            <h2>The empty square is the difference between finishing and rebuilding.</h2>
+            <p>
+              Color Connect looks like eight independent endpoint-matching problems. It is one
+              shared occupancy problem. A path can be perfectly legal and complete while consuming
+              the only corridor available to a color that has not started yet.
+            </p>
+          </section>
+
+          <figure class="comparison-figure breakout" aria-labelledby="color-comparison-title">
+            <div class="figure-heading">
+              <span class="figure-number">Figure 5</span>
+              <h3 id="color-comparison-title">The first divergence is one empty cell.</h3>
+              <p>Both runs reach the same active coral prefix before choosing where to turn.</p>
+            </div>
+            <div class="trajectory-comparison" data-left="color_recreate" data-right="color_reserve">
+              <p class="visual-loading">Interactive matched Color Connect traces (JavaScript required).</p>
+            </div>
+            <figcaption>
+              Sol-high routes coral around row 3, column 5 and later sends purple through it.
+              Sol-medium occupies the cell, names the conflict, deletes coral, and rebuilds the exact
+              same completed coral state at actions 10, 17, and 23.
+            </figcaption>
+          </figure>
+
+          <div class="prose evidence-after">
+            <p>
+              The successful route leaves row 3, column 5 unused; purple later passes through it.
+              The rationale explains the turn as avoiding the maroon endpoint; it does not
+              explicitly name purple or reserve the cell in advance. The failed run initially
+              finishes coral more directly. When purple becomes impossible, it correctly explains
+              that coral must change. What it fails to do is carry that constraint into the
+              reconstruction.
+            </p>
+            <p>
+              Exact board-state churn appears in 32 of 33 failed Color Connect episodes. It also
+              appears in 23 of 48 successes, so revisiting a state is not itself the failure.
+              What matters is whether the next branch changes the occupancy graph. Here, deletion
+              removes work without changing the next branch; the successful reference never cancels
+              a path.
+            </p>
+          </div>
+
+          <aside class="finding-sentence breakout">
+            <span>The finding</span>
+            <p>Early paths must preserve cells that later paths require; noticing the conflict after deletion is useless if reconstruction repeats the same occupancy.</p>
+          </aside>
+
+          <section class="finding prose" id="finding-4">
+            <div class="finding-index" aria-hidden="true">04</div>
+            <p class="section-kicker">Stale localization</p>
+            <h2>The target is right. The agent is on the wrong row.</h2>
+            <p>
+              Near the end of Maze Paint hard level 1, Terra-high and Kimi K3-high reach the exact
+              same evaluator state: the ball sits at row 10, column 2, and one dark cell remains at
+              row 9, column 4. Both slide right to row 10, column 7. From there, the board pixels are
+              nearly uniform; the remaining task is coordinate geometry.
+            </p>
+          </section>
+
+          <figure class="comparison-figure breakout" aria-labelledby="maze-comparison-title">
+            <div class="figure-heading">
+              <span class="figure-number">Figure 6</span>
+              <h3 id="maze-comparison-title">Knowing the missing cell is not enough.</h3>
+              <p>The ball and target must be represented in the same coordinate frame.</p>
+            </div>
+            <div class="trajectory-comparison" data-left="maze_stale" data-right="maze_recover">
+              <p class="visual-loading">Interactive matched Maze Paint traces (JavaScript required).</p>
+            </div>
+            <figcaption>
+              Kimi repeatedly names the right target but labels the bottom row as row 9, so its
+              horizontal slides can never cross the cell one row above. Terra moves up, left, then
+              down through it.
+            </figcaption>
+          </figure>
+
+          <div class="prose evidence-after">
+            <p>
+              Kimi’s action note says the ball is at <code>r9c2</code> and a right swipe will paint
+              <code>r9c4</code>. The evaluator says the ball is on one-based row 10. After the swipe
+              crosses the entire bottom corridor without changing the painted mask, the same row
+              assignment survives. Across three recovery warnings, that wrong bottom-row
+              assignment persists; the episode ends with one cell dark.
+            </p>
+            <p>
+              Terra is not initially more accurate everywhere. Earlier in the same run it also
+              declares completion too soon. The difference is correction: it eventually binds the
+              residual cell, current ball coordinate, and legal stopping points into one route.
+              Across the corpus, 28 of 41 failed Maze episodes contain a swipe that leaves the exact
+              evaluator state unchanged. In the matched trace, that broad signature has a more
+              specific cause: Kimi predicts a stop or crossing that the movement rule does not
+              permit.
+            </p>
+          </div>
+
+          <aside class="finding-sentence breakout">
+            <span>The finding</span>
+            <p>An agent can preserve the right residual target while its self-localization drifts far enough to make every planned approach impossible.</p>
+          </aside>
+
+          <section class="finding prose" id="finding-5">
+            <div class="finding-index" aria-hidden="true">05</div>
+            <p class="section-kicker">Part–whole segmentation</p>
+            <h2>Some agents split one car into two.</h2>
+            <p>
+              The red Rush Hour target is an articulated horizontal sprite: cargo body plus cab.
+              In five hand-verified episodes across four model configurations, the emitted description
+              assigns the cab a separate identity—“small red vertical car”—and tries to drag that
+              imagined object vertically. The action has no effect because no such vehicle exists.
+            </p>
+          </section>
+
+          <figure class="comparison-figure breakout" aria-labelledby="rush-comparison-title">
+            <div class="figure-heading">
+              <span class="figure-number">Figure 7</span>
+              <h3 id="rush-comparison-title">Binary success can hide an object-decomposition error.</h3>
+              <p>Both runs solve the board; the trajectories show why one uses twice the actions.</p>
+            </div>
+            <div class="trajectory-comparison" data-left="rush_split" data-right="rush_grouped">
+              <p class="visual-loading">Interactive matched Rush Hour traces (JavaScript required).</p>
+            </div>
+            <figcaption>
+              Sol-low treats the full red sprite as one object and clears two real blockers.
+              Terra-low spends two no-effect actions on the imagined fragment, then reclassifies the
+              scene and solves. Both are marked successful, though their numeric scores differ.
+            </figcaption>
+          </figure>
+
+          <div class="prose evidence-after">
+            <p>
+              Recovery is possible. Terra-high makes the same error on easy level 6, sees an
+              unchanged frame, immediately renames the sprite “the horizontal red target,” and
+              solves. Terra-low needs two failed fragment moves on medium level 3 before switching.
+              The three other selected episodes fail. One abandons the split-object behavior and
+              later attempts several horizontal target exits, but still times out.
+            </p>
+            <p>
+              The divergence occurs before spatial planning. Once the cab is granted its own
+              identity and motion axis, blocker relationships are computed over an object that is
+              not in the game. Recovery requires deleting that object hypothesis when direct
+              manipulation produces no independent motion.
+            </p>
+          </div>
+
+          <aside class="finding-sentence breakout">
+            <span>The finding</span>
+            <p>With articulated sprites, agents can lose object boundaries before they lose the plan.</p>
+          </aside>
+        </section>
+
+        <section class="synthesis prose section-block" id="model-delta">
+          <p class="section-kicker">What successful trajectories do differently</p>
+          <h2>The delta appears at the constraint boundary.</h2>
+          <p>
+            In the matched comparisons, successful behavior acts on the state variable the
+            constraint depends on. After a rejected Nut destination, it cancels the still-active
+            source. In Color Connect, it leaves the cell later used by purple unoccupied. After a
+            last dark square sits one row above, it changes rows. When a Rush Hour fragment refuses
+            to move, it merges that fragment back into the articulated target.
+          </p>
+          <p>
+            Failed recovery often varies the motor command while preserving the belief: another
+            click on the full bolt, another reconstruction of the same path, another swipe along the
+            wrong row, another vertical drag on the nonexistent car. The input changes; the causal
+            model does not.
+          </p>
+          <p>
+            Bolt Unscrew shows why correction can arrive too late. The benchmark terminates as soon
+            as the critical transfer creates the dead state, so the agent must compare post-physics
+            counterfactuals before acting. A lower-ranked model makes the better source choice in the
+            matched example: global rank does not guarantee the right local world model.
+          </p>
+        </section>
+
+        <figure class="delta-map breakout" aria-labelledby="delta-map-title">
+          <figcaption><span class="figure-number">Figure 8</span><strong id="delta-map-title">Successful behavior acts on the state variable that matters.</strong></figcaption>
+          <div class="delta-flow">
+            <div><span>Constraint</span><strong>What must change—or stay free?</strong><small>object, cell, selection, exposed anchor</small></div>
+            <i>≠</i>
+            <div><span>Observed</span><strong>What actually changed?</strong><small>fresh pixels plus public action feedback</small></div>
+            <i>→</i>
+            <div class="accent"><span>Repair</span><strong>Rewrite the cause</strong><small>not merely the coordinate or wording</small></div>
+          </div>
+        </figure>
+
+        <section class="future-section breakout" id="future">
+          <div class="future-art">
+            <img src="assets/illustrations/state-ledger.webp" alt="Conceptual state cards connected by valid and looping paths" loading="lazy" />
+            <span>Conceptual illustration, not empirical evidence</span>
+          </div>
+          <div class="future-copy prose">
+            <p class="section-kicker">What agents still need</p>
+            <h2>Track the transition, then invalidate the failed layer.</h2>
+            <ol class="research-list">
+              <li><strong>Persistent object and interaction identity.</strong> Track not only which object exists, but which source remains selected and which screen coordinate now refers to it.</li>
+              <li><strong>Counterfactual actionability checks.</strong> Predict the settled board after physics or occupancy changes, then ask whether at least one route or legal manipulation remains.</li>
+              <li><strong>Explicit residual and reservation ledgers.</strong> Store unpainted cells, stopping positions, and cells promised to future paths instead of re-reading a nearly uniform board from scratch.</li>
+              <li><strong>Representation-level recovery.</strong> Use no-effect evidence to delete an object, row, direction, or branch hypothesis. A retry is useful only if it changes the feasible frontier.</li>
+            </ol>
+          </div>
+        </section>
+
+        <section class="limitations prose section-block">
+          <p class="section-kicker">Scope and limits</p>
+          <h2>What the traces establish.</h2>
+          <p>
+            The corpus covers one seed, the full-instruction progressive protocol, and 18 complete
+            public runs. Counts use canonical executed episodes; task mix differs across models
+            because a failed level stops the remainder of that game–difficulty cell. Mechanism
+            claims use evaluator state, source game rules, screenshots, actions, and emitted
+            descriptions. “World model,” “reservation,” and
+            “object identity” are behavioral interpretations of those visible mismatches, not claims
+            about hidden chain of thought, training causes, or architecture.
+          </p>
+        </section>
+
+        <section class="ending prose">
+          <p>
+            LongPuzzleBench does not reduce to agents running out of patience. The revealing errors
+            happen much earlier: a source hole that will be covered, a selected nut that never
+            changed, an empty cell already needed elsewhere, a ball one row below its own plan, a cab
+            mistaken for a separate car.
+          </p>
+          <p>
+            Sol-medium’s hard-2 trace executes 26 valid transfers with no empty buffer; long,
+            exact dependency execution is already possible. What repeatedly breaks is a durable
+            account of how each action changes the world—and a recovery policy that replaces that
+            account when observation contradicts it.
+          </p>
+        </section>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <div>
+        <a href="https://github.com/AzureStarz/LongPuzzleBench">Benchmark</a>
+        <a href="https://github.com/AzureStarz/LongPuzzleBench/blob/main/leaderboard/results.json">Leaderboard</a>
+        <a href="https://github.com/AzureStarz/LongPuzzleBench/blob/main/scripts/analyze_blog_trajectories.py">Analysis script</a>
+        <a href="data/findings.json">Evidence bundle</a>
+      </div>
+      <p>
+        Empirical visuals use recorded LongPuzzleBench screenshots. Game assets follow the bundled
+        puzzle suite’s <a href="https://github.com/AzureStarz/LongPuzzleBench/blob/main/games/puzzle_suite/NOTICE.md">notice</a>. The final conceptual
+        illustration was generated with OpenAI image generation and is labeled accordingly.
+      </p>
+    </footer>
+  </body>
+</html>

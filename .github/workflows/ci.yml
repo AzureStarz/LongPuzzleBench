@@ -20,7 +20,9 @@ jobs:
       - name: Install Chromium
         run: uv run playwright install --with-deps chromium
       - name: Lint
-        run: uv run ruff check src tests
+        run: uv run ruff check src tests scripts
+      - name: Verify research article
+        run: uv run python scripts/verify_blog.py
       - name: Test Python harness
         run: uv run pytest -q
       - name: Test game models
