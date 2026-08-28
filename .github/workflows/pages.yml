@@ -13,6 +13,7 @@ on:
       - "blog/longpuzzlebench-agents/**"
       - "configs/longpuzzlebench.json"
       - "leaderboard/**"
+      - "scripts/build_home_data.py"
       - "scripts/build_pages.py"
       - "scripts/verify_blog.py"
       - "scripts/verify_playground.py"

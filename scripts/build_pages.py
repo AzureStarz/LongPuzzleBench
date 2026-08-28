@@ -5,6 +5,8 @@ from __future__ import annotations
 
 import argparse
 import shutil
+import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -14,6 +16,7 @@ SITE_ASSETS = (
     ROOT / "assets" / "site.css",
     ROOT / "assets" / "site.js",
     ROOT / "assets" / "home.css",
+    ROOT / "assets" / "home-data.js",
     ROOT / "assets" / "home.js",
 )
 PLAYGROUND = ROOT / "playground"
@@ -110,6 +113,11 @@ def paths_overlap(left: Path, right: Path) -> bool:
 
 def main() -> int:
     args = parse_args()
+    subprocess.run(
+        [sys.executable, str(ROOT / "scripts" / "build_home_data.py"), "--check"],
+        cwd=ROOT,
+        check=True,
+    )
     output = args.output.expanduser().resolve()
     source_roots = (ROOT / "assets", PLAYGROUND, RUNTIME, RESEARCH)
     if any(paths_overlap(output, source) for source in source_roots):

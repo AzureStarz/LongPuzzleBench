@@ -80,6 +80,14 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def recorded_output(step: dict[str, object]) -> str | None:
+    prediction = step.get("prediction")
+    if not isinstance(prediction, str) or not prediction.strip():
+        return None
+    output, _separator, _action = prediction.strip().partition("\nAction:")
+    return output.strip() or None
+
+
 def verify_claims(data: dict[str, object]) -> None:
     meta = data["meta"]
     assert isinstance(meta, dict)
@@ -186,6 +194,7 @@ def verify_story_assets(data: dict[str, object], results_root: Path | None) -> t
     frame_count = 0
     raw_sources = 0
     expected_assets: set[Path] = set()
+    raw_episode_cache: dict[tuple[str, str], dict[str, object]] = {}
     for story in stories.values():
         for frame in story["frames"]:
             frame_count += 1
@@ -195,6 +204,10 @@ def verify_story_assets(data: dict[str, object], results_root: Path | None) -> t
             assert re.fullmatch(r"[0-9a-f]{64}", frame["source_sha256"])
             source_path = Path(frame["source"])
             assert not source_path.is_absolute() and ".." not in source_path.parts
+            assert isinstance(frame["recorded_output"], str) and frame["recorded_output"]
+            assert isinstance(frame["executed_action"], dict)
+            assert set(frame["public_feedback"]) == {"status", "message"}
+            assert isinstance(frame["public_feedback"]["status"], str)
             for overlay in frame["overlays"]:
                 assert 0 <= overlay["x"] <= 100
                 assert 0 <= overlay["y"] <= 100
@@ -204,6 +217,28 @@ def verify_story_assets(data: dict[str, object], results_root: Path | None) -> t
                 source = results_root / frame["source"]
                 assert source.is_file(), source
                 assert sha256(source) == frame["source_sha256"], source
+                episode_key = (story["run"], story["episode_id"])
+                if episode_key not in raw_episode_cache:
+                    episode_path = (
+                        results_root
+                        / story["run"]
+                        / "leaderboard"
+                        / "episodes"
+                        / f"{story['episode_id']}.json"
+                    )
+                    raw_episode_cache[episode_key] = json.loads(episode_path.read_text())
+                raw_episode = raw_episode_cache[episode_key]
+                raw_step = raw_episode["trajectory"][frame["step"] - 1]
+                assert frame["recorded_output"] == recorded_output(raw_step)
+                expected_action = raw_step.get("executed_action") or raw_step.get(
+                    "normalized_action"
+                )
+                assert frame["executed_action"] == expected_action
+                raw_feedback = raw_step["execution_result"]["public_feedback"]
+                assert frame["public_feedback"] == {
+                    "status": raw_feedback.get("status"),
+                    "message": raw_feedback.get("message"),
+                }
                 raw_sources += 1
     assert frame_count == 51
     actual_assets = {

@@ -356,7 +356,17 @@
               "label": "only open hole",
               "tone": "warning"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 顶端横木中央螺丝已选中；将它转移到左上区域无遮挡的黑色空锚点。",
+          "executed_action": {
+            "action_type": "click",
+            "x": 390,
+            "y": 503
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 9,
@@ -376,7 +386,17 @@
               "label": "selected source",
               "tone": "danger"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 转移成功且顶端横木已倾斜；选中倾斜横木右端仍在木条上的螺丝。",
+          "executed_action": {
+            "action_type": "click",
+            "x": 894,
+            "y": 789
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 10,
@@ -396,7 +416,17 @@
               "label": "legal target",
               "tone": "warning"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 倾斜横木右端螺丝已选中；将它转移到右上区域无遮挡的黑色空锚点。",
+          "executed_action": {
+            "action_type": "click",
+            "x": 706,
+            "y": 503
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 10,
@@ -416,7 +446,17 @@
               "label": "empty anchors covered",
               "tone": "danger"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 倾斜横木右端螺丝已选中；将它转移到右上区域无遮挡的黑色空锚点。",
+          "executed_action": {
+            "action_type": "click",
+            "x": 706,
+            "y": 503
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         }
       ]
     },
@@ -447,7 +487,17 @@
               "label": "same open hole",
               "tone": "warning"
             }
-          ]
+          ],
+          "recorded_output": "第二排中间螺丝已选中（黄色环）。现在将其转移到剩余未被占据的黑色空锚点。剩下空孔：左上中(约360,261)和右上中(约655,261)。选择左上中黑孔。",
+          "executed_action": {
+            "action_type": "click",
+            "x": 388,
+            "y": 501
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 11,
@@ -467,7 +517,17 @@
               "label": "deeper source",
               "tone": "good"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 转移成功，木条继续松动。选中环消失，需重新选螺丝。点击仍在木条上的螺丝，选择第三排中间的螺丝（约495,585）。",
+          "executed_action": {
+            "action_type": "click",
+            "x": 534,
+            "y": 1123
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 12,
@@ -487,7 +547,17 @@
               "label": "newly usable source",
               "tone": "good"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 第三排中间螺丝已选中（黄色环）。将其转移到剩余未被占据的黑色空锚点(约655,261)。",
+          "executed_action": {
+            "action_type": "click",
+            "x": 707,
+            "y": 501
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 20,
@@ -498,7 +568,17 @@
           "asset": "assets/trajectories/bolt_deeper-020-post.webp",
           "source": "qwen3.8-27b/bolt_unscrew/hard/trajectories/run_001/bolt_unscrew.hard.level_01.seed_0/post_screenshots/bolt_unscrew.hard.level_01.seed_0-0-20.png",
           "source_sha256": "4977479bc7e0f038f561eebc6a35379ba3fb17d2a5ea110ec524fa0c3ec480f8",
-          "overlays": []
+          "overlays": [],
+          "recorded_output": "Thought: 底部左侧螺丝已选中（黄色环）。我看到背景中有一个未被占据的黑色空锚点，位于约(172,585)的位置。将选中的螺丝转移到该空锚点。",
+          "executed_action": {
+            "action_type": "click",
+            "x": 185,
+            "y": 1123
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         }
       ]
     },
@@ -520,7 +600,17 @@
           "asset": "assets/trajectories/nut_dependency-004-post.webp",
           "source": "gpt-5.6-sol-medium/nut_and_bolt/hard/trajectories/run_001/nut_and_bolt.hard.level_02.seed_0/post_screenshots/nut_and_bolt.hard.level_02.seed_0-0-4.png",
           "source_sha256": "73128ae8e4880bea18d1dbd69c76d5256da2be9879257ea1ff247b0f7d315f04",
-          "overlays": []
+          "overlays": [],
+          "recorded_output": "Thought: The two yellow nuts are selected; I will place them on the remaining empty bolt.",
+          "executed_action": {
+            "action_type": "click",
+            "x": 738,
+            "y": 1200
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 56,
@@ -531,7 +621,17 @@
           "asset": "assets/trajectories/nut_dependency-056-post.webp",
           "source": "gpt-5.6-sol-medium/nut_and_bolt/hard/trajectories/run_001/nut_and_bolt.hard.level_02.seed_0/post_screenshots/nut_and_bolt.hard.level_02.seed_0-0-56.png",
           "source_sha256": "4f5f76b2749f1dbd2fc0bd3672f8c962812e11c4c372168cfddb856423a5f7a2",
-          "overlays": []
+          "overlays": [],
+          "recorded_output": "Thought: The selected green nut can join the four green nuts on the fourth bolt.",
+          "executed_action": {
+            "action_type": "click",
+            "x": 738,
+            "y": 620
+          },
+          "public_feedback": {
+            "status": "returned_to_recent_screen",
+            "message": null
+          }
         },
         {
           "step": 58,
@@ -551,7 +651,17 @@
               "label": "reopened",
               "tone": "good"
             }
-          ]
+          ],
+          "recorded_output": "Thought: The selected yellow nut can fill the final slot on the yellow stack.",
+          "executed_action": {
+            "action_type": "click",
+            "x": 738,
+            "y": 1100
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         }
       ]
     },
@@ -590,7 +700,17 @@
               "label": "1 remains",
               "tone": "warning"
             }
-          ]
+          ],
+          "recorded_output": "Thought: I've selected the two Yellow nuts at the top of column 2. Column 1 has Yellow on top, so I can move these two Yellows there to combine them.",
+          "executed_action": {
+            "action_type": "click",
+            "x": 180,
+            "y": 474
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 5,
@@ -610,7 +730,17 @@
               "label": "selected source",
               "tone": "warning"
             }
-          ]
+          ],
+          "recorded_output": "Thought: Column 2's top is now a single Yellow. Column 1 has Yellow on top, so I can move this Yellow there to keep grouping. Let me select column 2's top Yellow.",
+          "executed_action": {
+            "action_type": "click",
+            "x": 425,
+            "y": 474
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 6,
@@ -638,7 +768,17 @@
               "label": "still selected",
               "tone": "warning"
             }
-          ]
+          ],
+          "recorded_output": "Thought: I've selected the Yellow nut at the top of column 2. Column 1 has Yellows on top, so I'll move it there to group the Yellows together.",
+          "executed_action": {
+            "action_type": "click",
+            "x": 180,
+            "y": 474
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 9,
@@ -658,7 +798,17 @@
               "label": "same source → target",
               "tone": "danger"
             }
-          ]
+          ],
+          "recorded_output": "Thought: Column 2's single Yellow is selected. I'll move it onto column 1 which has Yellows on top by clicking column 1's top yellow.",
+          "executed_action": {
+            "action_type": "click",
+            "x": 180,
+            "y": 435
+          },
+          "public_feedback": {
+            "status": "repeating_visual_cycle",
+            "message": "Recent interactions returned the interface to a previously observed visual state. Reassess the fresh screenshot and choose another visible target unless repetition is intentionally required."
+          }
         },
         {
           "step": 10,
@@ -678,7 +828,17 @@
               "label": "repeated target",
               "tone": "danger"
             }
-          ]
+          ],
+          "recorded_output": "Thought: Column 2's Yellow remains selected and not yet moved. I'll click directly on column 1's top Yellow nut to move it there, grouping the Yellows.",
+          "executed_action": {
+            "action_type": "click",
+            "x": 180,
+            "y": 460
+          },
+          "public_feedback": {
+            "status": "returned_to_recent_screen",
+            "message": null
+          }
         }
       ]
     },
@@ -717,7 +877,17 @@
               "label": "target full",
               "tone": "danger"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 将选中的两个紫色螺帽叠到下排第2根的两个紫色上，完成紫色。",
+          "executed_action": {
+            "action_type": "click",
+            "x": 338,
+            "y": 1360
+          },
+          "public_feedback": {
+            "status": "returned_to_recent_screen",
+            "message": null
+          }
         },
         {
           "step": 73,
@@ -737,7 +907,17 @@
               "label": "selected source",
               "tone": "warning"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 将上排第2根剩余的紫色移到下排第2根三个紫色上，完成紫色并腾空螺栓。",
+          "executed_action": {
+            "action_type": "click",
+            "x": 418,
+            "y": 590
+          },
+          "public_feedback": {
+            "status": "returned_to_recent_screen",
+            "message": null
+          }
         },
         {
           "step": 74,
@@ -757,7 +937,17 @@
               "label": "full",
               "tone": "danger"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 将选中的最后一个紫色移到下排第2根的三个紫色上，完成紫色。",
+          "executed_action": {
+            "action_type": "click",
+            "x": 338,
+            "y": 1320
+          },
+          "public_feedback": {
+            "status": "repeating_visual_cycle",
+            "message": "Recent interactions returned the interface to a previously observed visual state. Reassess the fresh screenshot and choose another visible target unless repetition is intentionally required."
+          }
         },
         {
           "step": 75,
@@ -777,7 +967,17 @@
               "label": "new destination",
               "tone": "good"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 下排第2根顶部连续三个紫色应移到上排第2根的一个紫色上；先取消当前选择。",
+          "executed_action": {
+            "action_type": "click",
+            "x": 418,
+            "y": 570
+          },
+          "public_feedback": {
+            "status": "returned_to_recent_screen",
+            "message": null
+          }
         },
         {
           "step": 77,
@@ -797,7 +997,17 @@
               "label": "complete stack",
               "tone": "good"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 将选中的三个紫色移到上排第2根的一个紫色上，完成紫色并露出红色。",
+          "executed_action": {
+            "action_type": "click",
+            "x": 418,
+            "y": 590
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         }
       ]
     },
@@ -836,7 +1046,17 @@
               "label": "future purple cell",
               "tone": "note"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 浅红色从第1行第5列向下到第2行第5列。",
+          "executed_action": {
+            "action_type": "click",
+            "x": 689,
+            "y": 547
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 6,
@@ -864,7 +1084,17 @@
               "label": "left open",
               "tone": "good"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 浅红色继续从第2行第5列左移一格到第4列，避免第3列的深红端点。",
+          "executed_action": {
+            "action_type": "click",
+            "x": 540,
+            "y": 547
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 7,
@@ -892,7 +1122,17 @@
               "label": "still empty",
               "tone": "good"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 浅红色从第2行第4列下移到第3行第4列。",
+          "executed_action": {
+            "action_type": "click",
+            "x": 540,
+            "y": 695
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 8,
@@ -912,7 +1152,17 @@
               "label": "available",
               "tone": "good"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 浅红色当前位于第3行第4列，可沿该行直接左移到第2列同色端点完成。",
+          "executed_action": {
+            "action_type": "click",
+            "x": 244,
+            "y": 695
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 14,
@@ -932,7 +1182,17 @@
               "label": "purple route",
               "tone": "good"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 紫色应避开黄色所需的第4行第6列，先左移到第3行第5列。",
+          "executed_action": {
+            "action_type": "click",
+            "x": 689,
+            "y": 695
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 33,
@@ -943,7 +1203,17 @@
           "asset": "assets/trajectories/color_reserve-033-post.webp",
           "source": "gpt-5.6-sol-high/color_connect/hard/trajectories/run_001/color_connect.hard.level_01.seed_0/post_screenshots/color_connect.hard.level_01.seed_0-0-33.png",
           "source_sha256": "5ffae9cc80132da9a8e0dbf9c05d53f20b43efe55bb315533074efb1e212e91b",
-          "overlays": []
+          "overlays": [],
+          "recorded_output": "Thought: 青色已到第8行第7列，底行第6、5列均为空，可直接左移到第4列同色端点完成全部连接。",
+          "executed_action": {
+            "action_type": "click",
+            "x": 540,
+            "y": 1435
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         }
       ]
     },
@@ -982,7 +1252,17 @@
               "label": "future purple cell",
               "tone": "note"
             }
-          ]
+          ],
+          "recorded_output": "Thought: Turn the red path downward through column 5 to the third row.",
+          "executed_action": {
+            "action_type": "click",
+            "x": 689,
+            "y": 546
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 9,
@@ -1002,7 +1282,17 @@
               "label": "occupied",
               "tone": "danger"
             }
-          ]
+          ],
+          "recorded_output": "Thought: Extend the red path down one more cell to the third row, then turn left toward the matching endpoint.",
+          "executed_action": {
+            "action_type": "click",
+            "x": 689,
+            "y": 694
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 10,
@@ -1022,7 +1312,17 @@
               "label": "purple blocked",
               "tone": "danger"
             }
-          ]
+          ],
+          "recorded_output": "Thought: Complete the red path across the third row to the matching coral endpoint.",
+          "executed_action": {
+            "action_type": "click",
+            "x": 243,
+            "y": 694
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 11,
@@ -1042,7 +1342,17 @@
               "label": "freed again",
               "tone": "warning"
             }
-          ]
+          ],
+          "recorded_output": "Thought: Red must be redrawn to leave the cell at row 3, column 5 available for the purple route. Cancel it from the top-right endpoint.",
+          "executed_action": {
+            "action_type": "click",
+            "x": 985,
+            "y": 397
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 17,
@@ -1062,7 +1372,17 @@
               "label": "same blocker",
               "tone": "danger"
             }
-          ]
+          ],
+          "recorded_output": "Thought: Complete the red path across the third row to its matching endpoint.",
+          "executed_action": {
+            "action_type": "click",
+            "x": 243,
+            "y": 694
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 23,
@@ -1082,7 +1402,17 @@
               "label": "same blocker again",
               "tone": "danger"
             }
-          ]
+          ],
+          "recorded_output": "Thought: Complete the red path across row 3 to the matching coral endpoint.",
+          "executed_action": {
+            "action_type": "click",
+            "x": 243,
+            "y": 694
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         }
       ]
     },
@@ -1121,7 +1451,16 @@
               "label": "ball",
               "tone": "note"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 向下会覆盖左侧底部第一个未涂蓝格并滑到底边。",
+          "executed_action": {
+            "action_type": "swipe",
+            "direction": "down"
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 32,
@@ -1149,7 +1488,16 @@
               "label": "ball",
               "tone": "note"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 仅剩中下方一个未涂蓝格；先沿底边向右滑到右侧竖直通道。",
+          "executed_action": {
+            "action_type": "swipe",
+            "direction": "right"
+          },
+          "public_feedback": {
+            "status": "returned_to_recent_screen",
+            "message": null
+          }
         },
         {
           "step": 33,
@@ -1169,7 +1517,16 @@
               "label": "ball",
               "tone": "good"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 先从右下角向上停在中下横道右端。",
+          "executed_action": {
+            "action_type": "swipe",
+            "direction": "up"
+          },
+          "public_feedback": {
+            "status": "returned_to_recent_screen",
+            "message": null
+          }
         },
         {
           "step": 34,
@@ -1197,7 +1554,16 @@
               "label": "target",
               "tone": "danger"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 向左滑到中下横道的左端，正好对准最后的蓝色方格。",
+          "executed_action": {
+            "action_type": "swipe",
+            "direction": "left"
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 35,
@@ -1217,7 +1583,16 @@
               "label": "painted",
               "tone": "good"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 向下经过最后一个蓝色未涂方格，完成全图覆盖。",
+          "executed_action": {
+            "action_type": "swipe",
+            "direction": "down"
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         }
       ]
     },
@@ -1256,7 +1631,16 @@
               "label": "ball",
               "tone": "note"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 小球在 r6c2，左滑已多次无效，说明不能直接补 r6c1。改向下推进底部：从 r6c2 向下滑到 r9c2，涂 r9c2，再处理 r9c4。",
+          "executed_action": {
+            "action_type": "swipe",
+            "direction": "down"
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 34,
@@ -1284,7 +1668,16 @@
               "label": "actual ball",
               "tone": "warning"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 小球在 r9c2，r9c4 仍深蓝。直接向右滑到 r9c4，涂 r9c3 与 r9c4，随后再处理最后的 r6c1。",
+          "executed_action": {
+            "action_type": "swipe",
+            "direction": "right"
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 35,
@@ -1312,7 +1705,16 @@
               "label": "target on row 9",
               "tone": "danger"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 小球在 r9c7，向上滑会沿 c7 到 r8c7（已过），左滑可到底排左端。为处理剩余 r6c1 与 r9c4，先向左滑到 r9c1，再利用左下竖段回到上方。",
+          "executed_action": {
+            "action_type": "swipe",
+            "direction": "left"
+          },
+          "public_feedback": {
+            "status": "returned_to_recent_screen",
+            "message": null
+          }
         },
         {
           "step": 37,
@@ -1332,7 +1734,16 @@
               "label": "same corridor",
               "tone": "danger"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 小球仍在 r9c1，向上滑未能生效；改为向右滑到 r9c4，正好补涂底行剩余的 r9c4，再继续处理最后的 r6c1。",
+          "executed_action": {
+            "action_type": "swipe",
+            "direction": "right"
+          },
+          "public_feedback": {
+            "status": "repeating_visual_cycle",
+            "message": "Recent interactions returned the interface to a previously observed visual state. Reassess the fresh screenshot and choose another visible target unless repetition is intentionally required."
+          }
         },
         {
           "step": 40,
@@ -1360,7 +1771,16 @@
               "label": "ball",
               "tone": "warning"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 小球在 r9c7。剩余未涂是 r6c1 与 r9c4；先向左滑到 r9c4，直接补涂底行 r9c4，再回到左端处理 r6c1。",
+          "executed_action": {
+            "action_type": "swipe",
+            "direction": "left"
+          },
+          "public_feedback": {
+            "status": "repeating_visual_cycle",
+            "message": "Recent interactions returned the interface to a previously observed visual state. Reassess the fresh screenshot and choose another visible target unless repetition is intentionally required."
+          }
         }
       ]
     },
@@ -1391,7 +1811,19 @@
               "label": "one target vehicle",
               "tone": "good"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 紫色竖车挡住红车所在横道，其下方同列一直到棋盘底部都有足够空间；先将它沿长轴向下拖到底，清空出口通道。",
+          "executed_action": {
+            "action_type": "drag",
+            "end_x": 540,
+            "end_y": 1250,
+            "start_x": 540,
+            "start_y": 730
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 1,
@@ -1411,7 +1843,19 @@
               "label": "target",
               "tone": "good"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 紫色竖车挡住红车所在横道，其下方同列一直到棋盘底部都有足够空间；先将它沿长轴向下拖到底，清空出口通道。",
+          "executed_action": {
+            "action_type": "drag",
+            "end_x": 540,
+            "end_y": 1250,
+            "start_x": 540,
+            "start_y": 730
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 2,
@@ -1431,7 +1875,19 @@
               "label": "horizontal route",
               "tone": "good"
             }
-          ]
+          ],
+          "recorded_output": "Thought: 紫车已成功下移；现在出口前只剩右侧蓝色竖车阻挡红车横道，将它沿长轴上移到棋盘顶部即可清空整条路线。",
+          "executed_action": {
+            "action_type": "drag",
+            "end_x": 925,
+            "end_y": 505,
+            "start_x": 925,
+            "start_y": 665
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         },
         {
           "step": 3,
@@ -1442,7 +1898,19 @@
           "asset": "assets/trajectories/rush_grouped-003-post.webp",
           "source": "gpt-5.6-sol-low/rush_hour_2/medium/trajectories/run_001/rush_hour_2.medium.level_03.seed_0/post_screenshots/rush_hour_2.medium.level_03.seed_0-0-3.png",
           "source_sha256": "9189282c65c3302914de7f4e6de0ad5c9f1ef0d6d9d4c84bc3ebc09d8e2c4b06",
-          "overlays": []
+          "overlays": [],
+          "recorded_output": "Thought: 红车到右侧出口的整条横向通道已经畅通，直接将红车沿长轴向右拖出棋盘。",
+          "executed_action": {
+            "action_type": "drag",
+            "end_x": 1040,
+            "end_y": 730,
+            "start_x": 220,
+            "start_y": 730
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         }
       ]
     },
@@ -1481,7 +1949,19 @@
               "label": "imagined car",
               "tone": "danger"
             }
-          ]
+          ],
+          "recorded_output": "Thought: Move the small red vertical vehicle above the target upward to clear the target row.",
+          "executed_action": {
+            "action_type": "drag",
+            "end_x": 292,
+            "end_y": 602,
+            "start_x": 292,
+            "start_y": 731
+          },
+          "public_feedback": {
+            "status": "no_visible_effect",
+            "message": null
+          }
         },
         {
           "step": 1,
@@ -1501,7 +1981,19 @@
               "label": "not independent",
               "tone": "danger"
             }
-          ]
+          ],
+          "recorded_output": "Thought: Move the small red vertical vehicle above the target upward to clear the target row.",
+          "executed_action": {
+            "action_type": "drag",
+            "end_x": 292,
+            "end_y": 602,
+            "start_x": 292,
+            "start_y": 731
+          },
+          "public_feedback": {
+            "status": "no_visible_effect",
+            "message": null
+          }
         },
         {
           "step": 3,
@@ -1521,7 +2013,19 @@
               "label": "same false object",
               "tone": "danger"
             }
-          ]
+          ],
+          "recorded_output": "Thought: The small red vertical car now has open vertical space above, so move it upward out of the target car’s path.",
+          "executed_action": {
+            "action_type": "drag",
+            "end_x": 292,
+            "end_y": 600,
+            "start_x": 292,
+            "start_y": 730
+          },
+          "public_feedback": {
+            "status": "no_visible_effect",
+            "message": null
+          }
         },
         {
           "step": 6,
@@ -1532,7 +2036,19 @@
           "asset": "assets/trajectories/rush_split-006-post.webp",
           "source": "gpt-5.6-terra-low/rush_hour_2/medium/trajectories/run_001/rush_hour_2.medium.level_03.seed_0/post_screenshots/rush_hour_2.medium.level_03.seed_0-0-6.png",
           "source_sha256": "cc2e89123d91df8a6d26db75ab11887226819115a394330a4eb7dafb7ddd67c1",
-          "overlays": []
+          "overlays": [],
+          "recorded_output": "Thought: The row to the exit is now clear; drag the red target vehicle straight right through the exit.",
+          "executed_action": {
+            "action_type": "drag",
+            "end_x": 1050,
+            "end_y": 730,
+            "start_x": 177,
+            "start_y": 730
+          },
+          "public_feedback": {
+            "status": "screen_changed",
+            "message": null
+          }
         }
       ]
     }

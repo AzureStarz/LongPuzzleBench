@@ -1,126 +1,198 @@
 (() => {
   "use strict";
 
-  const preview = document.querySelector("[data-trajectory-preview]");
-  if (!preview) return;
+  const payload = window.LONGPUZZLEBENCH_HOME_DATA;
+  const casebook = document.querySelector("[data-casebook]");
+  if (!payload || !casebook || !Array.isArray(payload.cases) || !payload.cases.length) return;
 
-  const images = {
-    failure: preview.querySelector('[data-trajectory-image="failure"]'),
-    preserved: preview.querySelector('[data-trajectory-image="preserved"]'),
-  };
-  const facts = {
-    failure: preview.querySelector('[data-trajectory-fact="failure"]'),
-    preserved: preview.querySelector('[data-trajectory-fact="preserved"]'),
-  };
-  const descriptions = {
-    failure: preview.querySelector('[data-trajectory-description="failure"]'),
-    preserved: preview.querySelector('[data-trajectory-description="preserved"]'),
-  };
-  const range = preview.querySelector("[data-trajectory-range]");
-  const output = preview.querySelector("[data-trajectory-output]");
-  const toggle = preview.querySelector("[data-trajectory-toggle]");
+  const stage = casebook.querySelector("[data-case-stage]");
+  const tabs = [...casebook.querySelectorAll("[data-case-tab]")];
+  const branches = [...casebook.querySelectorAll("[data-case-branch]")];
+  const previous = casebook.querySelector("[data-case-prev]");
+  const next = casebook.querySelector("[data-case-next]");
+  const toggle = casebook.querySelector("[data-case-toggle]");
+  const moment = casebook.querySelector("[data-case-moment]");
+  const count = casebook.querySelector("[data-case-output-count]");
+  const dots = casebook.querySelector("[data-case-dots]");
+  const researchLink = casebook.querySelector("[data-case-research]");
+  const playLink = casebook.querySelector("[data-case-play]");
 
   if (
-    !images.failure ||
-    !images.preserved ||
-    !facts.failure ||
-    !facts.preserved ||
-    !descriptions.failure ||
-    !descriptions.preserved ||
-    !range ||
-    !output ||
-    !toggle
+    !stage ||
+    tabs.length !== payload.cases.length ||
+    branches.length !== 2 ||
+    !previous ||
+    !next ||
+    !toggle ||
+    !moment ||
+    !count ||
+    !dots ||
+    !researchLink ||
+    !playLink
   ) return;
 
-  const frames = Object.freeze([
-    Object.freeze({
-      failure: Object.freeze({
-        src: "research/assets/trajectories/bolt_immediate-008-post.webp",
-        alt: "Bolt board before the branch that immediately loses all legal moves",
-        fact: "Same state · 20.8% progress",
-        description: "One uncovered destination remains.",
-      }),
-      preserved: Object.freeze({
-        src: "research/assets/trajectories/bolt_deeper-010-post.webp",
-        alt: "The byte-identical Bolt board before a branch that preserves mobility",
-        fact: "Same state · 20.8% progress",
-        description: "The same destination is open.",
-      }),
-    }),
-    Object.freeze({
-      failure: Object.freeze({
-        src: "research/assets/trajectories/bolt_immediate-009-post.webp",
-        alt: "The agent selects the exposed mid-right support screw",
-        fact: "Source: mid-right support",
-        description: "The visually salient screw is selected.",
-      }),
-      preserved: Object.freeze({
-        src: "research/assets/trajectories/bolt_deeper-011-post.webp",
-        alt: "The comparison run selects a deeper lower-center support screw",
-        fact: "Source: lower-center support",
-        description: "The comparison chooses a deeper support.",
-      }),
-    }),
-    Object.freeze({
-      failure: Object.freeze({
-        src: "research/assets/trajectories/bolt_immediate-010-pre.webp",
-        alt: "The selected screw is aimed at a legal visibly open destination",
-        fact: "The fatal click looks correct",
-        description: "The destination is legal and visibly open.",
-      }),
-      preserved: Object.freeze({
-        src: "research/assets/trajectories/bolt_deeper-012-post.webp",
-        alt: "After the deeper transfer, an exposed source hole remains available",
-        fact: "27.1% progress · mobility survives",
-        description: "The same destination preserves a usable source.",
-      }),
-    }),
-    Object.freeze({
-      failure: Object.freeze({
-        src: "research/assets/trajectories/bolt_immediate-010-post.webp",
-        alt: "After physics settles, every empty Bolt source is covered",
-        fact: "29.2% progress · 0 legal moves",
-        description: "Progress rises; physics covers every empty source.",
-      }),
-      preserved: Object.freeze({
-        src: "research/assets/trajectories/bolt_deeper-020-post.webp",
-        alt: "The deeper branch continues through three more transfers before a later deadlock",
-        fact: "50.0% progress · later deadlock",
-        description: "Three more transfers follow before a later deadlock.",
-      }),
-    }),
-  ]);
-
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  const intervalMs = 3200;
-  let index = 0;
+  const intervalMs = 5200;
+  let caseIndex = 0;
+  let frameIndex = 0;
   let timer = null;
   let visible = false;
   let userPaused = false;
-  let hoverPaused = false;
+  let interactionPaused = false;
 
-  function replaceImage(image, next) {
-    if (image.getAttribute("src") === next.src) return;
+  function currentCase() {
+    return payload.cases[caseIndex];
+  }
+
+  function setLinkLabel(link, label) {
+    link.textContent = `${label} `;
+    const arrow = document.createElement("span");
+    arrow.setAttribute("aria-hidden", "true");
+    arrow.textContent = "→";
+    link.append(arrow);
+  }
+
+  function replaceImage(image, frame, model) {
+    const alt = `${model}: ${frame.description}`;
+    if (image.getAttribute("src") === frame.asset) {
+      image.alt = alt;
+      return;
+    }
     image.classList.add("is-changing");
     image.addEventListener("load", () => image.classList.remove("is-changing"), { once: true });
-    image.src = next.src;
-    image.alt = next.alt;
+    image.src = frame.asset;
+    image.alt = alt;
     if (image.complete) window.requestAnimationFrame(() => image.classList.remove("is-changing"));
   }
 
-  function showFrame(nextIndex) {
-    index = (nextIndex + frames.length) % frames.length;
-    const frame = frames[index];
+  function outputLanguage(value) {
+    return /[\u3400-\u9fff]/u.test(value) ? "zh" : "en";
+  }
 
-    for (const branch of ["failure", "preserved"]) {
-      replaceImage(images[branch], frame[branch]);
-      facts[branch].textContent = frame[branch].fact;
-      descriptions[branch].textContent = frame[branch].description;
-    }
+  function branchElements(branch) {
+    return {
+      label: branch.querySelector("[data-branch-label]"),
+      model: branch.querySelector("[data-branch-model]"),
+      rank: branch.querySelector("[data-branch-rank]"),
+      thesis: branch.querySelector("[data-branch-thesis]"),
+      outcome: branch.querySelector("[data-branch-outcome]"),
+      image: branch.querySelector("[data-case-image]"),
+      state: branch.querySelector("[data-case-state-label]"),
+      output: branch.querySelector("[data-case-output]"),
+      action: branch.querySelector("[data-case-action]"),
+      fact: branch.querySelector("[data-case-fact]"),
+      description: branch.querySelector("[data-case-description]"),
+      feedback: branch.querySelector("[data-case-feedback]"),
+    };
+  }
 
-    range.value = String(index);
-    output.textContent = `State ${index + 1} of ${frames.length}`;
-    preview.dataset.trajectoryState = String(index);
+  const branchNodes = branches.map(branchElements);
+  if (branchNodes.some((nodes) => Object.values(nodes).some((node) => !node))) return;
+
+  function renderFrame(nextIndex) {
+    const selectedCase = currentCase();
+    const frameCount = selectedCase.branches[0].frames.length;
+    frameIndex = Math.max(0, Math.min(nextIndex, frameCount - 1));
+
+    selectedCase.branches.forEach((branch, branchIndex) => {
+      const nodes = branchNodes[branchIndex];
+      const frame = branch.frames[frameIndex];
+      const timing = frame.kind === "pre" ? "Before action" : "After action";
+      const omitted = frame.omitted_before ? ` · ${frame.omitted_before} omitted` : "";
+      replaceImage(nodes.image, frame, branch.model);
+      nodes.state.textContent = `${timing} ${String(frame.step).padStart(2, "0")}${omitted}`;
+      nodes.output.textContent = frame.recorded_output || "No output excerpt selected.";
+      nodes.output.lang = outputLanguage(nodes.output.textContent);
+      nodes.action.textContent = frame.action;
+      nodes.fact.textContent = frame.fact;
+      nodes.description.textContent = frame.description;
+      nodes.feedback.textContent = `Public feedback · ${frame.feedback.replaceAll("_", " ")}`;
+    });
+
+    const activeFrame = selectedCase.branches[0].frames[frameIndex];
+    moment.textContent = activeFrame.moment;
+    count.textContent = `${String(frameIndex + 1).padStart(2, "0")} / ${String(frameCount).padStart(2, "0")}`;
+    previous.disabled = frameIndex === 0;
+    next.disabled = frameIndex === frameCount - 1;
+    [...dots.children].forEach((dot, index) => {
+      if (index === frameIndex) dot.setAttribute("aria-current", "step");
+      else dot.removeAttribute("aria-current");
+    });
+    stage.dataset.caseFrame = String(frameIndex);
+  }
+
+  function buildDots() {
+    const selectedCase = currentCase();
+    dots.replaceChildren();
+    selectedCase.branches[0].frames.forEach((frame, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = `Moment ${index + 1}: ${frame.moment}`;
+      button.setAttribute("aria-label", `Show moment ${index + 1}: ${frame.moment}`);
+      button.addEventListener("click", () => {
+        userPaused = true;
+        renderFrame(index);
+        updateAutoplay();
+      });
+      dots.append(button);
+    });
+  }
+
+  function renderCase(nextCaseIndex) {
+    caseIndex = Math.max(0, Math.min(nextCaseIndex, payload.cases.length - 1));
+    frameIndex = 0;
+    const selectedCase = currentCase();
+    const kicker = stage.querySelector("[data-case-kicker]");
+    const title = stage.querySelector("[data-case-title]");
+    const summary = stage.querySelector("[data-case-summary]");
+    const stat = stage.querySelector("[data-case-stat]");
+    const match = stage.querySelector("[data-case-match]");
+
+    kicker.textContent = selectedCase.kicker;
+    title.textContent = selectedCase.title;
+    summary.textContent = selectedCase.summary;
+    stat.textContent = selectedCase.stat;
+    match.textContent = selectedCase.matched_initial_frame
+      ? `Byte-identical selected frame · SHA ${selectedCase.matched_sha256.slice(0, 10)}`
+      : "Matched evaluator state";
+    researchLink.href = selectedCase.research;
+    playLink.href = selectedCase.play;
+    setLinkLabel(researchLink, "Read this finding");
+    setLinkLabel(playLink, selectedCase.play_label);
+    stage.setAttribute("aria-labelledby", `case-tab-${selectedCase.id}`);
+    stage.dataset.caseId = selectedCase.id;
+
+    selectedCase.branches.forEach((branch, branchIndex) => {
+      const element = branches[branchIndex];
+      const nodes = branchNodes[branchIndex];
+      element.className = `trajectory-run trajectory-run--${branch.tone}`;
+      nodes.label.textContent = branch.label;
+      nodes.model.textContent = branch.model;
+      nodes.rank.textContent = `Rank ${branch.rank} · ${branch.benchmark_score.toFixed(3)}`;
+      nodes.thesis.textContent = branch.thesis;
+      nodes.outcome.textContent = branch.outcome;
+    });
+
+    tabs.forEach((tab, index) => {
+      const selected = index === caseIndex;
+      tab.setAttribute("aria-selected", String(selected));
+      tab.tabIndex = selected ? 0 : -1;
+    });
+
+    buildDots();
+    renderFrame(0);
+    casebook.querySelector("[data-case-branches]").scrollTo({ left: 0, behavior: "auto" });
+    if (visible) preloadCase(selectedCase);
+    updateAutoplay();
+  }
+
+  function preloadCase(selectedCase) {
+    selectedCase.branches.forEach((branch) => {
+      branch.frames.forEach((frame) => {
+        const image = new Image();
+        image.src = frame.asset;
+      });
+    });
   }
 
   function stop() {
@@ -129,42 +201,43 @@
   }
 
   function shouldPlay() {
-    return visible && !userPaused && !hoverPaused && !reducedMotion.matches && !document.hidden;
+    return visible && !userPaused && !interactionPaused && !reducedMotion.matches && !document.hidden;
   }
 
   function updateControl() {
     if (reducedMotion.matches) {
       toggle.disabled = true;
       toggle.textContent = "Autoplay off";
-      toggle.setAttribute("aria-label", "Autoplay disabled by reduced-motion preference");
       toggle.setAttribute("aria-pressed", "false");
+      toggle.setAttribute("aria-label", "Autoplay disabled by reduced-motion preference");
       return;
     }
-
     toggle.disabled = false;
-    toggle.textContent = userPaused ? "Play preview" : "Pause preview";
-    toggle.setAttribute("aria-label", userPaused ? "Play trajectory preview" : "Pause trajectory preview");
+    toggle.textContent = userPaused ? "Play" : "Pause";
     toggle.setAttribute("aria-pressed", String(!userPaused));
+    toggle.setAttribute("aria-label", userPaused ? "Play trajectory" : "Pause trajectory");
   }
 
   function updateAutoplay() {
     stop();
-    if (shouldPlay()) timer = window.setInterval(() => showFrame(index + 1), intervalMs);
+    if (shouldPlay()) {
+      timer = window.setInterval(() => {
+        const frameCount = currentCase().branches[0].frames.length;
+        renderFrame((frameIndex + 1) % frameCount);
+      }, intervalMs);
+    }
     updateControl();
   }
 
-  function preloadFrames() {
-    for (const frame of frames) {
-      for (const branch of ["failure", "preserved"]) {
-        const image = new Image();
-        image.src = frame[branch].src;
-      }
-    }
-  }
-
-  range.addEventListener("input", () => {
+  previous.addEventListener("click", () => {
     userPaused = true;
-    showFrame(Number(range.value));
+    renderFrame(frameIndex - 1);
+    updateAutoplay();
+  });
+
+  next.addEventListener("click", () => {
+    userPaused = true;
+    renderFrame(frameIndex + 1);
     updateAutoplay();
   });
 
@@ -174,24 +247,39 @@
     updateAutoplay();
   });
 
-  preview.addEventListener("pointerenter", () => {
-    hoverPaused = true;
+  tabs.forEach((tab, index) => {
+    tab.addEventListener("click", () => renderCase(index));
+    tab.addEventListener("keydown", (event) => {
+      if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+      event.preventDefault();
+      let target = index;
+      if (event.key === "ArrowLeft") target = (index - 1 + tabs.length) % tabs.length;
+      if (event.key === "ArrowRight") target = (index + 1) % tabs.length;
+      if (event.key === "Home") target = 0;
+      if (event.key === "End") target = tabs.length - 1;
+      renderCase(target);
+      tabs[target].focus();
+    });
+  });
+
+  casebook.addEventListener("pointerenter", () => {
+    interactionPaused = true;
     updateAutoplay();
   });
 
-  preview.addEventListener("pointerleave", () => {
-    hoverPaused = false;
+  casebook.addEventListener("pointerleave", () => {
+    interactionPaused = false;
     updateAutoplay();
   });
 
-  preview.addEventListener("focusin", () => {
-    hoverPaused = true;
+  casebook.addEventListener("focusin", () => {
+    interactionPaused = true;
     updateAutoplay();
   });
 
-  preview.addEventListener("focusout", (event) => {
-    if (!preview.contains(event.relatedTarget)) {
-      hoverPaused = false;
+  casebook.addEventListener("focusout", (event) => {
+    if (!casebook.contains(event.relatedTarget)) {
+      interactionPaused = false;
       updateAutoplay();
     }
   });
@@ -205,21 +293,20 @@
   }
 
   if ("IntersectionObserver" in window) {
-    let preloaded = false;
+    let preloadedCase = null;
     const observer = new IntersectionObserver((entries) => {
-      visible = entries.some((entry) => entry.isIntersecting && entry.intersectionRatio > 0.15);
-      if (visible && !preloaded) {
-        preloaded = true;
-        preloadFrames();
+      visible = entries.some((entry) => entry.isIntersecting && entry.intersectionRatio > 0.1);
+      if (visible && preloadedCase !== currentCase().id) {
+        preloadedCase = currentCase().id;
+        preloadCase(currentCase());
       }
       updateAutoplay();
-    }, { threshold: [0, 0.15, 0.6] });
-    observer.observe(preview);
+    }, { threshold: [0, 0.1, 0.5] });
+    observer.observe(casebook);
   } else {
     visible = true;
-    preloadFrames();
+    preloadCase(currentCase());
   }
 
-  showFrame(0);
-  updateAutoplay();
+  renderCase(0);
 })();

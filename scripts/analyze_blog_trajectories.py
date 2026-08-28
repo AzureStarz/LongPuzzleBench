@@ -699,6 +699,39 @@ def frame_progress(episode: dict[str, Any], kind: str, step: int) -> float:
     return float(value) if isinstance(value, (int, float)) else 0.0
 
 
+def recorded_output(step: dict[str, Any]) -> str | None:
+    """Return the emitted text before its serialized action payload.
+
+    The public story bundle intentionally exposes only the already-curated steps,
+    not complete raw episode logs. Keeping the exact emitted language here lets
+    downstream pages distinguish model output from editorial interpretation.
+    """
+    prediction = step.get("prediction")
+    if not isinstance(prediction, str) or not prediction.strip():
+        return None
+    output, _separator, _action = prediction.strip().partition("\nAction:")
+    return output.strip() or None
+
+
+def public_step_evidence(episode: dict[str, Any], step: int) -> dict[str, Any]:
+    trajectory = episode.get("trajectory") or []
+    index = step - 1
+    if index < 0 or index >= len(trajectory):
+        raise IndexError(f"Trajectory step {step} is unavailable")
+    record = trajectory[index]
+    action = record.get("executed_action") or record.get("normalized_action")
+    public_feedback = feedback(record)
+    evidence: dict[str, Any] = {
+        "recorded_output": recorded_output(record),
+        "executed_action": action if isinstance(action, dict) else None,
+        "public_feedback": {
+            "status": public_feedback.get("status"),
+            "message": public_feedback.get("message"),
+        },
+    }
+    return evidence
+
+
 def build_stories(results_root: Path, article_root: Path) -> dict[str, Any]:
     assets = article_root / "assets" / "trajectories"
     if assets.exists():
@@ -724,6 +757,7 @@ def build_stories(results_root: Path, article_root: Path) -> dict[str, Any]:
                     "source": str(source.relative_to(results_root)),
                     "source_sha256": sha256(source),
                     "overlays": overlays,
+                    **public_step_evidence(episode, step),
                 }
             )
         output[key] = {

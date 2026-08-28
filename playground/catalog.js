@@ -93,6 +93,14 @@ window.LONGPUZZLEBENCH_PLAYGROUND = Object.freeze({
           cardEvidence: "4 optimal drags",
         }),
         Object.freeze({
+          key: "medium-3",
+          difficulty: "medium",
+          level: 3,
+          label: "One car, not two · Medium 3",
+          evidence: "Matched agent runs solve in 3 versus 6 actions after an object-identity split",
+          cardEvidence: "Trajectory case",
+        }),
+        Object.freeze({
           key: "hard-6",
           difficulty: "hard",
           level: 6,

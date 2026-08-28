@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="assets/site.css" />
     <link rel="stylesheet" href="assets/home.css" />
     <script src="assets/site.js" defer></script>
+    <script src="assets/home-data.js" defer></script>
     <script src="assets/home.js" defer></script>
   </head>
   <body>
@@ -171,7 +172,7 @@
             <li>
               <time datetime="2026-08-28">28 Aug 2026</time>
               <h3><a href="play/">Browser playground released</a></h3>
-              <p>Twelve curated levels across all six game families are now playable without an install.</p>
+              <p>Thirteen curated levels across all six game families are now playable without an install.</p>
             </li>
             <li>
               <time datetime="2026-08-28">28 Aug 2026</time>
@@ -329,83 +330,448 @@
         </div>
       </section>
 
-      <section class="home-section research-feature" aria-labelledby="research-title">
-        <div class="site-container research-feature__layout">
-          <div class="research-feature__copy reveal">
-            <p class="home-kicker">Latest research · trajectory analysis</p>
-            <h2 id="research-title">The move was legal. The puzzle was already lost.</h2>
-            <p>
-              In Bolt Unscrew, 13 of 18 complete runs reach a state with no available hole. Twelve
-              make progress on the transfer that creates the deadlock.
-            </p>
-            <p>
-              The matched traces show why final scores are not enough: one source disappears under
-              the falling board; another preserves three more transfers.
-            </p>
-            <div class="research-feature__actions">
-              <a class="project-button project-button--light" href="research/">Read the research <span aria-hidden="true">→</span></a>
-              <a class="research-feature__try" href="play/?game=bolt-unscrew&amp;difficulty=hard&amp;level=1">Try this puzzle ↗</a>
+      <section class="home-section results-section" id="benchmark" aria-labelledby="benchmark-title">
+        <div class="site-container">
+          <div class="results-heading reveal">
+            <div>
+              <p class="home-kicker">Benchmark frontier · 18 complete configurations</p>
+              <h2 id="benchmark-title">The leading configuration clears just over half the score scale.</h2>
+            </div>
+            <div class="results-heading__scope" aria-label="Benchmark scope">
+              <span><strong>6</strong> games</span>
+              <span><strong>114</strong> levels</span>
+              <span><strong>16</strong> score cells</span>
             </div>
           </div>
 
-          <figure class="trajectory-preview reveal" data-trajectory-preview>
-            <div class="trajectory-preview__panels">
-              <section class="trajectory-branch trajectory-branch--failure" aria-labelledby="trajectory-failure-title">
-                <header>
-                  <span id="trajectory-failure-title">Salient source</span>
-                  <small>Sol · medium</small>
-                </header>
-                <div class="trajectory-branch__frame">
-                  <img
-                    src="research/assets/trajectories/bolt_immediate-008-post.webp"
-                    width="360"
-                    height="640"
-                    alt="Bolt board before the branch that immediately loses all legal moves"
-                    loading="lazy"
-                    decoding="async"
-                    data-trajectory-image="failure"
-                  />
-                </div>
-                <div class="trajectory-branch__copy">
-                  <strong data-trajectory-fact="failure">Same state · 20.8% progress</strong>
-                  <span data-trajectory-description="failure">One uncovered destination remains.</span>
-                </div>
-              </section>
+          <!-- LONGPUZZLEBENCH:RESULTS:START -->
+<div class="results-layout">
+  <aside class="frontier-panel" aria-labelledby="frontier-title">
+    <div class="frontier-panel__intro">
+      <p class="home-kicker">Frontier by model ID</p>
+      <h3 id="frontier-title">Best observed setting per model</h3>
+      <p>Each card keeps only the strongest reasoning setting for that model ID. The canonical configuration ranking remains at right.</p>
+    </div>
+    <ol class="frontier-models">
+      <li data-model="gpt-5.6-sol" data-effort="medium">
+        <span class="frontier-model__rank">01</span>
+        <span class="frontier-model__mark" aria-hidden="true">SOL</span>
+        <span class="frontier-model__identity">
+          <strong>GPT-5.6 Sol</strong>
+          <small>medium reasoning · leader</small>
+        </span>
+        <span class="frontier-model__score">
+          <strong>54.796</strong><small>/100</small>
+          <em>55.42% success</em>
+        </span>
+      </li>
+      <li data-model="gpt-5.6-terra" data-effort="high">
+        <span class="frontier-model__rank">02</span>
+        <span class="frontier-model__mark" aria-hidden="true">TER</span>
+        <span class="frontier-model__identity">
+          <strong>GPT-5.6 Terra</strong>
+          <small>high reasoning · −7.205 vs. leader</small>
+        </span>
+        <span class="frontier-model__score">
+          <strong>47.591</strong><small>/100</small>
+          <em>48.75% success</em>
+        </span>
+      </li>
+      <li data-model="kimi-k3" data-effort="high">
+        <span class="frontier-model__rank">03</span>
+        <span class="frontier-model__mark" aria-hidden="true">K3</span>
+        <span class="frontier-model__identity">
+          <strong>Kimi K3</strong>
+          <small>high reasoning · −22.102 vs. leader</small>
+        </span>
+        <span class="frontier-model__score">
+          <strong>32.694</strong><small>/100</small>
+          <em>32.50% success</em>
+        </span>
+      </li>
+    </ol>
+    <div class="metric-note">
+      <span aria-hidden="true">↳</span>
+      <p><strong>Primary metric</strong> Equal-weight mean across 16 game × difficulty cells. Bars use the released 0–100 scale.</p>
+    </div>
+    <p class="baseline-note"><strong>Reference point</strong> Human baseline is not reported in this release.</p>
+  </aside>
+  <div class="ranking-panel">
+    <header class="ranking-panel__header">
+      <div>
+        <p class="home-kicker">Complete ranking</p>
+        <h3>All 18 model × reasoning configurations</h3>
+      </div>
+      <div class="ranking-legend" aria-label="Ranking columns"><span>Score</span><span>Success</span></div>
+    </header>
+    <ol class="ranking-list" data-ranking-list>
+      <li class="ranking-row" data-rank="1" data-model="gpt-5.6-sol" data-effort="medium" data-score="54.796" data-success="55.42">
+        <span class="ranking-row__rank">01</span>
+        <span class="ranking-row__model">
+          <strong>GPT-5.6 Sol</strong>
+          <small>gpt-5.6-sol</small>
+        </span>
+        <span class="ranking-row__effort">medium</span>
+        <span class="ranking-row__bar" aria-label="Score 54.796 out of 100"><i style="--score: 54.796%"></i></span>
+        <strong class="ranking-row__score">54.796</strong>
+        <span class="ranking-row__success">55.42%</span>
+      </li>
+      <li class="ranking-row" data-rank="2" data-model="gpt-5.6-sol" data-effort="low" data-score="54.142" data-success="55.62">
+        <span class="ranking-row__rank">02</span>
+        <span class="ranking-row__model">
+          <strong>GPT-5.6 Sol</strong>
+          <small>gpt-5.6-sol</small>
+        </span>
+        <span class="ranking-row__effort">low</span>
+        <span class="ranking-row__bar" aria-label="Score 54.142 out of 100"><i style="--score: 54.142%"></i></span>
+        <strong class="ranking-row__score">54.142</strong>
+        <span class="ranking-row__success">55.62%</span>
+      </li>
+      <li class="ranking-row" data-rank="3" data-model="gpt-5.6-sol" data-effort="high" data-score="49.968" data-success="50.47">
+        <span class="ranking-row__rank">03</span>
+        <span class="ranking-row__model">
+          <strong>GPT-5.6 Sol</strong>
+          <small>gpt-5.6-sol</small>
+        </span>
+        <span class="ranking-row__effort">high</span>
+        <span class="ranking-row__bar" aria-label="Score 49.968 out of 100"><i style="--score: 49.968%"></i></span>
+        <strong class="ranking-row__score">49.968</strong>
+        <span class="ranking-row__success">50.47%</span>
+      </li>
+      <li class="ranking-row" data-rank="4" data-model="gpt-5.6-terra" data-effort="high" data-score="47.591" data-success="48.75">
+        <span class="ranking-row__rank">04</span>
+        <span class="ranking-row__model">
+          <strong>GPT-5.6 Terra</strong>
+          <small>gpt-5.6-terra</small>
+        </span>
+        <span class="ranking-row__effort">high</span>
+        <span class="ranking-row__bar" aria-label="Score 47.591 out of 100"><i style="--score: 47.591%"></i></span>
+        <strong class="ranking-row__score">47.591</strong>
+        <span class="ranking-row__success">48.75%</span>
+      </li>
+      <li class="ranking-row" data-rank="5" data-model="gpt-5.6-terra" data-effort="medium" data-score="37.772" data-success="38.18">
+        <span class="ranking-row__rank">05</span>
+        <span class="ranking-row__model">
+          <strong>GPT-5.6 Terra</strong>
+          <small>gpt-5.6-terra</small>
+        </span>
+        <span class="ranking-row__effort">medium</span>
+        <span class="ranking-row__bar" aria-label="Score 37.772 out of 100"><i style="--score: 37.772%"></i></span>
+        <strong class="ranking-row__score">37.772</strong>
+        <span class="ranking-row__success">38.18%</span>
+      </li>
+      <li class="ranking-row" data-rank="6" data-model="gpt-5.6-terra" data-effort="low" data-score="36.806" data-success="37.29">
+        <span class="ranking-row__rank">06</span>
+        <span class="ranking-row__model">
+          <strong>GPT-5.6 Terra</strong>
+          <small>gpt-5.6-terra</small>
+        </span>
+        <span class="ranking-row__effort">low</span>
+        <span class="ranking-row__bar" aria-label="Score 36.806 out of 100"><i style="--score: 36.806%"></i></span>
+        <strong class="ranking-row__score">36.806</strong>
+        <span class="ranking-row__success">37.29%</span>
+      </li>
+      <li class="ranking-row" data-rank="7" data-model="kimi-k3" data-effort="high" data-score="32.694" data-success="32.50">
+        <span class="ranking-row__rank">07</span>
+        <span class="ranking-row__model">
+          <strong>Kimi K3</strong>
+          <small>kimi-k3</small>
+        </span>
+        <span class="ranking-row__effort">high</span>
+        <span class="ranking-row__bar" aria-label="Score 32.694 out of 100"><i style="--score: 32.694%"></i></span>
+        <strong class="ranking-row__score">32.694</strong>
+        <span class="ranking-row__success">32.50%</span>
+      </li>
+      <li class="ranking-row" data-rank="8" data-model="gpt-5.6-luna" data-effort="high" data-score="30.337" data-success="31.25">
+        <span class="ranking-row__rank">08</span>
+        <span class="ranking-row__model">
+          <strong>GPT-5.6 Luna</strong>
+          <small>gpt-5.6-luna</small>
+        </span>
+        <span class="ranking-row__effort">high</span>
+        <span class="ranking-row__bar" aria-label="Score 30.337 out of 100"><i style="--score: 30.337%"></i></span>
+        <strong class="ranking-row__score">30.337</strong>
+        <span class="ranking-row__success">31.25%</span>
+      </li>
+      <li class="ranking-row" data-rank="9" data-model="gpt-5.6-luna" data-effort="medium" data-score="24.158" data-success="23.75">
+        <span class="ranking-row__rank">09</span>
+        <span class="ranking-row__model">
+          <strong>GPT-5.6 Luna</strong>
+          <small>gpt-5.6-luna</small>
+        </span>
+        <span class="ranking-row__effort">medium</span>
+        <span class="ranking-row__bar" aria-label="Score 24.158 out of 100"><i style="--score: 24.158%"></i></span>
+        <strong class="ranking-row__score">24.158</strong>
+        <span class="ranking-row__success">23.75%</span>
+      </li>
+      <li class="ranking-row" data-rank="10" data-model="gpt-5.6-luna" data-effort="low" data-score="17.867" data-success="16.04">
+        <span class="ranking-row__rank">10</span>
+        <span class="ranking-row__model">
+          <strong>GPT-5.6 Luna</strong>
+          <small>gpt-5.6-luna</small>
+        </span>
+        <span class="ranking-row__effort">low</span>
+        <span class="ranking-row__bar" aria-label="Score 17.867 out of 100"><i style="--score: 17.867%"></i></span>
+        <strong class="ranking-row__score">17.867</strong>
+        <span class="ranking-row__success">16.04%</span>
+      </li>
+      <li class="ranking-row" data-rank="11" data-model="qwen/qwen3.8-27b" data-effort="default" data-score="16.915" data-success="16.25">
+        <span class="ranking-row__rank">11</span>
+        <span class="ranking-row__model">
+          <strong>Qwen 3.8 27B</strong>
+          <small>qwen/qwen3.8-27b</small>
+        </span>
+        <span class="ranking-row__effort">default</span>
+        <span class="ranking-row__bar" aria-label="Score 16.915 out of 100"><i style="--score: 16.915%"></i></span>
+        <strong class="ranking-row__score">16.915</strong>
+        <span class="ranking-row__success">16.25%</span>
+      </li>
+      <li class="ranking-row" data-rank="12" data-model="moonshotai/kimi-k2.5" data-effort="max" data-score="15.979" data-success="15.47">
+        <span class="ranking-row__rank">12</span>
+        <span class="ranking-row__model">
+          <strong>Kimi K2.5</strong>
+          <small>moonshotai/kimi-k2.5</small>
+        </span>
+        <span class="ranking-row__effort">max</span>
+        <span class="ranking-row__bar" aria-label="Score 15.979 out of 100"><i style="--score: 15.979%"></i></span>
+        <strong class="ranking-row__score">15.979</strong>
+        <span class="ranking-row__success">15.47%</span>
+      </li>
+      <li class="ranking-row" data-rank="13" data-model="qwen/qwen3.5-122b-a10b" data-effort="default" data-score="11.285" data-success="10.10">
+        <span class="ranking-row__rank">13</span>
+        <span class="ranking-row__model">
+          <strong>Qwen 3.5 122B A10B</strong>
+          <small>qwen/qwen3.5-122b-a10b</small>
+        </span>
+        <span class="ranking-row__effort">default</span>
+        <span class="ranking-row__bar" aria-label="Score 11.285 out of 100"><i style="--score: 11.285%"></i></span>
+        <strong class="ranking-row__score">11.285</strong>
+        <span class="ranking-row__success">10.10%</span>
+      </li>
+      <li class="ranking-row" data-rank="14" data-model="qwen/qwen3.6-35b-a3b" data-effort="default" data-score="6.580" data-success="5.68">
+        <span class="ranking-row__rank">14</span>
+        <span class="ranking-row__model">
+          <strong>Qwen 3.6 35B A3B</strong>
+          <small>qwen/qwen3.6-35b-a3b</small>
+        </span>
+        <span class="ranking-row__effort">default</span>
+        <span class="ranking-row__bar" aria-label="Score 6.580 out of 100"><i style="--score: 6.580%"></i></span>
+        <strong class="ranking-row__score">6.580</strong>
+        <span class="ranking-row__success">5.68%</span>
+      </li>
+      <li class="ranking-row" data-rank="15" data-model="qwen/qwen3.5-397b-a17b" data-effort="default" data-score="6.471" data-success="4.84">
+        <span class="ranking-row__rank">15</span>
+        <span class="ranking-row__model">
+          <strong>Qwen 3.5 397B A17B</strong>
+          <small>qwen/qwen3.5-397b-a17b</small>
+        </span>
+        <span class="ranking-row__effort">default</span>
+        <span class="ranking-row__bar" aria-label="Score 6.471 out of 100"><i style="--score: 6.471%"></i></span>
+        <strong class="ranking-row__score">6.471</strong>
+        <span class="ranking-row__success">4.84%</span>
+      </li>
+      <li class="ranking-row" data-rank="16" data-model="z-ai/glm-4.6v" data-effort="max" data-score="6.386" data-success="5.47">
+        <span class="ranking-row__rank">16</span>
+        <span class="ranking-row__model">
+          <strong>GLM-4.6V</strong>
+          <small>z-ai/glm-4.6v</small>
+        </span>
+        <span class="ranking-row__effort">max</span>
+        <span class="ranking-row__bar" aria-label="Score 6.386 out of 100"><i style="--score: 6.386%"></i></span>
+        <strong class="ranking-row__score">6.386</strong>
+        <span class="ranking-row__success">5.47%</span>
+      </li>
+      <li class="ranking-row" data-rank="17" data-model="qwen/qwen3-vl-235b-a22b-thinking" data-effort="default" data-score="5.314" data-success="3.59">
+        <span class="ranking-row__rank">17</span>
+        <span class="ranking-row__model">
+          <strong>Qwen3-VL 235B Thinking</strong>
+          <small>qwen/qwen3-vl-235b-a22b-thinking</small>
+        </span>
+        <span class="ranking-row__effort">default</span>
+        <span class="ranking-row__bar" aria-label="Score 5.314 out of 100"><i style="--score: 5.314%"></i></span>
+        <strong class="ranking-row__score">5.314</strong>
+        <span class="ranking-row__success">3.59%</span>
+      </li>
+      <li class="ranking-row" data-rank="18" data-model="qwen/qwen3-vl-30b-a3b-thinking" data-effort="default" data-score="5.134" data-success="4.43">
+        <span class="ranking-row__rank">18</span>
+        <span class="ranking-row__model">
+          <strong>Qwen3-VL 30B Thinking</strong>
+          <small>qwen/qwen3-vl-30b-a3b-thinking</small>
+        </span>
+        <span class="ranking-row__effort">default</span>
+        <span class="ranking-row__bar" aria-label="Score 5.134 out of 100"><i style="--score: 5.134%"></i></span>
+        <strong class="ranking-row__score">5.134</strong>
+        <span class="ranking-row__success">4.43%</span>
+      </li>
+    </ol>
+  </div>
+</div>
+<ol class="result-observations" aria-label="Three observations from the results">
+  <li><span>01</span><p><strong>The top three configurations are all Sol settings.</strong> Medium leads low by 0.654 points; high trails the leader by 4.828.</p></li>
+  <li><span>02</span><p><strong>Success alone does not set the rank.</strong> Sol-low solves 0.20 percentage points more levels, while Sol-medium earns the higher 16-cell score.</p></li>
+  <li><span>03</span><p><strong>No configuration leads every game.</strong> Sol-high leads Rush Hour; Terra-high leads Maze Paint and Color Connect; Kimi K3 leads Bolt Unscrew and Truck Escape.</p></li>
+</ol>
+<!-- LONGPUZZLEBENCH:RESULTS:END -->
 
-              <section class="trajectory-branch trajectory-branch--preserved" aria-labelledby="trajectory-preserved-title">
-                <header>
-                  <span id="trajectory-preserved-title">Deeper source</span>
-                  <small>Qwen 3.8 · 27B</small>
-                </header>
-                <div class="trajectory-branch__frame">
-                  <img
-                    src="research/assets/trajectories/bolt_deeper-010-post.webp"
-                    width="360"
-                    height="640"
-                    alt="The byte-identical Bolt board before a branch that preserves mobility"
-                    loading="lazy"
-                    decoding="async"
-                    data-trajectory-image="preserved"
-                  />
-                </div>
-                <div class="trajectory-branch__copy">
-                  <strong data-trajectory-fact="preserved">Same state · 20.8% progress</strong>
-                  <span data-trajectory-description="preserved">The same destination is open.</span>
-                </div>
-              </section>
+          <div class="result-links reveal">
+            <a class="project-button project-button--secondary" href="https://github.com/AzureStarz/LongPuzzleBench#leaderboard">
+              View evaluation details <span aria-hidden="true">↗</span>
+            </a>
+            <a class="home-text-action" href="https://github.com/AzureStarz/LongPuzzleBench/blob/main/leaderboard/results.json">
+              Download canonical results JSON <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="home-section trajectory-section" id="trajectories" aria-labelledby="trajectories-title">
+        <div class="site-container">
+          <div class="trajectory-section__heading reveal">
+            <div>
+              <p class="home-kicker">Scores tell us who leads. Trajectories show why.</p>
+              <h2 id="trajectories-title">The mistake often happens before the bad move.</h2>
+            </div>
+            <p>
+              Each case synchronizes real evaluator frames from two runs. Model text is copied from
+              the selected public action record; actions and evaluator outcomes remain separately labelled.
+            </p>
+          </div>
+
+          <ul class="trajectory-grammar reveal" aria-label="Trajectory evidence legend">
+            <li><span>01</span><strong>Game state</strong><small>What the screenshot shows</small></li>
+            <li><span>02</span><strong>Recorded output</strong><small>What the model emitted</small></li>
+            <li><span>03</span><strong>Executed action</strong><small>What the runtime performed</small></li>
+            <li><span>04</span><strong>Environment</strong><small>What changed next</small></li>
+          </ul>
+
+          <div class="trajectory-casebook reveal" data-casebook>
+            <div class="trajectory-case-tabs" role="tablist" aria-label="Representative trajectory cases">
+              <!-- LONGPUZZLEBENCH:CASE-TABS:START -->
+<button type="button" role="tab" id="case-tab-rush" aria-controls="trajectory-case" aria-selected="true" tabindex="0" data-case-tab="rush"><span>01</span>Rush Hour</button>
+<button type="button" role="tab" id="case-tab-bolt" aria-controls="trajectory-case" aria-selected="false" tabindex="-1" data-case-tab="bolt"><span>02</span>Bolt Unscrew</button>
+<button type="button" role="tab" id="case-tab-color" aria-controls="trajectory-case" aria-selected="false" tabindex="-1" data-case-tab="color"><span>03</span>Color Connect</button>
+<!-- LONGPUZZLEBENCH:CASE-TABS:END -->
             </div>
 
-            <div class="trajectory-preview__controls">
-              <button type="button" data-trajectory-toggle aria-pressed="true">Pause preview</button>
-              <label for="trajectory-state">Trajectory state</label>
-              <input id="trajectory-state" type="range" min="0" max="3" step="1" value="0" data-trajectory-range />
-              <output for="trajectory-state" data-trajectory-output>State 1 of 4</output>
+            <article
+              class="trajectory-case"
+              id="trajectory-case"
+              role="tabpanel"
+              aria-labelledby="case-tab-rush"
+              data-case-stage
+            >
+              <header class="trajectory-case__header">
+                <div class="trajectory-case__copy">
+                  <p class="home-kicker" data-case-kicker>Case 01 · Part–whole segmentation</p>
+                  <h3 data-case-title>One model sees a car. Another sees a fragment that is not there.</h3>
+                  <p data-case-summary>
+                    The same initial pixels produce the first meaningful divergence: one run moves a
+                    real blocker; the other invents a vertical red vehicle and receives no visible effect.
+                  </p>
+                </div>
+                <div class="trajectory-case__meta">
+                  <strong data-case-stat>17.336-point benchmark gap · 3 actions versus 6</strong>
+                  <span data-case-match>Byte-identical initial screenshot</span>
+                </div>
+              </header>
+
+              <div class="trajectory-branches" data-case-branches>
+                <!-- LONGPUZZLEBENCH:CASE-FALLBACK:START -->
+<section class="trajectory-run trajectory-run--success" data-case-branch="0">
+  <header class="trajectory-run__header">
+    <div>
+      <span data-branch-label>Higher-ranked run</span>
+      <strong data-branch-model>GPT-5.6 Sol · low</strong>
+    </div>
+    <span class="trajectory-run__rank" data-branch-rank>Rank 2 · 54.142</span>
+  </header>
+  <figure class="trajectory-state">
+    <div class="trajectory-state__image">
+      <img src="research/assets/trajectories/rush_grouped-001-pre.webp" width="360" height="640" alt="The board contains one articulated horizontal target." loading="lazy" decoding="async" data-case-image />
+      <span data-case-state-label>Before action 01</span>
+    </div>
+    <figcaption data-branch-thesis>Treats the articulated sprite as one target</figcaption>
+  </figure>
+  <dl class="trajectory-record">
+    <div class="trajectory-record__output"><dt>Recorded model output</dt><dd data-case-output lang="und">Thought: 紫色竖车挡住红车所在横道，其下方同列一直到棋盘底部都有足够空间；先将它沿长轴向下拖到底，清空出口通道。</dd></div>
+    <div class="trajectory-record__action"><dt>Executed action</dt><dd><code data-case-action>drag((540,730) → (540,1250))</code></dd></div>
+    <div class="trajectory-record__environment"><dt>Environment</dt><dd><strong data-case-fact>game state: one vehicle · one motion axis</strong><span data-case-description>The board contains one articulated horizontal target.</span><small data-case-feedback>Public feedback · screen changed</small></dd></div>
+  </dl>
+  <p class="trajectory-run__outcome" data-branch-outcome>Success · 3 actions</p>
+</section>
+<section class="trajectory-run trajectory-run--warning" data-case-branch="1">
+  <header class="trajectory-run__header">
+    <div>
+      <span data-branch-label>Lower-ranked run</span>
+      <strong data-branch-model>GPT-5.6 Terra · low</strong>
+    </div>
+    <span class="trajectory-run__rank" data-branch-rank>Rank 6 · 36.806</span>
+  </header>
+  <figure class="trajectory-state">
+    <div class="trajectory-state__image">
+      <img src="research/assets/trajectories/rush_split-001-pre.webp" width="360" height="640" alt="The same sprite is split into a body and a ‘small red vertical car.’" loading="lazy" decoding="async" data-case-image />
+      <span data-case-state-label>Before action 01</span>
+    </div>
+    <figcaption data-branch-thesis>Splits one sprite into two vehicles</figcaption>
+  </figure>
+  <dl class="trajectory-record">
+    <div class="trajectory-record__output"><dt>Recorded model output</dt><dd data-case-output lang="und">Thought: Move the small red vertical vehicle above the target upward to clear the target row.</dd></div>
+    <div class="trajectory-record__action"><dt>Executed action</dt><dd><code data-case-action>drag((292,731) → (292,602))</code></dd></div>
+    <div class="trajectory-record__environment"><dt>Environment</dt><dd><strong data-case-fact>one sprite described as two vehicles</strong><span data-case-description>The same sprite is split into a body and a ‘small red vertical car.’</span><small data-case-feedback>Public feedback · no visible effect</small></dd></div>
+  </dl>
+  <p class="trajectory-run__outcome" data-branch-outcome>Success · 6 actions</p>
+</section>
+<!-- LONGPUZZLEBENCH:CASE-FALLBACK:END -->
+              </div>
+
+              <div class="trajectory-case__controls" aria-label="Trajectory controls">
+                <button type="button" data-case-prev><span aria-hidden="true">←</span> Previous</button>
+                <div class="trajectory-case__position">
+                  <strong data-case-moment>Same pixels</strong>
+                  <output data-case-output-count>01 / 04</output>
+                  <div class="trajectory-case__dots" data-case-dots aria-label="Choose trajectory moment"></div>
+                </div>
+                <button type="button" data-case-toggle aria-pressed="true">Pause</button>
+                <button type="button" data-case-next>Next <span aria-hidden="true">→</span></button>
+              </div>
+
+              <footer class="trajectory-case__footer">
+                <p>
+                  <span aria-hidden="true">↳</span>
+                  Recorded text is shown in its original language. English case titles and takeaways are editorial analysis, not model quotes.
+                </p>
+                <div>
+                  <a class="home-text-action" href="research/#finding-5" data-case-research>Read this finding <span aria-hidden="true">→</span></a>
+                  <a class="project-button project-button--primary" href="play/?game=rush-hour&amp;difficulty=medium&amp;level=3" data-case-play>
+                    Try this exact puzzle <span aria-hidden="true">→</span>
+                  </a>
+                </div>
+              </footer>
+            </article>
+          </div>
+
+          <aside class="trajectory-research-bridge reveal" aria-labelledby="research-deep-title">
+            <div class="research-atlas" aria-hidden="true">
+              <figure><img src="research/assets/trajectories/bolt_immediate-010-post.webp" width="360" height="640" alt="" loading="lazy" decoding="async" /><span>01 · Access</span></figure>
+              <figure><img src="research/assets/trajectories/nut_repair-074-post.webp" width="360" height="640" alt="" loading="lazy" decoding="async" /><span>02 · State</span></figure>
+              <figure><img src="research/assets/trajectories/color_recreate-017-post.webp" width="360" height="640" alt="" loading="lazy" decoding="async" /><span>03 · Space</span></figure>
+              <figure><img src="research/assets/trajectories/maze_stale-034-post.webp" width="360" height="640" alt="" loading="lazy" decoding="async" /><span>04 · Position</span></figure>
+              <figure><img src="research/assets/trajectories/rush_split-001-post.webp" width="360" height="640" alt="" loading="lazy" decoding="async" /><span>05 · Identity</span></figure>
             </div>
-            <figcaption>
-              Same board, same open destination, different source screw. Recorded evaluator frames;
-              neither branch is reconstructed.
-            </figcaption>
-          </figure>
+            <div class="trajectory-research-bridge__copy">
+              <p class="home-kicker">Trajectory analysis · 782 executed episodes</p>
+              <h3 id="research-deep-title">The move was legal. The puzzle was already lost.</h3>
+              <p>
+                Five recurring boundaries appear across the public runs: future actionability,
+                postcondition repair, shared-space reservation, self-localization, and object identity.
+                In Bolt Unscrew, 13 of 18 complete runs end with no available hole.
+              </p>
+              <div>
+                <a class="project-button project-button--light" href="research/">Read the full analysis <span aria-hidden="true">→</span></a>
+                <a href="research/data/findings.json">Inspect the evidence bundle ↗</a>
+              </div>
+            </div>
+          </aside>
         </div>
       </section>
 
@@ -435,7 +801,7 @@
               benchmark, without evaluator state, agent time limits, or diagnostic hints.
             </p>
             <ul aria-label="Playground features">
-              <li>12 curated demo levels</li>
+              <li>13 curated demo levels</li>
               <li>All six game families</li>
               <li>No install or account</li>
             </ul>
@@ -444,49 +810,6 @@
                 Play LongPuzzleBench <span aria-hidden="true">→</span>
               </a>
               <a class="home-text-action" href="play/">Browse all games <span aria-hidden="true">→</span></a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="home-section results-section" id="benchmark" aria-labelledby="benchmark-title">
-        <div class="site-container">
-          <div class="home-section-heading reveal">
-            <div>
-              <p class="home-kicker">Benchmark snapshot</p>
-              <h2 id="benchmark-title">The frontier clears only about half the benchmark.</h2>
-            </div>
-            <p>All ranked configurations cover the complete 16-cell evaluation plan under the released progressive protocol.</p>
-          </div>
-
-          <div class="results-snapshot reveal">
-            <div class="best-result">
-              <p>Best LongPuzzleBench score</p>
-              <strong>54.796<small>/100</small></strong>
-              <span>gpt-5.6-sol · medium reasoning</span>
-              <div class="score-track" aria-label="Best score 54.796 out of 100"><i style="--score: 54.796%"></i></div>
-              <dl>
-                <div><dt>Success rate</dt><dd>55.42%</dd></div>
-                <div><dt>Complete configurations</dt><dd>18</dd></div>
-              </dl>
-            </div>
-
-            <div class="result-context">
-              <div class="result-scope" aria-label="Evaluation scope">
-                <div><strong>6</strong><span>games</span></div>
-                <div><strong>114</strong><span>levels</span></div>
-                <div><strong>16</strong><span>cells</span></div>
-              </div>
-              <ol class="top-configurations" aria-label="Top three configurations">
-                <li><span><b>01</b> gpt-5.6-sol · medium</span><strong>54.796</strong></li>
-                <li><span><b>02</b> gpt-5.6-sol · low</span><strong>54.142</strong></li>
-                <li><span><b>03</b> gpt-5.6-sol · high</span><strong>49.968</strong></li>
-              </ol>
-              <p class="human-baseline-note"><strong>Human baseline</strong> Not reported in this release.</p>
-              <div class="result-links">
-                <a href="https://github.com/AzureStarz/LongPuzzleBench#leaderboard">Open leaderboard ↗</a>
-                <a href="https://github.com/AzureStarz/LongPuzzleBench/blob/main/leaderboard/results.json">Download results JSON ↗</a>
-              </div>
             </div>
           </div>
         </div>

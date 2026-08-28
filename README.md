@@ -22,7 +22,7 @@ LongPuzzleBench evaluates whether GUI agents can sustain coherent visual reasoni
 
 The initial release contains **6 puzzle environments, 114 levels, and 16 game × difficulty evaluation cells**. Every environment runs locally from the bundled browser build; the agent receives screenshots and public action feedback, while evaluator-only state stays on a separate scoring path.
 
-**Want to feel the benchmark before installing it?** Open the [public human playground](https://azurestarz.github.io/LongPuzzleBench/play/) to try 12 curated levels across all six game families. It runs entirely on GitHub Pages and clearly separates the human exhibit from the full agent evaluation set.
+**Want to feel the benchmark before installing it?** Open the [public human playground](https://azurestarz.github.io/LongPuzzleBench/play/) to try 13 curated levels across all six game families. It runs entirely on GitHub Pages and clearly separates the human exhibit from the full agent evaluation set.
 
 ## Why long-horizon puzzle games?
 

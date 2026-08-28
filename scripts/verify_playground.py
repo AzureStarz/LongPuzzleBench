@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 from html.parser import HTMLParser
@@ -20,7 +21,8 @@ EXPECTED_RUNTIME_IDS = {
     "color_connect",
 }
 SHARED_ASSET_NAMES = {"site.css", "site.js"}
-HOMEPAGE_ASSET_NAMES = SHARED_ASSET_NAMES | {"home.css", "home.js"}
+HOMEPAGE_ASSET_NAMES = SHARED_ASSET_NAMES | {"home.css", "home-data.js", "home.js"}
+HOME_DATA_PREFIX = "window.LONGPUZZLEBENCH_HOME_DATA="
 
 
 class ReferenceParser(HTMLParser):
@@ -118,6 +120,10 @@ def visible_text(parser: ReferenceParser) -> str:
     return " ".join(" ".join(parser.text).split())
 
 
+def sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
 def verify_homepage_facts(home_parser: ReferenceParser) -> None:
     config = json.loads((ROOT / "configs" / "longpuzzlebench.json").read_text())
     results = json.loads((ROOT / "leaderboard" / "results.json").read_text())
@@ -153,6 +159,69 @@ def verify_homepage_facts(home_parser: ReferenceParser) -> None:
         for score in (f"{top_run['benchmark_score']:.3f}", f"{top_run['benchmark_score']:.1f}")
     )
     assert not re.search(r"\b18\s+(?:unique\s+)?models\b", text)
+
+
+def verify_homepage_data(site: Path) -> None:
+    source = (site / "assets" / "home-data.js").read_text()
+    assert source.startswith(HOME_DATA_PREFIX) and source.endswith(";\n")
+    assert not any(marker in source for marker in ("/Users/", "/home/", "C:\\Users\\"))
+    payload = json.loads(source[len(HOME_DATA_PREFIX) : -2])
+    canonical_results = json.loads((ROOT / "leaderboard" / "results.json").read_text())
+    findings_path = ROOT / "blog" / "longpuzzlebench-agents" / "data" / "findings.json"
+
+    generated = payload["generated_from"]
+    assert generated["leaderboard_sha256"] == sha256(ROOT / "leaderboard" / "results.json")
+    assert generated["findings_sha256"] == sha256(findings_path)
+    assert payload["benchmark"]["rows"] == canonical_results["results"]
+    assert [row["model"] for row in payload["benchmark"]["top_models"]] == [
+        "gpt-5.6-sol",
+        "gpt-5.6-terra",
+        "kimi-k3",
+    ]
+
+    cases = payload["cases"]
+    assert [case["id"] for case in cases] == ["rush", "bolt", "color"]
+    assert [len(case["branches"][0]["frames"]) for case in cases] == [4, 4, 6]
+    assert all(case["matched_initial_frame"] for case in cases)
+    expected_stories = [
+        ["rush_grouped", "rush_split"],
+        ["bolt_immediate", "bolt_deeper"],
+        ["color_reserve", "color_recreate"],
+    ]
+    assert [
+        [branch["story"] for branch in case["branches"]] for case in cases
+    ] == expected_stories
+    for case in cases:
+        for branch in case["branches"]:
+            for frame in branch["frames"]:
+                assert frame["recorded_output"]
+                assert frame["action"]
+                assert frame["feedback"]
+                assert (site / frame["asset"]).is_file(), frame["asset"]
+
+    weak_rush = cases[0]["branches"][1]
+    assert "small red vertical vehicle" in weak_rush["frames"][0]["recorded_output"]
+    assert weak_rush["frames"][0]["feedback"] == "no_visible_effect"
+    assert weak_rush["frames"][0]["action"] == "drag((292,731) → (292,602))"
+
+    home_html = (site / "index.html").read_text()
+    ranking_rows = re.findall(
+        r'class="ranking-row" data-rank="(\d+)" data-model="([^"]+)" '
+        r'data-effort="([^"]+)" data-score="([\d.]+)" data-success="([\d.]+)"',
+        home_html,
+    )
+    assert len(ranking_rows) == 18
+    assert len(ranking_rows) == len(canonical_results["results"])
+    for rendered, canonical in zip(ranking_rows, canonical_results["results"]):
+        rank, model, effort, score, success = rendered
+        assert int(rank) == canonical["rank"]
+        assert model == canonical["model"]
+        assert effort == (canonical.get("reasoning_effort") or "default")
+        assert float(score) == canonical["benchmark_score"]
+        assert float(success) == canonical["success_rate"]
+    assert home_html.count('role="tab" id="case-tab-') == 3
+    assert "Recorded model output" in home_html
+    assert "evaluator outcomes remain separately labelled" in home_html
 
 
 def verify_homepage_links(site: Path, parser: ReferenceParser) -> None:
@@ -246,9 +315,10 @@ def main() -> int:
     catalog_source = (site / "play" / "catalog.js").read_text(encoding="utf-8")
     runtime_ids = set(re.findall(r'runtimeId:\s*"([^"]+)"', catalog_source))
     assert runtime_ids == EXPECTED_RUNTIME_IDS, runtime_ids
-    assert len(re.findall(r'^\s+key:\s*"', catalog_source, flags=re.MULTILINE)) == 12
+    assert len(re.findall(r'^\s+key:\s*"', catalog_source, flags=re.MULTILINE)) == 13
     assert "totalEvaluationLevels: 114" in catalog_source
     assert "a recorded successful agent attempt" in catalog_source
+    assert 'key: "medium-3"' in catalog_source
 
     preview_paths = re.findall(r'preview:\s*"([^"]+)"', catalog_source)
     assert len(preview_paths) == 6
@@ -266,6 +336,7 @@ def main() -> int:
     assert_asset_links(play_targets, site, SHARED_ASSET_NAMES)
     assert_asset_links(research_targets, site, SHARED_ASSET_NAMES)
     verify_homepage_facts(home_parser)
+    verify_homepage_data(site)
     verify_homepage_links(site, home_parser)
     verify_homepage_runtime_boundary(site, home_parser)
     verify_legacy_game_redirect(home_html_path.read_text(encoding="utf-8"))
@@ -307,7 +378,7 @@ def main() -> int:
     total_bytes = sum(path.stat().st_size for path in site.rglob("*") if path.is_file())
     assert total_bytes < 12 * 1024 * 1024, total_bytes
     print(
-        "Verified public site: factual homepage, 6 linked games, 12 curated levels, "
+        "Verified public site: factual homepage, 6 linked games, 13 curated levels, "
         "114-level disclosure, research and Playground routes, complete runtime assets, "
         f"relative Pages paths, {total_bytes / 1024 / 1024:.1f} MiB."
     )

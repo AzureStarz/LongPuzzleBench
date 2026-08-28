@@ -99,7 +99,7 @@ def test_static_playground_deep_links_gameplay_reset_and_mobile(tmp_path: Path) 
     cases = (
         ("maze-paint", "maze_paint", "easy", 1),
         ("bolt-unscrew", "bolt_unscrew", "hard", 1),
-        ("rush-hour", "truck_escape_2", "hard", 6),
+        ("rush-hour", "truck_escape_2", "medium", 3),
         ("nut-and-bolt", "nuts_bolts", "hard", 2),
         ("truck-escape", "truck_escape", "default", 1),
         ("color-connect", "color_connect", "hard", 1),
@@ -138,18 +138,25 @@ def test_static_playground_deep_links_gameplay_reset_and_mobile(tmp_path: Path) 
         assert page.locator(".updates-list > li").count() == 4
         assert page.locator("#benchmark").is_visible()
         assert "54.796" in (page.locator("#benchmark").text_content() or "")
+        assert page.locator(".frontier-models > li").count() == 3
+        assert page.locator(".ranking-row").count() == 18
+        assert page.locator("[data-case-tab]").count() == 3
+        assert page.locator("[data-case-branch]").count() == 2
+        assert "small red vertical vehicle" in (
+            page.locator('[data-case-branch="1"] [data-case-output]').text_content() or ""
+        )
         assert page.locator("iframe").count() == 0
         assert not page.evaluate(
             "performance.getEntriesByType('resource').some((entry) => entry.name.includes('/runtime/'))"
         )
 
-        page.locator("[data-trajectory-range]").evaluate(
-            """(range) => {
-              range.value = "3";
-              range.dispatchEvent(new Event("input", { bubbles: true }));
-            }"""
-        )
-        assert page.locator("[data-trajectory-output]").text_content() == "State 4 of 4"
+        page.locator("[data-case-next]").click()
+        assert page.locator("[data-case-output-count]").text_content() == "02 / 04"
+        page.locator('[data-case-tab="bolt"]').click()
+        assert "legal move raises progress" in (
+            page.locator("[data-case-title]").text_content() or ""
+        ).casefold()
+        assert "bolt-unscrew" in (page.locator("[data-case-play]").get_attribute("href") or "")
 
         page.set_viewport_size({"width": 390, "height": 844})
         assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth + 1")
