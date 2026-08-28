@@ -56,6 +56,7 @@ const UNDO_SIZE = 72;
 export class NutsBoltsController extends Component {
     public difficulty: NutsBoltsDifficulty = 'easy';
     public onRequestExit: (() => void) | null = null;
+    private _directLaunchMode = false;
 
     private _levels: NutsBoltsLevelData[] = [];
     private _levelIndex = 0;
@@ -141,6 +142,11 @@ export class NutsBoltsController extends Component {
     public setInitialLevel(levelId: number): void {
         this._initialLevelIndex = Math.max(0, Math.min(Math.trunc(levelId) - 1, this._levels.length - 1));
         if (this._boardRoot) this._loadLevel(this._initialLevelIndex);
+    }
+
+    /** Keep a query-launched completion visible instead of advancing silently. */
+    public setDirectLaunchMode(enabled: boolean): void {
+        this._directLaunchMode = enabled;
     }
 
     /** Reset without routing through the Hub or changing the selected level. */
@@ -237,9 +243,11 @@ export class NutsBoltsController extends Component {
         levelLabel.verticalAlign = Label.VerticalAlign.CENTER;
         this._levelLabel = levelLabel;
 
-        const exit = this._createRoundButton('ExitButton', refX(38.5), refY(82), 62, EXIT_BUTTON, true);
-        this._drawBackIcon(exit);
-        exit.on(Button.EventType.CLICK, this._requestExit, this);
+        if (!this._directLaunchMode) {
+            const exit = this._createRoundButton('ExitButton', refX(38.5), refY(82), 62, EXIT_BUTTON, true);
+            this._drawBackIcon(exit);
+            exit.on(Button.EventType.CLICK, this._requestExit, this);
+        }
 
         const restart = this._createRoundButton('RestartButton', refX(390), refY(82), 62, RESTART_BUTTON, true);
         this._drawRestartIcon(restart, RESTART_ICON);
@@ -674,7 +682,9 @@ export class NutsBoltsController extends Component {
         subNode.setPosition(40, -23, 0);
         subNode.addComponent(UITransform).setContentSize(205, 32);
         const sub = subNode.addComponent(Label);
-        sub.string = last ? '這個難度已全數通關' : '即將進入下一關';
+        sub.string = this._directLaunchMode
+            ? '可重開本關，或從外頁選擇其他謎題'
+            : (last ? '這個難度已全數通關' : '即將進入下一關');
         sub.fontSize = 17;
         sub.lineHeight = 22;
         sub.color = new Color(218, 207, 224, 255);
@@ -685,7 +695,7 @@ export class NutsBoltsController extends Component {
         tween(node).to(0.28, { scale: new Vec3(1, 1, 1) }, { easing: 'backOut' }).start();
         this._completeNode = node;
 
-        if (!last) {
+        if (!last && !this._directLaunchMode) {
             const token = this._actionToken;
             this._pendingAdvance = () => {
                 this._pendingAdvance = null;

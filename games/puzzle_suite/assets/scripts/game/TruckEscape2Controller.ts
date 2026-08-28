@@ -141,6 +141,7 @@ interface MoveHistory {
 @ccclass('TruckEscape2Controller')
 export class TruckEscape2Controller extends Component {
     public onRequestExit: (() => void) | null = null;
+    private _directLaunchMode = false;
 
     private _difficulty: TruckEscape2Difficulty = 'easy';
     private _levels: TruckEscape2LevelData[] = [];
@@ -236,6 +237,11 @@ export class TruckEscape2Controller extends Component {
         if (this._started) this._loadLevel(this._initialLevelIndex, 'restored');
     }
 
+    /** Hide Hub navigation and level advancement in a query-launched attempt. */
+    public setDirectLaunchMode(enabled: boolean) {
+        this._directLaunchMode = enabled;
+    }
+
     /** Reset without routing through the Hub or changing the selected level. */
     public resetCurrentLevel() {
         this._restartLevel();
@@ -285,12 +291,14 @@ export class TruckEscape2Controller extends Component {
     }
 
     private _buildHeader(parent: Node) {
-        const back = this._makeHeaderButton(parent, 'TruckEscape2Back', '退出', -208, 391);
-        this._drawBackChevron(back, COLORS.coral);
-        back.on(Button.EventType.CLICK, () => {
-            if (this._inputLocked && !this._complete) return;
-            this._requestExit();
-        }, this);
+        if (!this._directLaunchMode) {
+            const back = this._makeHeaderButton(parent, 'TruckEscape2Back', '退出', -208, 391);
+            this._drawBackChevron(back, COLORS.coral);
+            back.on(Button.EventType.CLICK, () => {
+                if (this._inputLocked && !this._complete) return;
+                this._requestExit();
+            }, this);
+        }
 
         const restart = this._makeHeaderButton(parent, 'TruckEscape2Restart', '重来', 208, 391);
         this._drawRestartIcon(restart, COLORS.coral);
@@ -486,11 +494,22 @@ export class TruckEscape2Controller extends Component {
         const subtitle = this._makeLabel(card, 'CompleteSubtitle', '红色车辆已安全驶出', 19, new Color(100, 108, 102, 255), false);
         subtitle.node.setPosition(0, 2, 0);
 
-        const primary = this._makeRoundedButton(card, 'Primary', '下一关', -88, -72, 150, 55, COLORS.gold);
+        const primary = this._makeRoundedButton(
+            card,
+            'Primary',
+            this._directLaunchMode ? '再玩一次' : '下一关',
+            this._directLaunchMode ? 0 : -88,
+            -72,
+            150,
+            55,
+            COLORS.gold,
+        );
         this._completePrimaryLabel = primary.getChildByName('Label')?.getComponent(Label) ?? null;
         primary.on(Button.EventType.CLICK, () => this._handleCompletePrimary(), this);
-        const exit = this._makeRoundedButton(card, 'Exit', '退出', 88, -72, 150, 55, COLORS.coral);
-        exit.on(Button.EventType.CLICK, () => this._requestExit(), this);
+        if (!this._directLaunchMode) {
+            const exit = this._makeRoundedButton(card, 'Exit', '退出', 88, -72, 150, 55, COLORS.coral);
+            exit.on(Button.EventType.CLICK, () => this._requestExit(), this);
+        }
     }
 
     private _loadLevel(index: number, startReason: TruckEscape2AttemptStartReason = 'initial') {
@@ -915,7 +934,11 @@ export class TruckEscape2Controller extends Component {
     private _showComplete() {
         if (!this._completeOverlay) return;
         const hasNext = this._levelIndex + 1 < this._levels.length;
-        if (this._completePrimaryLabel) this._completePrimaryLabel.string = hasNext ? '下一关' : '再玩一次';
+        if (this._completePrimaryLabel) {
+            this._completePrimaryLabel.string = this._directLaunchMode
+                ? '再玩一次'
+                : (hasNext ? '下一关' : '再玩一次');
+        }
         this._completeOverlay.active = true;
         const card = this._completeOverlay.getChildByName('CompleteCard');
         if (card) {
@@ -933,6 +956,10 @@ export class TruckEscape2Controller extends Component {
     }
 
     private _handleCompletePrimary() {
+        if (this._directLaunchMode) {
+            this._restartLevel();
+            return;
+        }
         if (this._levelIndex + 1 < this._levels.length) this._loadLevel(this._levelIndex + 1, 'next-level');
         else this._restartLevel();
     }

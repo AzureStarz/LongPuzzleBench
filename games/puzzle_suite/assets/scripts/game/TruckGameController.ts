@@ -122,6 +122,8 @@ export class TruckGameController extends Component {
     /** 高亮提示 */
     private _idleTimer: number = 0;
     private _hintedTruck: TruckRuntime | null = null;
+    private _autoHintEnabled: boolean = true;
+    private _directLaunchMode: boolean = false;
     /** 高亮提示节点（脉冲圆环）的引用，用于 stopHint 时清理 */
     private _hintRingNode: Node | null = null;
 
@@ -147,7 +149,7 @@ export class TruckGameController extends Component {
     }
 
     update(dt: number) {
-        if (!this._level || this._isLevelComplete()) return;
+        if (!this._autoHintEnabled || !this._level || this._isLevelComplete()) return;
         this._idleTimer += dt;
         if (this._idleTimer >= TRUCK_IDLE_HINT_SECONDS && !this._hintedTruck) {
             this._idleTimer = 0;
@@ -165,6 +167,18 @@ export class TruckGameController extends Component {
         const index = Math.max(0, Math.min(Math.trunc(levelId) - 1, this._levels.length - 1));
         this._pendingLevelIndex = index;
         if (this._texturesLoaded) this._loadLevel(index);
+    }
+
+    /** Direct benchmark/playground launches must never reveal a correct move. */
+    public setAutoHintEnabled(enabled: boolean) {
+        this._autoHintEnabled = enabled;
+        this._idleTimer = 0;
+        if (!enabled) this._stopHint();
+    }
+
+    /** Keep direct benchmark/playground attempts on the requested level. */
+    public setDirectLaunchMode(enabled: boolean) {
+        this._directLaunchMode = enabled;
     }
 
     /** Reset without routing through the Hub or changing the selected level. */
@@ -272,11 +286,13 @@ export class TruckGameController extends Component {
         giftGfx.rect(-3, -12, 6, 24); giftGfx.fill();
         giftGfx.rect(-15, -2, 30, 4); giftGfx.fill();
 
-        const backBtn = this._makeButton(parent, 'BackBtn', '主菜单', 95, 38);
-        backBtn.node.setPosition(-TRUCK_VIEWPORT_WIDTH / 2 + 65, HALF_H - 60, 0);
-        backBtn.node.on(Button.EventType.CLICK, () => {
-            if (this.onRequestExit) this.onRequestExit();
-        }, this);
+        if (!this._directLaunchMode) {
+            const backBtn = this._makeButton(parent, 'BackBtn', '主菜单', 95, 38);
+            backBtn.node.setPosition(-TRUCK_VIEWPORT_WIDTH / 2 + 65, HALF_H - 60, 0);
+            backBtn.node.on(Button.EventType.CLICK, () => {
+                if (this.onRequestExit) this.onRequestExit();
+            }, this);
+        }
 
         const restartBtn = this._makeButton(parent, 'RestartBtn', '重玩', 95, 38);
         restartBtn.node.setPosition(TRUCK_VIEWPORT_WIDTH / 2 - 65, HALF_H - 60, 0);
@@ -381,13 +397,15 @@ export class TruckGameController extends Component {
         this._completeSubLabel = subLbl;
 
         const restartBtn = this._makeButton(panel, 'RestartBtn', '重玩本关', 140, 44);
-        restartBtn.node.setPosition(-90, -70, 0);
+        restartBtn.node.setPosition(this._directLaunchMode ? 0 : -90, -70, 0);
         restartBtn.node.on(Button.EventType.CLICK, () => this._loadLevel(this._currentIndex), this);
 
-        const nextBtn = this._makeButton(panel, 'NextBtn', '下一关', 140, 44);
-        nextBtn.node.setPosition(90, -70, 0);
-        nextBtn.node.on(Button.EventType.CLICK, () => this._goToNextLevel(), this);
-        this._nextLevelButton = nextBtn;
+        if (!this._directLaunchMode) {
+            const nextBtn = this._makeButton(panel, 'NextBtn', '下一关', 140, 44);
+            nextBtn.node.setPosition(90, -70, 0);
+            nextBtn.node.on(Button.EventType.CLICK, () => this._goToNextLevel(), this);
+            this._nextLevelButton = nextBtn;
+        }
 
         this._completeOverlay = overlay;
     }

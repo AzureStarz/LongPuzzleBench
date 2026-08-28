@@ -35,6 +35,7 @@ import type { ColorConnectDifficulty } from '../color_connect/ColorConnectLevelD
 import {
     BenchmarkLaunchConfig,
     installBenchmarkBridge,
+    installPlaygroundBridge,
     readBenchmarkLaunchConfig,
 } from './BenchmarkBridge';
 
@@ -72,10 +73,11 @@ export class GameMain extends Component {
         // Debug Web builds enable the engine stats overlay by default; keep it
         // out of GUI-agent screenshots and normal Hub gameplay.
         try { profiler.hideStats(); } catch (_) { /* profiler is optional on some targets */ }
-        GameInspector.instance.install();
         const benchmark = readBenchmarkLaunchConfig();
+        GameInspector.instance.install(!benchmark.playground);
         if (benchmark.enabled) {
-            installBenchmarkBridge(benchmark);
+            if (benchmark.playground) installPlaygroundBridge(benchmark);
+            else installBenchmarkBridge(benchmark);
             this._showBenchmarkGame(benchmark);
         } else this._showHome();
     }
@@ -85,15 +87,31 @@ export class GameMain extends Component {
         if (config.gameId === 'bolt_unscrew') {
             this._showBoltGame(config.difficulty as BoltDifficulty, config.levelId, true);
         } else if (config.gameId === 'truck_escape') {
-            this._showTruckGame(config.levelId);
+            this._showTruckGame(config.levelId, true, config.playground);
         } else if (config.gameId === 'truck_escape_2') {
-            this._showTruckEscape2Game(config.difficulty as TruckEscape2Difficulty, config.levelId);
+            this._showTruckEscape2Game(
+                config.difficulty as TruckEscape2Difficulty,
+                config.levelId,
+                config.playground,
+            );
         } else if (config.gameId === 'nuts_bolts') {
-            this._showNutsBoltsGame(config.difficulty as NutsBoltsDifficulty, config.levelId);
+            this._showNutsBoltsGame(
+                config.difficulty as NutsBoltsDifficulty,
+                config.levelId,
+                config.playground,
+            );
         } else if (config.gameId === 'maze_paint') {
-            this._showMazePaintGame(config.difficulty as MazePaintDifficulty, config.levelId);
+            this._showMazePaintGame(
+                config.difficulty as MazePaintDifficulty,
+                config.levelId,
+                config.playground,
+            );
         } else if (config.gameId === 'color_connect') {
-            this._showColorConnectGame(config.difficulty as ColorConnectDifficulty, config.levelId);
+            this._showColorConnectGame(
+                config.difficulty as ColorConnectDifficulty,
+                config.levelId,
+                config.playground,
+            );
         }
     }
 
@@ -370,7 +388,11 @@ export class GameMain extends Component {
         return n;
     }
 
-    private _showTruckGame(initialLevelId: number = 1) {
+    private _showTruckGame(
+        initialLevelId: number = 1,
+        disableAutoHint: boolean = false,
+        directLaunchMode: boolean = false,
+    ) {
         this._disposeCurrentView();
         const view = new Node('TruckGameView');
         view.layer = this.node.layer;
@@ -378,6 +400,8 @@ export class GameMain extends Component {
         view.addComponent(UITransform).setContentSize(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
         view.setPosition(0, 0, 0);
         const ctrl = view.addComponent(TruckGameController);
+        ctrl.setAutoHintEnabled(!disableAutoHint);
+        ctrl.setDirectLaunchMode(directLaunchMode);
         ctrl.setInitialLevel(initialLevelId);
         ctrl.onRequestExit = () => this._showHome();
         this._viewRoot = view;
@@ -470,7 +494,11 @@ export class GameMain extends Component {
         GameInspector.instance.setView('truck2-difficulty');
     }
 
-    private _showTruckEscape2Game(difficulty: TruckEscape2Difficulty, initialLevelId: number = 1) {
+    private _showTruckEscape2Game(
+        difficulty: TruckEscape2Difficulty,
+        initialLevelId: number = 1,
+        directLaunchMode: boolean = false,
+    ) {
         this._disposeCurrentView();
         const view = new Node('TruckEscape2GameView');
         view.layer = this.node.layer;
@@ -479,6 +507,7 @@ export class GameMain extends Component {
         view.setPosition(0, 0, 0);
         const controller = view.addComponent(TruckEscape2Controller);
         controller.setDifficulty(difficulty);
+        controller.setDirectLaunchMode(directLaunchMode);
         controller.setInitialLevel(initialLevelId);
         controller.onRequestExit = () => this._showTruckEscape2DifficultySelect();
         this._viewRoot = view;
@@ -573,7 +602,11 @@ export class GameMain extends Component {
         GameInspector.instance.setView('nuts-bolts-difficulty');
     }
 
-    private _showNutsBoltsGame(difficulty: NutsBoltsDifficulty, initialLevelId: number = 1) {
+    private _showNutsBoltsGame(
+        difficulty: NutsBoltsDifficulty,
+        initialLevelId: number = 1,
+        directLaunchMode: boolean = false,
+    ) {
         this._disposeCurrentView();
         const viewRoot = new Node('NutsBoltsGameView');
         viewRoot.layer = this.node.layer;
@@ -582,6 +615,7 @@ export class GameMain extends Component {
         viewRoot.setPosition(0, 0, 0);
         const controller = viewRoot.addComponent(NutsBoltsController);
         controller.setDifficulty(difficulty);
+        controller.setDirectLaunchMode(directLaunchMode);
         controller.setInitialLevel(initialLevelId);
         controller.onRequestExit = () => this._showNutsBoltsDifficultySelect();
         this._viewRoot = viewRoot;
@@ -663,7 +697,11 @@ export class GameMain extends Component {
         GameInspector.instance.setView('maze-paint-difficulty');
     }
 
-    private _showMazePaintGame(difficulty: MazePaintDifficulty, initialLevelId: number = 1) {
+    private _showMazePaintGame(
+        difficulty: MazePaintDifficulty,
+        initialLevelId: number = 1,
+        directLaunchMode: boolean = false,
+    ) {
         this._disposeCurrentView();
         const viewRoot = new Node('MazePaintGameView');
         viewRoot.layer = this.node.layer;
@@ -672,6 +710,7 @@ export class GameMain extends Component {
         viewRoot.setPosition(0, 0, 0);
         const controller = viewRoot.addComponent(MazePaintController);
         controller.setDifficulty(difficulty);
+        controller.setDirectLaunchMode(directLaunchMode);
         controller.setInitialLevel(initialLevelId);
         controller.onRequestExit = () => this._showMazePaintDifficultySelect();
         this._viewRoot = viewRoot;
@@ -749,7 +788,11 @@ export class GameMain extends Component {
         GameInspector.instance.setView('color-connect-difficulty');
     }
 
-    private _showColorConnectGame(difficulty: ColorConnectDifficulty, initialLevelId: number = 1) {
+    private _showColorConnectGame(
+        difficulty: ColorConnectDifficulty,
+        initialLevelId: number = 1,
+        directLaunchMode: boolean = false,
+    ) {
         this._disposeCurrentView();
         const viewRoot = new Node('ColorConnectGameView');
         viewRoot.layer = this.node.layer;
@@ -758,6 +801,7 @@ export class GameMain extends Component {
         viewRoot.setPosition(0, 0, 0);
         const controller = viewRoot.addComponent(ColorConnectController);
         controller.setDifficulty(difficulty);
+        controller.setDirectLaunchMode(directLaunchMode);
         controller.setInitialLevel(initialLevelId);
         controller.onRequestExit = () => this._showHome();
         this._viewRoot = viewRoot;

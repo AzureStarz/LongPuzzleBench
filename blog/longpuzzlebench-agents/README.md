@@ -2,7 +2,7 @@
 
 This directory contains the static research article **“The Move Was Legal. The Puzzle Was Already Lost.”**
 
-**[Read the published article](https://azurestarz.github.io/LongPuzzleBench/)**
+**[Read the published article](https://azurestarz.github.io/LongPuzzleBench/research/)**
 
 The article has no runtime dependencies. Open `index.html` directly, or serve it from the repository root:
 

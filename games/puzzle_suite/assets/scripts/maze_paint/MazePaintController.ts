@@ -107,6 +107,7 @@ interface GestureState {
 export class MazePaintController extends Component {
     public difficulty: MazePaintDifficulty = 'easy';
     public onRequestExit: (() => void) | null = null;
+    private _directLaunchMode = false;
 
     private _levels: readonly MazePaintLevelDefinition[] = [];
     private _levelIndex = 0;
@@ -224,6 +225,11 @@ export class MazePaintController extends Component {
         if (this._sceneBuilt) this._loadLevel(this._initialLevelIndex);
     }
 
+    /** Hide Hub navigation and pin completion actions to this deep-linked level. */
+    public setDirectLaunchMode(enabled: boolean): void {
+        this._directLaunchMode = enabled;
+    }
+
     /** Benchmark-safe reset that preserves difficulty and selected level. */
     public resetCurrentLevel(): void {
         this._loadLevel(this._levelIndex);
@@ -283,20 +289,22 @@ export class MazePaintController extends Component {
     }
 
     private _buildHeader(): void {
-        const back = this._makeCircleButton('MazePaintBack', -220, 390);
-        const backIcon = new Node('BackIcon');
-        backIcon.layer = back.layer;
-        backIcon.parent = back;
-        const backGraphics = backIcon.addComponent(Graphics);
-        backGraphics.strokeColor = new Color(211, 126, 164, 255);
-        backGraphics.lineWidth = 8;
-        backGraphics.lineCap = Graphics.LineCap.ROUND;
-        backGraphics.lineJoin = Graphics.LineJoin.ROUND;
-        backGraphics.moveTo(8, 16);
-        backGraphics.lineTo(-8, 0);
-        backGraphics.lineTo(8, -16);
-        backGraphics.stroke();
-        back.on(Button.EventType.CLICK, this._requestExit, this);
+        if (!this._directLaunchMode) {
+            const back = this._makeCircleButton('MazePaintBack', -220, 390);
+            const backIcon = new Node('BackIcon');
+            backIcon.layer = back.layer;
+            backIcon.parent = back;
+            const backGraphics = backIcon.addComponent(Graphics);
+            backGraphics.strokeColor = new Color(211, 126, 164, 255);
+            backGraphics.lineWidth = 8;
+            backGraphics.lineCap = Graphics.LineCap.ROUND;
+            backGraphics.lineJoin = Graphics.LineJoin.ROUND;
+            backGraphics.moveTo(8, 16);
+            backGraphics.lineTo(-8, 0);
+            backGraphics.lineTo(8, -16);
+            backGraphics.stroke();
+            back.on(Button.EventType.CLICK, this._requestExit, this);
+        }
 
         const restart = this._makeCircleButton('MazePaintRestart', 220, 390);
         const restartIcon = new Node('RestartIcon');
@@ -476,11 +484,20 @@ export class MazePaintController extends Component {
         );
         this._completeSubtitle.node.setPosition(0, 3, 0);
 
-        const primary = this._makeRoundedButton(card, 'CompletePrimary', '下一關', -91, -82, COLORS.accent);
+        const primary = this._makeRoundedButton(
+            card,
+            'CompletePrimary',
+            this._directLaunchMode ? '再玩一次' : '下一關',
+            this._directLaunchMode ? 0 : -91,
+            -82,
+            COLORS.accent,
+        );
         this._completePrimaryLabel = primary.getChildByName('Label')?.getComponent(Label) ?? null;
         primary.on(Button.EventType.CLICK, this._handleTerminalPrimary, this);
-        const exit = this._makeRoundedButton(card, 'CompleteExit', '返回', 91, -82, new Color(218, 116, 155, 255));
-        exit.on(Button.EventType.CLICK, this._requestExit, this);
+        if (!this._directLaunchMode) {
+            const exit = this._makeRoundedButton(card, 'CompleteExit', '返回', 91, -82, new Color(218, 116, 155, 255));
+            exit.on(Button.EventType.CLICK, this._requestExit, this);
+        }
     }
 
     private _makeRoundedButton(
@@ -858,7 +875,9 @@ export class MazePaintController extends Component {
         }
         if (this._completePrimaryLabel) {
             this._completePrimaryLabel.string = success
-                ? (this._levelIndex + 1 < this._levels.length ? '下一關' : '再玩一次')
+                ? (this._directLaunchMode
+                    ? '再玩一次'
+                    : (this._levelIndex + 1 < this._levels.length ? '下一關' : '再玩一次'))
                 : '重新挑戰';
         }
         this._busy = false;
@@ -884,7 +903,7 @@ export class MazePaintController extends Component {
 
     private _handleTerminalPrimary(): void {
         if (!this._evaluator) return;
-        if (this._evaluator.status === 'success' && this._levelIndex + 1 < this._levels.length) {
+        if (!this._directLaunchMode && this._evaluator.status === 'success' && this._levelIndex + 1 < this._levels.length) {
             this._loadLevel(this._levelIndex + 1);
         } else {
             this._loadLevel(this._levelIndex);

@@ -79,8 +79,9 @@ export class GameInspector {
     private _movingBodies: number = 0;
     private _installed: boolean = false;
     private _inputHooked: boolean = false;
+    private _lastInputStartedAt: number = Number.NEGATIVE_INFINITY;
 
-    install() {
+    install(exposeGlobal: boolean = true) {
         if (!this._installed) {
             director.on(Director.EVENT_AFTER_UPDATE, this._tick, this);
             this._installed = true;
@@ -88,17 +89,27 @@ export class GameInspector {
         if (!this._inputHooked && typeof globalThis !== 'undefined'
             && typeof (globalThis as unknown as EventTarget).addEventListener === 'function') {
             try {
-                (globalThis as unknown as EventTarget).addEventListener(
-                    'pointerdown',
-                    () => { this._step++; },
-                    true,
-                );
+                const target = globalThis as unknown as EventTarget;
+                const countInput = () => {
+                    const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+                    // Browsers can emit pointerdown plus mouse/touch compatibility events
+                    // for one physical gesture. Count that gesture once while retaining
+                    // mousedown/touchstart fallbacks for embedded and synthetic input.
+                    if (now - this._lastInputStartedAt < 8) return;
+                    this._lastInputStartedAt = now;
+                    this._step++;
+                };
+                target.addEventListener('pointerdown', countInput, true);
+                target.addEventListener('mousedown', countInput, true);
+                target.addEventListener('touchstart', countInput, true);
                 this._inputHooked = true;
             } catch (_) {
                 // native platform without DOM — step counter just stays at 0
             }
         }
-        (globalThis as unknown as { __game: GameInspector }).__game = this;
+        const target = globalThis as unknown as { __game?: GameInspector };
+        if (exposeGlobal) target.__game = this;
+        else if (target.__game === this) delete target.__game;
     }
 
     setView(view: ViewName) {

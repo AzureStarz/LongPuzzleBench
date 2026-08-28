@@ -1,4 +1,5 @@
 import { TruckEscape2AbilityTracker } from '../analytics/TruckEscape2AbilityTracker';
+import { GameInspector } from './GameInspector';
 
 export type BenchmarkGameId =
     | 'bolt_unscrew'
@@ -10,10 +11,26 @@ export type BenchmarkGameId =
 
 export interface BenchmarkLaunchConfig {
     enabled: boolean;
+    playground: boolean;
     gameId: BenchmarkGameId;
     difficulty: string;
     levelId: number;
     seed: number;
+}
+
+export interface PlaygroundState {
+    schema_version: 1;
+    game_id: BenchmarkGameId;
+    difficulty: string;
+    level_id: number;
+    ready: boolean;
+    status: 'loading' | 'running' | 'success' | 'failure';
+    terminal: boolean;
+    step_count: number;
+}
+
+export interface PlaygroundBridge {
+    getState(): PlaygroundState;
 }
 
 export interface BenchmarkSuiteManifestEntry {
@@ -230,13 +247,69 @@ export function readBenchmarkLaunchConfig(): BenchmarkLaunchConfig {
     }
     const gameId = normalizeGameId(params?.get('game_id') ?? null);
     const benchmarkFlag = (params?.get('benchmark') ?? '').trim().toLowerCase();
+    const playgroundFlag = (params?.get('playground') ?? '').trim().toLowerCase();
+    const benchmarkEnabled = benchmarkFlag === '1' || benchmarkFlag === 'true' || benchmarkFlag === 'yes';
+    const playgroundEnabled = playgroundFlag === '1' || playgroundFlag === 'true' || playgroundFlag === 'yes';
     return {
-        enabled: benchmarkFlag === '1' || benchmarkFlag === 'true' || benchmarkFlag === 'yes',
+        enabled: benchmarkEnabled || playgroundEnabled,
+        playground: playgroundEnabled && !benchmarkEnabled,
         gameId,
         difficulty: normalizeDifficulty(gameId, params?.get('difficulty') ?? null),
         levelId: finiteInt(params?.get('level_id') ?? null, 1, 1),
         seed: finiteInt(params?.get('seed') ?? null, 0, 0),
     };
+}
+
+/**
+ * Install the least-privilege channel used by the public human playground.
+ * Unlike the evaluator bridge, it never exposes metrics, trajectories,
+ * deadlock diagnostics, raw board state, or reference-solution data.
+ */
+export function installPlaygroundBridge(config: BenchmarkLaunchConfig): PlaygroundBridge {
+    const getState = (): PlaygroundState => {
+        const snapshot = asRecord(GameInspector.instance.getState());
+        const provider = asRecord(snapshot[PROVIDER_KEYS[config.gameId]]);
+        const evaluator = asRecord(provider.evaluator);
+        const success = Boolean(provider.complete ?? provider.success ?? evaluator.success);
+        const failure = Boolean(provider.failure ?? evaluator.failure);
+        const providerDifficulty = typeof (provider.difficulty ?? evaluator.difficulty) === 'string'
+            ? String(provider.difficulty ?? evaluator.difficulty)
+            : config.difficulty;
+        const levelId = levelFromProvider(config.gameId, provider);
+        const correctDifficulty = config.gameId === 'truck_escape'
+            || providerDifficulty === config.difficulty;
+        const ready = Boolean(provider.ready)
+            && snapshot.view === VIEW_NAMES[config.gameId]
+            && levelId === config.levelId
+            && correctDifficulty
+            && Boolean(snapshot.outcome_stable);
+        const status: PlaygroundState['status'] = success
+            ? 'success'
+            : (failure ? 'failure' : (ready ? 'running' : 'loading'));
+        return Object.freeze({
+            schema_version: 1 as const,
+            game_id: config.gameId,
+            difficulty: providerDifficulty,
+            level_id: levelId || config.levelId,
+            ready,
+            status,
+            terminal: success || failure,
+            step_count: Number(snapshot.step ?? 0),
+        });
+    };
+    const bridge = Object.freeze({ getState });
+    const target = globalThis as unknown as Record<string, unknown>;
+    try {
+        Object.defineProperty(target, '__LONGPUZZLEBENCH_PLAY__', {
+            value: bridge,
+            enumerable: false,
+            configurable: false,
+            writable: false,
+        });
+    } catch (_) {
+        target.__LONGPUZZLEBENCH_PLAY__ = bridge;
+    }
+    return bridge;
 }
 
 function levelFromProvider(gameId: BenchmarkGameId, provider: Record<string, unknown>): number {

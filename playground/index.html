@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Play faithful LongPuzzleBench puzzle environments directly in your browser. No install, account, or backend required."
+    />
+    <meta name="theme-color" content="#f2eee5" />
+    <title>Play LongPuzzleBench</title>
+    <link rel="canonical" href="https://azurestarz.github.io/LongPuzzleBench/play/" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="catalog.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to puzzles</a>
+
+    <header class="site-header">
+      <a class="wordmark" href="./" aria-label="LongPuzzleBench playground home">
+        <span aria-hidden="true"></span>
+        LongPuzzleBench
+      </a>
+      <nav aria-label="Project navigation">
+        <a href="#games">Games</a>
+        <a href="../research/">Research note</a>
+        <a href="https://github.com/AzureStarz/LongPuzzleBench">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="main-content">
+      <div id="landingView">
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="hero-copy">
+            <p class="eyebrow">Human playground · canonical game mechanics</p>
+            <h1 id="hero-title">Play<br />LongPuzzleBench</h1>
+            <p class="hero-dek">
+              These puzzles look simple. Solving them reliably can require dozens of dependent
+              decisions. Pick one and feel the planning horizon yourself.
+            </p>
+            <div class="hero-actions">
+              <a class="button button-primary" href="#games">Choose a puzzle</a>
+              <button class="button button-secondary" type="button" data-launch="maze-paint">
+                Start with Maze Paint <span aria-hidden="true">→</span>
+              </button>
+            </div>
+            <p class="hero-note">
+              Zero install · no server round trips · mouse and touch
+            </p>
+          </div>
+
+          <div class="hero-exhibit" aria-label="A sequence of LongPuzzleBench puzzle states">
+            <div class="exhibit-card exhibit-card-a">
+              <img src="../assets/games/bolt_unscrew.webp" alt="Bolt Unscrew puzzle board" />
+              <span>One legal move</span>
+            </div>
+            <div class="exhibit-card exhibit-card-b">
+              <img src="../assets/games/color_connect.webp" alt="Color Connect puzzle board" />
+              <span>Changes every future move</span>
+            </div>
+            <div class="exhibit-card exhibit-card-c">
+              <img src="../assets/games/maze_paint.webp" alt="Maze Paint puzzle board" />
+              <span>Re-plan from the new state</span>
+            </div>
+            <div class="exhibit-line" aria-hidden="true"></div>
+          </div>
+        </section>
+
+        <section class="gallery-section" id="games" aria-labelledby="games-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Playable demo levels</p>
+              <h2 id="games-title">Six ways to lose the future.</h2>
+            </div>
+            <p>
+              Each family stresses a different kind of persistent state: access, identity,
+              ordering, occupancy, coverage, or workspace.
+            </p>
+          </div>
+          <div class="game-grid" id="gameGrid" aria-live="polite"></div>
+        </section>
+
+        <section class="integrity-strip" aria-labelledby="integrity-title">
+          <div>
+            <p class="eyebrow">What you are playing</p>
+            <h2 id="integrity-title">The real browser environments, without the evaluator.</h2>
+          </div>
+          <p>
+            The playground loads the same checked-in Cocos runtime and level definitions used by
+            LongPuzzleBench evaluation. It omits agent-only observation, scoring, time limits, and
+            private diagnostics. This curated human demo is not the full 114-level evaluation set.
+          </p>
+          <a href="https://github.com/AzureStarz/LongPuzzleBench#evaluation-protocol">
+            Read the evaluation protocol <span aria-hidden="true">↗</span>
+          </a>
+        </section>
+      </div>
+
+      <section id="gameView" class="game-view" hidden aria-labelledby="playTitle">
+        <div class="game-view-heading">
+          <button class="text-button" id="backToGallery" type="button">
+            <span aria-hidden="true">←</span> All games
+          </button>
+          <div class="live-status" id="liveStatus" role="status" aria-live="polite">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span id="statusText">Loading puzzle</span>
+          </div>
+        </div>
+
+        <div class="play-layout">
+          <aside class="game-brief">
+            <div>
+              <p class="eyebrow" id="playEyebrow">Playable demo</p>
+              <h1 id="playTitle">Maze Paint</h1>
+              <p class="objective" id="playObjective"></p>
+            </div>
+
+            <div class="level-picker">
+              <label for="levelSelect">Puzzle</label>
+              <div class="select-wrap">
+                <select id="levelSelect"></select>
+              </div>
+              <p id="levelEvidence"></p>
+            </div>
+
+            <div class="control-card">
+              <span class="control-icon" id="controlIcon" aria-hidden="true">↔</span>
+              <div>
+                <strong>Controls</strong>
+                <p id="playControls"></p>
+              </div>
+            </div>
+
+            <dl class="session-stats" aria-label="Current attempt">
+              <div>
+                <dt>Actions</dt>
+                <dd id="actionCount">0</dd>
+              </div>
+              <div>
+                <dt>State</dt>
+                <dd id="attemptState">Ready</dd>
+              </div>
+            </dl>
+
+            <div class="game-actions">
+              <button class="button button-primary" id="resetGame" type="button">Reset</button>
+              <button class="button button-secondary" id="tryAnother" type="button">
+                Try another puzzle
+              </button>
+            </div>
+
+            <p class="do-not-warn">
+              Legal moves can still be strategically fatal. The playground will not warn you.
+            </p>
+          </aside>
+
+          <div class="runtime-column">
+            <div class="runtime-quick-guide" aria-hidden="true">
+              <strong id="mobilePlayTitle">Maze Paint</strong>
+              <span id="mobilePlayControls">Swipe in any direction; the ball stops at a wall.</span>
+            </div>
+            <div class="runtime-frame" id="runtimeFrame">
+              <div class="runtime-loader" id="runtimeLoader">
+                <span aria-hidden="true"></span>
+                <strong>Preparing the board</strong>
+                <small>The game runtime loads only after you choose a puzzle.</small>
+              </div>
+              <iframe
+                id="gameRuntime"
+                title="LongPuzzleBench game board"
+                allow="fullscreen"
+                referrerpolicy="no-referrer"
+              ></iframe>
+            </div>
+            <p class="viewport-note">
+              The benchmark uses a portrait game canvas. On a small landscape screen, rotate your
+              device or use a larger viewport.
+            </p>
+          </div>
+        </div>
+
+        <div class="completion-toast" id="completionToast" hidden>
+          <div>
+            <span class="completion-mark" aria-hidden="true">✓</span>
+            <div>
+              <strong>Puzzle solved</strong>
+              <p id="completionCopy"></p>
+            </div>
+          </div>
+          <button class="button button-secondary" type="button" data-completion-reset>
+            Play again
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>LongPuzzleBench · Human Playground</span>
+      <span>Static by design. Canonical evaluation remains in the repository.</span>
+    </footer>
+
+    <noscript>
+      <div class="noscript-note">
+        The playground requires JavaScript to launch a game. The project and evaluation runtime are
+        available on <a href="https://github.com/AzureStarz/LongPuzzleBench">GitHub</a>.
+      </div>
+    </noscript>
+  </body>
+</html>

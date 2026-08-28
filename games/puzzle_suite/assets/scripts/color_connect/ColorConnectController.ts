@@ -124,6 +124,7 @@ interface BoardLayout {
 export class ColorConnectController extends Component {
     public difficulty: ColorConnectDifficulty = 'easy';
     public onRequestExit: (() => void) | null = null;
+    private _directLaunchMode = false;
 
     private _levels: readonly ColorConnectLevelDefinition[] = [];
     private _levelIndex = 0;
@@ -268,6 +269,11 @@ export class ColorConnectController extends Component {
         if (this._sceneBuilt) this._loadLevel(this._initialLevelIndex);
     }
 
+    /** Hide navigation that would leave a query-launched game without updating its URL. */
+    public setDirectLaunchMode(enabled: boolean): void {
+        this._directLaunchMode = enabled;
+    }
+
     /** Reset gameplay, metrics, transient paths, feedback and animation locks. */
     public resetCurrentLevel(): void {
         if (!this._sceneBuilt || !this._level || !this._evaluator) return;
@@ -323,20 +329,22 @@ export class ColorConnectController extends Component {
     }
 
     private _buildHeader(): void {
-        const back = this._makeCircleButton('ColorConnectBack', -220, HEADER_BUTTON_Y, COLORS.white);
-        const backIcon = new Node('BackIcon');
-        backIcon.layer = back.layer;
-        backIcon.parent = back;
-        const backGraphics = backIcon.addComponent(Graphics);
-        backGraphics.strokeColor = COLORS.backIcon;
-        backGraphics.lineWidth = 9;
-        backGraphics.lineCap = Graphics.LineCap.ROUND;
-        backGraphics.lineJoin = Graphics.LineJoin.ROUND;
-        backGraphics.moveTo(8, 17);
-        backGraphics.lineTo(-9, 0);
-        backGraphics.lineTo(8, -17);
-        backGraphics.stroke();
-        back.on(Button.EventType.CLICK, this._requestExit, this);
+        if (!this._directLaunchMode) {
+            const back = this._makeCircleButton('ColorConnectBack', -220, HEADER_BUTTON_Y, COLORS.white);
+            const backIcon = new Node('BackIcon');
+            backIcon.layer = back.layer;
+            backIcon.parent = back;
+            const backGraphics = backIcon.addComponent(Graphics);
+            backGraphics.strokeColor = COLORS.backIcon;
+            backGraphics.lineWidth = 9;
+            backGraphics.lineCap = Graphics.LineCap.ROUND;
+            backGraphics.lineJoin = Graphics.LineJoin.ROUND;
+            backGraphics.moveTo(8, 17);
+            backGraphics.lineTo(-9, 0);
+            backGraphics.lineTo(8, -17);
+            backGraphics.stroke();
+            back.on(Button.EventType.CLICK, this._requestExit, this);
+        }
 
         const restart = this._makeCircleButton(
             'ColorConnectRestart',

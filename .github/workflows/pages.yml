@@ -1,10 +1,21 @@
-name: Deploy research article
+name: Deploy public site
 
 on:
   push:
     branches: [main]
     paths:
+      - "playground/**"
+      - "games/puzzle_suite/assets/**"
+      - "games/puzzle_suite/build/web-mobile/**"
+      - "games/puzzle_suite/NOTICE.md"
       - "blog/longpuzzlebench-agents/**"
+      - "configs/longpuzzlebench.json"
+      - "scripts/build_pages.py"
+      - "scripts/verify_blog.py"
+      - "scripts/verify_playground.py"
+      - "LICENSE"
+      - "NOTICE"
+      - "THIRD_PARTY_NOTICES.md"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -26,12 +37,22 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7.0.1
+      - name: Set up Python
+        uses: actions/setup-python@v6.0.0
+        with:
+          python-version: "3.12"
+      - name: Verify research article
+        run: python3 scripts/verify_blog.py
+      - name: Build Pages artifact
+        run: python3 scripts/build_pages.py
+      - name: Verify browser playground
+        run: python3 scripts/verify_playground.py
       - name: Configure Pages
         uses: actions/configure-pages@v6.0.0
-      - name: Upload article
+      - name: Upload static site
         uses: actions/upload-pages-artifact@v5.0.0
         with:
-          path: blog/longpuzzlebench-agents
+          path: dist/pages
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v5.0.0

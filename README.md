@@ -10,7 +10,7 @@
 [![Environments](https://img.shields.io/badge/Environments-6-0f766e.svg)](#game-environments)
 [![Levels](https://img.shields.io/badge/Levels-114-7c3aed.svg)](#game-environments)
 
-[Quick start](#quick-start) · [Leaderboard](#leaderboard) · [Evaluation protocol](#evaluation-protocol) · [Roadmap](#roadmap)
+[Play in browser](https://azurestarz.github.io/LongPuzzleBench/play/) · [Research note](https://azurestarz.github.io/LongPuzzleBench/research/) · [Quick start](#quick-start) · [Leaderboard](#leaderboard) · [Evaluation protocol](#evaluation-protocol)
 
 <img src="assets/longpuzzlebench-hero.png" alt="A GUI agent reasoning across a long sequence of visual puzzle states" width="920" />
 
@@ -21,6 +21,8 @@
 LongPuzzleBench evaluates whether GUI agents can sustain coherent visual reasoning and precise interaction across extended puzzle trajectories. Its browser environments require agents to observe changing boards, preserve state across many actions, plan ahead, localize relevant objects, recover from ineffective moves, and adapt their strategy as the scene evolves.
 
 The initial release contains **6 puzzle environments, 114 levels, and 16 game × difficulty evaluation cells**. Every environment runs locally from the bundled browser build; the agent receives screenshots and public action feedback, while evaluator-only state stays on a separate scoring path.
+
+**Want to feel the benchmark before installing it?** Open the [public human playground](https://azurestarz.github.io/LongPuzzleBench/play/) to try 12 curated levels across all six game families. It runs entirely on GitHub Pages and clearly separates the human exhibit from the full agent evaluation set.
 
 ## Why long-horizon puzzle games?
 
@@ -293,7 +295,7 @@ LongPuzzleBench will scale with additional long-horizon interactive game environ
 
 ## Research note
 
-**[Read: “The Move Was Legal. The Puzzle Was Already Lost.”](https://azurestarz.github.io/LongPuzzleBench/)**
+**[Read: “The Move Was Legal. The Puzzle Was Already Lost.”](https://azurestarz.github.io/LongPuzzleBench/research/)**
 
 The interactive research note analyzes 782 executed trajectories across the 18 complete public
 runs. It reconstructs environment-level failures: irreversible loss of future actions, sticky
