@@ -12,7 +12,7 @@
 
 [Project homepage](https://azurestarz.github.io/LongPuzzleBench/) · [Play in browser](https://azurestarz.github.io/LongPuzzleBench/play/) · [Research note](https://azurestarz.github.io/LongPuzzleBench/research/) · [Quick start](#quick-start) · [Leaderboard](#leaderboard) · [Evaluation protocol](#evaluation-protocol)
 
-<img src="assets/longpuzzlebench-hero.webp" alt="LongPuzzleBench homepage with three real puzzle states connected as a long-horizon sequence" width="920" />
+<img src="assets/longpuzzlebench-hero.webp" alt="LongPuzzleBench branded hero with six unified puzzle icons connected along a long-horizon trajectory" width="920" />
 
 </div>
 
