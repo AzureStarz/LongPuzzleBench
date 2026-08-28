@@ -1,10 +1,12 @@
 {
   "benchmark": "LongPuzzleBench",
-  "generated_at": "2026-08-26T03:12:59.357764+00:00",
+  "generated_at": "2026-08-28T01:57:08.173194+00:00",
+  "source_results_through": "2026-08-27T20:37:20.808142+00:00",
   "evaluation_setting": {
     "games": 6,
     "levels": 114,
     "game_difficulty_cells": 16,
+    "ranked_runs": 18,
     "prompt_setting": "full",
     "evaluation_mode": "progressive",
     "seeds": [
@@ -91,13 +93,13 @@
       "rank": 3,
       "model": "gpt-5.6-sol",
       "reasoning_effort": "high",
-      "benchmark_score": 45.577,
-      "success_rate": 46.3,
+      "benchmark_score": 49.968,
+      "success_rate": 50.47,
       "completed_cells": 16,
       "game_scores": {
         "bolt_unscrew": 45.98,
-        "rush_hour_2": 84.65,
-        "nut_and_bolt": 26.55,
+        "rush_hour_2": 87.69,
+        "nut_and_bolt": 38.77,
         "truck_escape": 94.91,
         "maze_paint": 38.59,
         "color_connect": 19.95
@@ -105,11 +107,11 @@
       "cell_scores": {
         "bolt_unscrew/easy": 90.93,
         "bolt_unscrew/hard": 1.03,
-        "rush_hour_2/easy": 67.08,
-        "rush_hour_2/medium": 94.76,
-        "rush_hour_2/hard": 92.11,
-        "nut_and_bolt/easy": 98.12,
-        "nut_and_bolt/medium": 34.63,
+        "rush_hour_2/easy": 98.25,
+        "rush_hour_2/medium": 96.35,
+        "rush_hour_2/hard": 68.49,
+        "nut_and_bolt/easy": 98.67,
+        "nut_and_bolt/medium": 95.21,
         "nut_and_bolt/hard": 0.0,
         "nut_and_bolt/extreme": 0.0,
         "nut_and_bolt/nightmare": 0.0,
@@ -123,6 +125,40 @@
     },
     {
       "rank": 4,
+      "model": "gpt-5.6-terra",
+      "reasoning_effort": "high",
+      "benchmark_score": 47.591,
+      "success_rate": 48.75,
+      "completed_cells": 16,
+      "game_scores": {
+        "bolt_unscrew": 49.26,
+        "rush_hour_2": 45.76,
+        "nut_and_bolt": 20.46,
+        "truck_escape": 94.69,
+        "maze_paint": 73.68,
+        "color_connect": 53.81
+      },
+      "cell_scores": {
+        "bolt_unscrew/easy": 97.48,
+        "bolt_unscrew/hard": 1.03,
+        "rush_hour_2/easy": 95.21,
+        "rush_hour_2/medium": 39.52,
+        "rush_hour_2/hard": 2.54,
+        "nut_and_bolt/easy": 98.45,
+        "nut_and_bolt/medium": 3.64,
+        "nut_and_bolt/hard": 0.0,
+        "nut_and_bolt/extreme": 0.0,
+        "nut_and_bolt/nightmare": 0.22,
+        "truck_escape/default": 94.69,
+        "maze_paint/easy": 97.62,
+        "maze_paint/medium": 91.45,
+        "maze_paint/hard": 31.97,
+        "color_connect/easy": 95.63,
+        "color_connect/hard": 12.0
+      }
+    },
+    {
+      "rank": 5,
       "model": "gpt-5.6-terra",
       "reasoning_effort": "medium",
       "benchmark_score": 37.772,
@@ -156,7 +192,7 @@
       }
     },
     {
-      "rank": 5,
+      "rank": 6,
       "model": "gpt-5.6-terra",
       "reasoning_effort": "low",
       "benchmark_score": 36.806,
@@ -190,7 +226,41 @@
       }
     },
     {
-      "rank": 6,
+      "rank": 7,
+      "model": "kimi-k3",
+      "reasoning_effort": "high",
+      "benchmark_score": 32.694,
+      "success_rate": 32.5,
+      "completed_cells": 16,
+      "game_scores": {
+        "bolt_unscrew": 49.58,
+        "rush_hour_2": 20.44,
+        "nut_and_bolt": 20.88,
+        "truck_escape": 95.19,
+        "maze_paint": 53.74,
+        "color_connect": 0.92
+      },
+      "cell_scores": {
+        "bolt_unscrew/easy": 98.13,
+        "bolt_unscrew/hard": 1.03,
+        "rush_hour_2/easy": 19.95,
+        "rush_hour_2/medium": 38.88,
+        "rush_hour_2/hard": 2.49,
+        "nut_and_bolt/easy": 98.63,
+        "nut_and_bolt/medium": 5.29,
+        "nut_and_bolt/hard": 0.02,
+        "nut_and_bolt/extreme": 0.44,
+        "nut_and_bolt/nightmare": 0.0,
+        "truck_escape/default": 95.19,
+        "maze_paint/easy": 97.15,
+        "maze_paint/medium": 59.57,
+        "maze_paint/hard": 4.48,
+        "color_connect/easy": 0.35,
+        "color_connect/hard": 1.49
+      }
+    },
+    {
+      "rank": 8,
       "model": "gpt-5.6-luna",
       "reasoning_effort": "high",
       "benchmark_score": 30.337,
@@ -224,7 +294,7 @@
       }
     },
     {
-      "rank": 7,
+      "rank": 9,
       "model": "gpt-5.6-luna",
       "reasoning_effort": "medium",
       "benchmark_score": 24.158,
@@ -258,7 +328,7 @@
       }
     },
     {
-      "rank": 8,
+      "rank": 10,
       "model": "gpt-5.6-luna",
       "reasoning_effort": "low",
       "benchmark_score": 17.867,
@@ -292,7 +362,7 @@
       }
     },
     {
-      "rank": 9,
+      "rank": 11,
       "model": "qwen/qwen3.8-27b",
       "reasoning_effort": null,
       "benchmark_score": 16.915,
@@ -326,7 +396,7 @@
       }
     },
     {
-      "rank": 10,
+      "rank": 12,
       "model": "moonshotai/kimi-k2.5",
       "reasoning_effort": "max",
       "benchmark_score": 15.979,
@@ -360,7 +430,7 @@
       }
     },
     {
-      "rank": 11,
+      "rank": 13,
       "model": "qwen/qwen3.5-122b-a10b",
       "reasoning_effort": null,
       "benchmark_score": 11.285,
@@ -394,7 +464,7 @@
       }
     },
     {
-      "rank": 12,
+      "rank": 14,
       "model": "qwen/qwen3.6-35b-a3b",
       "reasoning_effort": null,
       "benchmark_score": 6.58,
@@ -428,7 +498,7 @@
       }
     },
     {
-      "rank": 13,
+      "rank": 15,
       "model": "qwen/qwen3.5-397b-a17b",
       "reasoning_effort": null,
       "benchmark_score": 6.471,
@@ -462,7 +532,7 @@
       }
     },
     {
-      "rank": 14,
+      "rank": 16,
       "model": "z-ai/glm-4.6v",
       "reasoning_effort": "max",
       "benchmark_score": 6.386,
@@ -496,7 +566,7 @@
       }
     },
     {
-      "rank": 15,
+      "rank": 17,
       "model": "qwen/qwen3-vl-235b-a22b-thinking",
       "reasoning_effort": null,
       "benchmark_score": 5.314,
@@ -530,7 +600,7 @@
       }
     },
     {
-      "rank": 16,
+      "rank": 18,
       "model": "qwen/qwen3-vl-30b-a3b-thinking",
       "reasoning_effort": null,
       "benchmark_score": 5.134,

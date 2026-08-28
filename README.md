@@ -195,23 +195,71 @@ This aggregation prevents games with more levels from dominating the benchmark w
 
 ## Leaderboard
 
-**Setting:** 6 games · 114 levels · 16/16 cells · full instructions · progressive evaluation · seed 0.  
-**Metric:** LongPuzzleBench score (`0–100`, higher is better). Only complete runs are shown.
+<!-- LEADERBOARD:START -->
 
-| Rank | Model | Reasoning effort | LongPuzzleBench score | Success rate |
-| ---: | --- | :---: | ---: | ---: |
-| 1 | `gpt-5.6-sol` | medium | **54.796** | 55.42% |
-| 2 | `gpt-5.6-sol` | low | **54.142** | 55.62% |
-| 3 | `gpt-5.6-sol` | high | **45.577** | 46.30% |
-| 4 | `gpt-5.6-terra` | medium | **37.772** | 38.18% |
-| 5 | `gpt-5.6-terra` | low | **36.806** | 37.29% |
-| 6 | `gpt-5.6-luna` | high | **30.337** | 31.25% |
-| 7 | `gpt-5.6-luna` | medium | **24.158** | 23.75% |
-| 8 | `gpt-5.6-luna` | low | **17.867** | 16.04% |
-| 9 | `qwen/qwen3.8-27b` | — | **16.915** | 16.25% |
-| 10 | `moonshotai/kimi-k2.5` | max | **15.979** | 15.47% |
+> **Evaluation snapshot · August 28, 2026**<br>
+> 18 complete runs · 6 games · 114 levels · 16/16 cells · full instructions · progressive evaluation · seed 0
 
-The complete, presentation-independent data—including per-game and per-cell scores—is available in [`leaderboard/results.json`](leaderboard/results.json) and [`leaderboard/results.csv`](leaderboard/results.csv). Incomplete runs are intentionally excluded rather than zero-padded into the public ranking.
+<table>
+<tr>
+<td align="center" width="33%">
+<strong>🥇 1st</strong><br/>
+<code>gpt-5.6-sol</code><br/>
+<sub>medium reasoning</sub><br/><br/>
+<strong>54.796</strong><br/>
+<sub>55.42% success</sub>
+</td>
+<td align="center" width="33%">
+<strong>🥈 2nd</strong><br/>
+<code>gpt-5.6-sol</code><br/>
+<sub>low reasoning</sub><br/><br/>
+<strong>54.142</strong><br/>
+<sub>55.62% success</sub>
+</td>
+<td align="center" width="33%">
+<strong>🥉 3rd</strong><br/>
+<code>gpt-5.6-sol</code><br/>
+<sub>high reasoning</sub><br/><br/>
+<strong>49.968</strong><br/>
+<sub>50.47% success</sub>
+</td>
+</tr>
+</table>
+
+**Primary metric:** LongPuzzleBench score (`0–100`, higher is better), computed as the unweighted macro average over all 16 game × difficulty cells.
+
+| Rank | Model | Reasoning | Score ↑ | Success rate |
+| :---: | --- | :---: | ---: | ---: |
+| 🥇 1 | **`gpt-5.6-sol`** | `medium` | **54.796** | **55.42%** |
+| 🥈 2 | **`gpt-5.6-sol`** | `low` | **54.142** | **55.62%** |
+| 🥉 3 | **`gpt-5.6-sol`** | `high` | **49.968** | **50.47%** |
+| 4 | `gpt-5.6-terra` | `high` | 47.591 | 48.75% |
+| 5 | `gpt-5.6-terra` | `medium` | 37.772 | 38.18% |
+| 6 | `gpt-5.6-terra` | `low` | 36.806 | 37.29% |
+| 7 | `kimi-k3` | `high` | 32.694 | 32.50% |
+| 8 | `gpt-5.6-luna` | `high` | 30.337 | 31.25% |
+| 9 | `gpt-5.6-luna` | `medium` | 24.158 | 23.75% |
+| 10 | `gpt-5.6-luna` | `low` | 17.867 | 16.04% |
+
+<details>
+<summary><strong>View ranks 11–18</strong></summary>
+
+| Rank | Model | Reasoning | Score ↑ | Success rate |
+| :---: | --- | :---: | ---: | ---: |
+| 11 | `qwen/qwen3.8-27b` | — | 16.915 | 16.25% |
+| 12 | `moonshotai/kimi-k2.5` | `max` | 15.979 | 15.47% |
+| 13 | `qwen/qwen3.5-122b-a10b` | — | 11.285 | 10.10% |
+| 14 | `qwen/qwen3.6-35b-a3b` | — | 6.580 | 5.68% |
+| 15 | `qwen/qwen3.5-397b-a17b` | — | 6.471 | 4.84% |
+| 16 | `z-ai/glm-4.6v` | `max` | 6.386 | 5.47% |
+| 17 | `qwen/qwen3-vl-235b-a22b-thinking` | — | 5.314 | 3.59% |
+| 18 | `qwen/qwen3-vl-30b-a3b-thinking` | — | 5.134 | 4.43% |
+
+</details>
+
+This refresh adds complete `gpt-5.6-terra` (`high`) and `kimi-k3` (`high`) runs and incorporates the latest complete `gpt-5.6-sol` (`high`) result. Machine-readable data—including every per-game and per-cell score—is available in [`leaderboard/results.json`](leaderboard/results.json) and [`leaderboard/results.csv`](leaderboard/results.csv). Incomplete runs are excluded rather than zero-padded into the public ranking.
+
+<!-- LEADERBOARD:END -->
 
 ## Repository structure
 
