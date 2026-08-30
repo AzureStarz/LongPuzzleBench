@@ -8,6 +8,7 @@ import {
     UITransform,
     Sprite,
     SpriteFrame,
+    Mask,
     Label,
     Button,
     RigidBody2D,
@@ -958,7 +959,13 @@ export class LevelController extends Component {
         ui.setContentSize(diameter, diameter);
         ui.setAnchorPoint(0.5, 0.5);
 
-        const gfx = n.addComponent(Graphics);
+        const padHoles = data.holeOffsets ?? [{ x: 0, y: 0 }];
+        const visual = this._createHoleCutoutMask(n, diameter, diameter, padHoles);
+        const bodyNode = new Node('Wood');
+        bodyNode.layer = n.layer;
+        bodyNode.parent = visual;
+        bodyNode.addComponent(UITransform).setContentSize(diameter, diameter);
+        const gfx = bodyNode.addComponent(Graphics);
         const level8ReferenceStyle = this._isLevel8ReferenceStyle();
         gfx.fillColor = level8ReferenceStyle
             ? new Color(211, 139, 72, 250)
@@ -1000,17 +1007,13 @@ export class LevelController extends Component {
             gfx.stroke();
         }
 
-        const padHoles = data.holeOffsets ?? [{ x: 0, y: 0 }];
         // Holes are visible after the screw leaves, covered by screw sprites
         // while occupied because the Anchors root is drawn above Boards.
-        for (const h of padHoles) {
-            gfx.fillColor = new Color(64, 38, 20, 220);
-            gfx.circle(h.x, h.y, VISUAL_HOLE_OUTER_RADIUS);
-            gfx.fill();
-            gfx.fillColor = new Color(40, 24, 12, 255);
-            gfx.circle(h.x, h.y, VISUAL_HOLE_INNER_RADIUS);
-            gfx.fill();
-        }
+        const overlay = new Node('Holes');
+        overlay.layer = n.layer;
+        overlay.parent = n;
+        overlay.addComponent(UITransform).setContentSize(diameter, diameter);
+        this._drawHoleRims(overlay.addComponent(Graphics), padHoles);
 
         const body = n.addComponent(RigidBody2D);
         body.type = ERigidBody2DType.Dynamic;
@@ -1039,6 +1042,7 @@ export class LevelController extends Component {
         board.circleRadius = data.radius;
         board.rigidBody = body;
         board.collider = collider;
+        board.overlayNode = overlay;
 
         this._boards.push(board);
         this._boardById.set(data.id, board);
@@ -1057,10 +1061,17 @@ export class LevelController extends Component {
         ui.setContentSize(data.collisionWidth, data.collisionHeight);
         ui.setAnchorPoint(0.5, 0.5);
 
+        const visual = this._createHoleCutoutMask(
+            n,
+            data.collisionWidth,
+            data.collisionHeight,
+            data.holeOffsets,
+        );
+
         // Sprite child (visual stretched to collision dims).
         const spriteNode = new Node('Sprite');
         spriteNode.layer = n.layer;
-        spriteNode.parent = n;
+        spriteNode.parent = visual;
         const spriteUI = spriteNode.addComponent(UITransform);
         spriteUI.setContentSize(data.collisionWidth, data.collisionHeight);
         spriteUI.setAnchorPoint(0.5, 0.5);
@@ -1072,7 +1083,7 @@ export class LevelController extends Component {
         if (this._isLevel8ReferenceStyle()) {
             const toneNode = new Node('WoodTone');
             toneNode.layer = n.layer;
-            toneNode.parent = n;
+            toneNode.parent = visual;
             toneNode.addComponent(UITransform).setContentSize(data.collisionWidth, data.collisionHeight);
             const tone = toneNode.addComponent(Graphics);
             tone.fillColor = new Color(230, 171, 91, 70);
@@ -1086,23 +1097,12 @@ export class LevelController extends Component {
             tone.fill();
         }
 
-        // Hole overlay (we can't punch holes through the sprite via shader in this simple
-        // port, but we draw a dark hole ring on top of the wood at each hole offset).
+        // Keep the dark inner wall on top of the transparent sprite cutout.
         const overlay = new Node('Holes');
         overlay.layer = n.layer;
         overlay.parent = n;
         overlay.addComponent(UITransform).setContentSize(data.collisionWidth, data.collisionHeight);
-        const overlayGfx = overlay.addComponent(Graphics);
-        for (const h of data.holeOffsets) {
-            // hole offsets are authored in board-local space (X along board length, Y across width).
-            // Draw a deep socket: dark fill + bright rim shadow.
-            overlayGfx.fillColor = new Color(64, 38, 20, 220);
-            overlayGfx.circle(h.x, h.y, VISUAL_HOLE_OUTER_RADIUS);
-            overlayGfx.fill();
-            overlayGfx.fillColor = new Color(40, 24, 12, 255);
-            overlayGfx.circle(h.x, h.y, VISUAL_HOLE_INNER_RADIUS);
-            overlayGfx.fill();
-        }
+        this._drawHoleRims(overlay.addComponent(Graphics), data.holeOffsets);
 
         // Physics.
         const body = n.addComponent(RigidBody2D);
@@ -1137,6 +1137,45 @@ export class LevelController extends Component {
 
         this._boards.push(board);
         this._boardById.set(data.id, board);
+    }
+
+    private _createHoleCutoutMask(
+        parent: Node,
+        width: number,
+        height: number,
+        holes: readonly { x: number; y: number }[],
+    ): Node {
+        const visual = new Node('WoodCutout');
+        visual.layer = parent.layer;
+        visual.parent = parent;
+        const visualUI = visual.addComponent(UITransform);
+        visualUI.setContentSize(width, height);
+        visualUI.setAnchorPoint(0.5, 0.5);
+
+        const mask = visual.addComponent(Mask);
+        mask.type = Mask.Type.GRAPHICS_STENCIL;
+        mask.inverted = true;
+        const stencil = visual.getComponent(Graphics)!;
+        stencil.clear();
+        stencil.fillColor = Color.WHITE;
+        for (const hole of holes) {
+            stencil.circle(hole.x, hole.y, VISUAL_HOLE_INNER_RADIUS);
+            stencil.fill();
+        }
+        return visual;
+    }
+
+    private _drawHoleRims(
+        graphics: Graphics,
+        holes: readonly { x: number; y: number }[],
+    ) {
+        graphics.lineWidth = VISUAL_HOLE_OUTER_RADIUS - VISUAL_HOLE_INNER_RADIUS;
+        graphics.strokeColor = new Color(64, 38, 20, 220);
+        const ringRadius = (VISUAL_HOLE_OUTER_RADIUS + VISUAL_HOLE_INNER_RADIUS) * 0.5;
+        for (const hole of holes) {
+            graphics.circle(hole.x, hole.y, ringRadius);
+            graphics.stroke();
+        }
     }
 
     private _addWoodRoundedRectCollider(

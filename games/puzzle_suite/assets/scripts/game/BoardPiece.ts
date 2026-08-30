@@ -209,10 +209,10 @@ export class BoardPiece extends Component {
         const sampleLocal = this.worldToLocal(sampleWx, sampleWy);
         if (this._visualOutsideDistance(sampleLocal, solidInset) > 0) return 'empty';
 
-        // Hole graphics are opaque dark circles drawn above the wood sprite. A
-        // sample inside any drawn hole is therefore visually a hole regardless
-        // of how far that hole's center is from the base anchor. Restricting this
-        // to only "aligned" holes classified visible black pixels as solid wood.
+        // Hole graphics use a transparent center with a dark rim above the wood
+        // sprite. A sample inside that visible footprint is therefore a hole
+        // regardless of how far its center is from the base anchor. Restricting
+        // this to only "aligned" holes would classify the rim as solid wood.
         if (this._isInsideVisibleHole(sampleLocal, visualHoleRadius)) {
             return 'hole';
         }
