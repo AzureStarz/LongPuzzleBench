@@ -1157,7 +1157,9 @@ export class LevelController extends Component {
         mask.inverted = true;
         const stencil = visual.getComponent(Graphics)!;
         stencil.clear();
-        stencil.fillColor = Color.WHITE;
+        // The graphics component only defines the stencil shape; it must not
+        // contribute any visible color to the hole center.
+        stencil.fillColor = new Color(255, 255, 255, 0);
         for (const hole of holes) {
             stencil.circle(hole.x, hole.y, VISUAL_HOLE_INNER_RADIUS);
             stencil.fill();
