@@ -445,6 +445,17 @@ class GeneralE2EAgentMCP(MCPAgent):
 
         return messages
 
+    def _get_system_prompt(self, active_scale_factor: int | tuple[int, int]) -> str:
+        return GENERAL_E2E_PROMPT_TEMPLATE.render(
+            tools="\n".join([json.dumps(tool, ensure_ascii=False) for tool in self.tools]),
+            scale_factor=active_scale_factor,
+            allow_multi_action=self.use_responses_api,
+            mini_game=self.mini_game_mode,
+        )
+
+    def _defer_queued_action(self, action: dict[str, Any]) -> bool:
+        return action.get("action_type") == "answer"
+
     def predict(
         self,
         observation: dict[str, Any],
@@ -497,12 +508,7 @@ class GeneralE2EAgentMCP(MCPAgent):
         messages = [
             {
                 "role": "system",
-                "content": GENERAL_E2E_PROMPT_TEMPLATE.render(
-                    tools="\n".join([json.dumps(tool, ensure_ascii=False) for tool in self.tools]),
-                    scale_factor=active_scale_factor,
-                    allow_multi_action=self.use_responses_api,
-                    mini_game=self.mini_game_mode,
-                ),
+                "content": self._get_system_prompt(active_scale_factor),
             },
             # UPDATED 2026-04-21: user instruction may get ignored by opus-4.7 occasionally,
             # migrated user instruction from system prompt to user prompt!
@@ -614,7 +620,7 @@ class GeneralE2EAgentMCP(MCPAgent):
             # executed, the next predict call will ask the model again with
             # the latest screenshot. Since status actions normalize to answer,
             # checking the parsed action covers both forms.
-            if queued_dict.get("action_type") == "answer":
+            if self._defer_queued_action(queued_dict):
                 logger.info(
                     "Deferred terminal action from multi-action response; "
                     "the agent will re-evaluate completion after queued actions"

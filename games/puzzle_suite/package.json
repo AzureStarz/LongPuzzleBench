@@ -4,6 +4,7 @@
   "private": true,
   "description": "Bundled Cocos Creator environments for LongPuzzleBench",
   "scripts": {
+    "build:autonomous-runtime": "node ./tools/build-autonomous-runtime.mjs",
     "test": "node --loader ./tools/ts-extension-loader.mjs --test ./tools/*.test.mjs"
   },
   "creator": {

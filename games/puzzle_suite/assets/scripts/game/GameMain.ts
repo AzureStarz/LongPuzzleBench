@@ -38,6 +38,10 @@ import {
     installPlaygroundBridge,
     readBenchmarkLaunchConfig,
 } from './BenchmarkBridge';
+import {
+    installAutonomousBridge,
+    readAutonomousLaunchConfig,
+} from './AutonomousBridge';
 
 const { ccclass } = _decorator;
 
@@ -68,14 +72,20 @@ type View =
 export class GameMain extends Component {
     private _currentView: View | null = null;
     private _viewRoot: Node | null = null;
+    private _autonomousMode: boolean = false;
 
     start() {
         // Debug Web builds enable the engine stats overlay by default; keep it
         // out of GUI-agent screenshots and normal Hub gameplay.
         try { profiler.hideStats(); } catch (_) { /* profiler is optional on some targets */ }
         const benchmark = readBenchmarkLaunchConfig();
-        GameInspector.instance.install(!benchmark.playground);
-        if (benchmark.enabled) {
+        const autonomous = readAutonomousLaunchConfig();
+        this._autonomousMode = autonomous.enabled;
+        GameInspector.instance.install(autonomous.enabled || !benchmark.playground);
+        if (autonomous.enabled) {
+            installAutonomousBridge(autonomous);
+            this._showHome();
+        } else if (benchmark.enabled) {
             if (benchmark.playground) installPlaygroundBridge(benchmark);
             else installBenchmarkBridge(benchmark);
             this._showBenchmarkGame(benchmark);
@@ -400,7 +410,7 @@ export class GameMain extends Component {
         view.addComponent(UITransform).setContentSize(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
         view.setPosition(0, 0, 0);
         const ctrl = view.addComponent(TruckGameController);
-        ctrl.setAutoHintEnabled(!disableAutoHint);
+        ctrl.setAutoHintEnabled(!disableAutoHint && !this._autonomousMode);
         ctrl.setDirectLaunchMode(directLaunchMode);
         ctrl.setInitialLevel(initialLevelId);
         ctrl.onRequestExit = () => this._showHome();

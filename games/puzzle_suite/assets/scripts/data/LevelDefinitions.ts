@@ -1,4 +1,5 @@
-import { LevelData, AnchorData, AnchorPadData, BoardData, BOLT_DIAMETER, BOARD_WIDTH, boardLen } from './LevelData';
+import type { LevelData, AnchorData, AnchorPadData, BoardData } from './LevelData';
+import { BOLT_DIAMETER, BOARD_WIDTH, boardLen } from './LevelData';
 
 const W = BOARD_WIDTH; // 56
 export type BoltDifficulty = 'easy' | 'hard';
@@ -72,9 +73,9 @@ export function buildLevels(): LevelData[] {
 
             a('n_top_l', 195, 252, true),
             a('n_top_r', 353, 252, true),
-            a('n_mid_l', 93, 395, true),
-            a('n_mid_c', 270, 395, true),
-            a('n_mid_r', 447, 395, true),
+            a('n_mid_l', 93, 407, true),
+            a('n_mid_c', 270, 407, true),
+            a('n_mid_r', 447, 407, true),
             a('n_low_l', 93, 566, true),
             a('n_low_c', 270, 566, true),
             a('n_low_r', 447, 566, true),
@@ -84,7 +85,9 @@ export function buildLevels(): LevelData[] {
         ],
         anchorPads: [
             p('pad_top_l', 'n_top_l', 195, 252), p('pad_top_r', 'n_top_r', 353, 252),
-            p('pad_mid_l', 'n_mid_l', 93, 395), p('pad_mid_c', 'n_mid_c', 270, 395), p('pad_mid_r', 'n_mid_r', 447, 395),
+            cp('pad_mid_l', 93, 395, 70, 5, ['n_mid_l'], [{ x: 0, y: -12 }]),
+            cp('pad_mid_c', 270, 395, 70, 5, ['n_mid_c'], [{ x: 0, y: -12 }]),
+            cp('pad_mid_r', 447, 395, 70, 5, ['n_mid_r'], [{ x: 0, y: -12 }]),
             p('pad_low_l', 'n_low_l', 93, 566), p('pad_low_c', 'n_low_c', 270, 566, 84), p('pad_low_r', 'n_low_r', 447, 566),
             p('pad_bot_l', 'n_bot_l', 93, 743), p('pad_bot_c', 'n_bot_c', 270, 743), p('pad_bot_r', 'n_bot_r', 447, 743),
         ],
@@ -94,32 +97,32 @@ export function buildLevels(): LevelData[] {
             b('b_cross_lr', 359, 655, 45, 4, 322, W,
                 holes(359, 655, 45, [[270, 566], [447, 743]]), 10, 0.2, 0.42, ['n_low_c', 'n_bot_r']),
             b('b_cross_ul', 182, 481, 44, 4, 318, W,
-                holes(182, 481, 44, [[93, 395], [270, 566]]), 12, 0.2, 0.42, ['n_mid_l', 'n_low_c']),
+                holes(182, 481, 44, [[93, 407], [270, 566]]), 12, 0.2, 0.42, ['n_mid_l', 'n_low_c']),
             b('b_cross_ur', 359, 481, -44, 4, 318, W,
-                holes(359, 481, -44, [[447, 395], [270, 566]]), 12, 0.2, 0.42, ['n_mid_r', 'n_low_c']),
+                holes(359, 481, -44, [[447, 407], [270, 566]]), 12, 0.2, 0.42, ['n_mid_r', 'n_low_c']),
 
             b('b_up_l_diag', 144, 324, -55, 3, 248, W,
-                holes(144, 324, -55, [[195, 252], [93, 395]]), 30, 0.2, 0.42, ['n_top_l', 'n_mid_l']),
+                holes(144, 324, -55, [[195, 252], [93, 407]]), 30, 0.2, 0.42, ['n_top_l', 'n_mid_l']),
             b('b_up_r_diag', 400, 324, 55, 3, 248, W,
-                holes(400, 324, 55, [[353, 252], [447, 395]]), 30, 0.2, 0.42, ['n_top_r', 'n_mid_r']),
+                holes(400, 324, 55, [[353, 252], [447, 407]]), 30, 0.2, 0.42, ['n_top_r', 'n_mid_r']),
             b('b_mid_low', 270, 566, 0, 10, 466, W,
                 [{ x: -177, y: 0 }, { x: 0, y: 0 }, { x: 177, y: 0 }], 40, 0.18, 0.38,
                 ['n_low_l', 'n_low_c', 'n_low_r']),
 
             b('b_left_v', 93, 569, 90, 8, 420, W,
-                [{ x: -174, y: 0 }, { x: -3, y: 0 }, { x: 174, y: 0 }], 65, 0.18, 0.38,
+                [{ x: -162, y: 0 }, { x: -3, y: 0 }, { x: 174, y: 0 }], 65, 0.18, 0.38,
                 ['n_mid_l', 'n_low_l', 'n_bot_l']),
             b('b_center_v', 270, 569, 90, 8, 420, W,
-                [{ x: -174, y: 0 }, { x: -3, y: 0 }, { x: 174, y: 0 }], 66, 0.18, 0.38,
+                [{ x: -162, y: 0 }, { x: -3, y: 0 }, { x: 174, y: 0 }], 66, 0.18, 0.38,
                 ['n_mid_c', 'n_low_c', 'n_bot_c']),
             b('b_right_v', 447, 569, 90, 8, 420, W,
-                [{ x: -174, y: 0 }, { x: -3, y: 0 }, { x: 174, y: 0 }], 65, 0.18, 0.38,
+                [{ x: -162, y: 0 }, { x: -3, y: 0 }, { x: 174, y: 0 }], 65, 0.18, 0.38,
                 ['n_mid_r', 'n_low_r', 'n_bot_r']),
 
             b('b_top', 274, 252, 0, 7, 276, W,
                 [{ x: -79, y: 0 }, { x: 79, y: 0 }], 60, 0.18, 0.38, ['n_top_l', 'n_top_r']),
             b('b_mid_top', 270, 395, 0, 10, 466, W,
-                [{ x: -177, y: 0 }, { x: 0, y: 0 }, { x: 177, y: 0 }], 70, 0.18, 0.38,
+                [{ x: -177, y: -12 }, { x: 0, y: -12 }, { x: 177, y: -12 }], 70, 0.18, 0.38,
                 ['n_mid_l', 'n_mid_c', 'n_mid_r']),
             b('b_bottom', 270, 743, 0, 10, 466, W,
                 [{ x: -177, y: 0 }, { x: 0, y: 0 }, { x: 177, y: 0 }], 80, 0.18, 0.38,

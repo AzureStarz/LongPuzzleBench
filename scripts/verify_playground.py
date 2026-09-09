@@ -365,7 +365,7 @@ def main() -> int:
     assert "GameInspector.instance.install(!benchmark.playground)" in game_main
     assert "installPlaygroundBridge" in game_main
     assert "setDirectLaunchMode(directLaunchMode)" in game_main
-    assert "setAutoHintEnabled(!disableAutoHint)" in game_main
+    assert "setAutoHintEnabled(!disableAutoHint && !this._autonomousMode)" in game_main
 
     not_found = (site / "404.html").read_text(encoding="utf-8")
     assert 'const projectSlug = "LongPuzzleBench"' in not_found

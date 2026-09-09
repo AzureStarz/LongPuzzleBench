@@ -309,6 +309,18 @@ part–whole vehicle confusion. Its figures and trace frames are reproducible wi
 The self-contained article source and sanitized evidence bundle are available under
 [`blog/longpuzzlebench-agents/`](blog/longpuzzlebench-agents/).
 
+## Autonomous evaluation
+
+`longpuzzlebench autonomous` adds a separate full-lifecycle GUI evaluation mode:
+the agent starts at the original native Cocos Game Suite home menu, discovers,
+starts, plays, and retries games itself. The default objective is game × difficulty:
+the agent completes all released levels, choosing when to advance or retry.
+Use `--level` only for single-level debugging. The public demo is not the evaluation
+environment. The default global
+wall-clock budget is 60 minutes. Existing `longpuzzlebench eval` behavior and
+scores are unchanged. See [Autonomous evaluation](docs/autonomous-evaluation.md)
+for desktop/viewport capture profiles, commands, trajectory schema, and scoring.
+
 ## Technical report
 
 **Technical report coming soon.**

@@ -6,7 +6,7 @@ import argparse
 from collections.abc import Callable
 from typing import Any
 
-from mobile_world.core.subcommands import eval, leaderboard, play
+from mobile_world.core.subcommands import autonomous, eval, leaderboard, play
 
 
 def create_parser() -> argparse.ArgumentParser:
@@ -18,6 +18,7 @@ def create_parser() -> argparse.ArgumentParser:
     play.configure_parser(subparsers)
     eval.configure_parser(subparsers)
     leaderboard.configure_parser(subparsers)
+    autonomous.configure_parser(subparsers)
     return parser
 
 
