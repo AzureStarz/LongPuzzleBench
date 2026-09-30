@@ -362,7 +362,7 @@ def main() -> int:
     game_main = (
         ROOT / "games" / "puzzle_suite" / "assets" / "scripts" / "game" / "GameMain.ts"
     ).read_text()
-    assert "GameInspector.instance.install(!benchmark.playground)" in game_main
+    assert "GameInspector.instance.install(autonomous.enabled || !benchmark.playground)" in game_main
     assert "installPlaygroundBridge" in game_main
     assert "setDirectLaunchMode(directLaunchMode)" in game_main
     assert "setAutoHintEnabled(!disableAutoHint && !this._autonomousMode)" in game_main

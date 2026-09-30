@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 import shutil
 import subprocess
 import sys
@@ -153,9 +154,11 @@ def main() -> int:
 
     runtime_index = output / "runtime" / "index.html"
     runtime_html = runtime_index.read_text(encoding="utf-8")
-    runtime_html = runtime_html.replace(
-        "<title>Cocos Creator | longpuzzlebench-puzzle-suite</title>",
+    runtime_html = re.sub(
+        r"<title>.*?</title>",
         "<title>LongPuzzleBench game runtime</title>",
+        runtime_html,
+        count=1,
     )
     runtime_index.write_text(runtime_html, encoding="utf-8")
 
