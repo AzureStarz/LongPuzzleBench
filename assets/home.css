@@ -2653,3 +2653,83 @@ input:focus-visible {
     grid-template-columns: 1fr;
   }
 }
+
+/* Evaluation protocol cards */
+.evaluation-section {
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.evaluation-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.evaluation-card {
+  display: flex;
+  min-height: 18rem;
+  padding: 1.5rem;
+  flex-direction: column;
+  background: var(--paper);
+}
+
+.evaluation-card--primary {
+  background: #e7e0d5;
+}
+
+.evaluation-card__index {
+  color: var(--terracotta);
+  font-size: 0.66rem;
+  font-weight: 820;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.evaluation-card h3 {
+  margin: 1.6rem 0 0.65rem;
+  font-family: var(--serif);
+  font-size: clamp(1.55rem, 2.4vw, 2.25rem);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.evaluation-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.evaluation-card code {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  margin-top: auto;
+  overflow: hidden;
+  color: var(--ink);
+  font: 700 0.68rem/1.2 var(--mono);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.evaluation-card a {
+  width: max-content;
+  margin-top: 1rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1000px) {
+  .evaluation-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 620px) {
+  .evaluation-grid { grid-template-columns: 1fr; }
+}

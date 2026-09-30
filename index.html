@@ -45,7 +45,8 @@
           <a href="./" aria-current="page">Home</a>
           <a href="research/">Research</a>
           <a href="play/">Playground</a>
-          <a href="#benchmark">Benchmark</a>
+          <a href="#evaluation">Evaluation</a>
+          <a href="#benchmark">Results</a>
           <a href="#updates">Updates</a>
           <a class="global-nav__mobile-external" href="https://github.com/AzureStarz/LongPuzzleBench">GitHub ↗</a>
         </nav>
@@ -72,7 +73,7 @@
       <section class="home-hero" aria-labelledby="home-title">
         <div class="site-container home-hero__layout">
           <div class="home-hero__copy">
-            <p class="home-kicker">Long-horizon visual puzzle environments</p>
+            <p class="home-kicker">Long-horizon visual puzzle benchmark · paper-facing release</p>
             <h1 id="home-title"><span>Long</span><span>PuzzleBench</span></h1>
             <p class="home-hero__claim">
               Interactive puzzles where one legal move can decide whether dozens of future moves
@@ -80,7 +81,7 @@
             </p>
             <p class="home-hero__dek">
               LongPuzzleBench evaluates GUI agents across six stateful browser games and 114
-              levels—then opens their trajectories to inspection.
+              levels. Autonomous Evaluation is the paper-facing protocol; every trajectory remains open to inspection.
             </p>
             <div class="home-hero__actions" aria-label="Primary project actions">
               <a class="project-button project-button--primary" href="research/">
@@ -184,19 +185,19 @@
               <p class="home-kicker">Recent updates</p>
               <h2 id="updates-title">The project is moving.</h2>
             </div>
-            <p>Four concrete releases from the benchmark’s first public week.</p>
+            <p>The public artifact now connects the paper, runnable benchmark, playground, and evidence in one release surface.</p>
           </div>
 
           <ol class="updates-list reveal">
             <li>
-              <time datetime="2026-08-28">28 Aug 2026</time>
-              <h3><a href="play/">Browser playground released</a></h3>
-              <p>Thirteen curated levels across all six game families are now playable without an install.</p>
+              <time datetime="2026-09-30">30 Sep 2026</time>
+              <h3><a href="https://arxiv.org/abs/2609.34769">Paper reference integrated ↗</a></h3>
+              <p>The publication, benchmark protocol, results, and runnable artifact now share canonical terminology.</p>
             </li>
             <li>
-              <time datetime="2026-08-28">28 Aug 2026</time>
-              <h3><a href="research/">Trajectory research note published</a></h3>
-              <p>Five recurring failures are reconstructed from real model actions and board states.</p>
+              <time datetime="2026-09-30">30 Sep 2026</time>
+              <h3><a href="#evaluation">Autonomous Evaluation documented</a></h3>
+              <p>The paper-facing full-lifecycle protocol and its CUA implementations are now explained in one place.</p>
             </li>
             <li>
               <time datetime="2026-08-28">28 Aug 2026</time>
@@ -243,6 +244,48 @@
               <small>local move ≠ safe move</small>
             </li>
           </ol>
+        </div>
+      </section>
+
+      <section class="home-section evaluation-section" id="evaluation" aria-labelledby="evaluation-title">
+        <div class="site-container">
+          <div class="home-section-heading reveal">
+            <div>
+              <p class="home-kicker">Evaluation design</p>
+              <h2 id="evaluation-title">One benchmark. Clear protocols.</h2>
+            </div>
+            <p>The recommended path is Autonomous Evaluation, which starts at the native game hub and completes a full game × difficulty cell.</p>
+          </div>
+          <div class="evaluation-grid reveal">
+            <article class="evaluation-card evaluation-card--primary">
+              <span class="evaluation-card__index">01 · Recommended</span>
+              <h3>Autonomous Evaluation</h3>
+              <p>The agent discovers the game, selects its difficulty, plays every released level, and recovers through the UI. This is the paper-facing setting.</p>
+              <code>longpuzzlebench autonomous</code>
+              <a href="https://github.com/AzureStarz/LongPuzzleBench/blob/main/docs/evaluation.md">Read the protocol <span aria-hidden="true">↗</span></a>
+            </article>
+            <article class="evaluation-card">
+              <span class="evaluation-card__index">02 · CUA pathway</span>
+              <h3>Code-execution CUA</h3>
+              <p><code>autonomous_tools</code> uses the Responses API and persistent <code>cua_repl</code> for screenshot-grounded GUI interaction.</p>
+              <code>--agent autonomous_tools</code>
+              <a href="https://github.com/AzureStarz/LongPuzzleBench/blob/main/docs/harness-cua-alignment.md">Inspect the harness <span aria-hidden="true">↗</span></a>
+            </article>
+            <article class="evaluation-card">
+              <span class="evaluation-card__index">03 · Structured GUI</span>
+              <h3>Computer Tool</h3>
+              <p><code>autonomous_gui</code> exposes the structured <code>action</code> envelope and keeps the environment as the source of success.</p>
+              <code>--agent autonomous_gui</code>
+              <a href="https://github.com/AzureStarz/LongPuzzleBench/blob/main/docs/evaluation.md">See all implementations <span aria-hidden="true">↗</span></a>
+            </article>
+            <article class="evaluation-card">
+              <span class="evaluation-card__index">04 · Controlled harness</span>
+              <h3>Fixed catalog evaluation</h3>
+              <p><code>eval</code> launches a deterministic catalog cell for debugging, ablations, custom <code>BaseAgent</code> integrations, and regrading.</p>
+              <code>longpuzzlebench eval</code>
+              <a href="https://github.com/AzureStarz/LongPuzzleBench/blob/main/configs/longpuzzlebench.json">Open the catalog <span aria-hidden="true">↗</span></a>
+            </article>
+          </div>
         </div>
       </section>
 
@@ -353,7 +396,7 @@
         <div class="site-container">
           <div class="results-heading reveal">
             <div>
-              <p class="home-kicker">Benchmark frontier · 18 complete configurations</p>
+              <p class="home-kicker">Public results · 18 complete configurations</p>
               <h2 id="benchmark-title">The leading configuration clears just over half the score scale.</h2>
             </div>
             <div class="results-heading__scope" aria-label="Benchmark scope">
