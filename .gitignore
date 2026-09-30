@@ -57,3 +57,39 @@ test-results/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Local research-process material (canonical configs/results are versioned elsewhere)
+/evaluation_logs/
+/logs/
+/tmp/
+/scratch_cs/
+/_gui_batch/
+/DeepSeek-V4.1-Flash-native-gui-only/
+/qwen3.8-flash-native-gui-only/
+/2026*/
+/targets-*.json
+/targets_*.json
+/batch-targets*.json
+/gui-benchmark-targets*.json
+/gui-game-benchmark-targets*.json
+/benchmark-targets*.json
+/response*.txt
+/test_*.py
+
+# Local research-process material (canonical configs/results are versioned elsewhere)
+/evaluation_logs/
+/logs/
+/tmp/
+/scratch_cs/
+/_gui_batch/
+/DeepSeek-V4.1-Flash-native-gui-only/
+/qwen3.8-flash-native-gui-only/
+/2026*/
+/targets-*.json
+/targets_*.json
+/batch-targets*.json
+/gui-benchmark-targets*.json
+/gui-game-benchmark-targets*.json
+/benchmark-targets*.json
+/response*.txt
+/test_*.py

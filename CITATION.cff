@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you use LongPuzzleBench, please cite the accompanying paper."
+title: "LongPuzzleBench: Evaluating GUI Agents on Long-Horizon Visual Puzzles"
+type: software
+abstract: >-
+  LongPuzzleBench is a benchmark of six deterministic browser puzzle games and
+  114 levels for evaluating long-horizon visual reasoning and computer-use agents.
+authors:
+  - family-names: Zhang
+    given-names: Bingo
+  - family-names: Lu
+    given-names: Haochuan
+  - family-names: Li
+    given-names: Zongjie
+  - family-names: Li
+    given-names: Genjian
+  - family-names: Zhang
+    given-names: Ari Yu
+  - family-names: Wang
+    given-names: Chaozheng
+url: https://github.com/AzureStarz/LongPuzzleBench
+repository-code: https://github.com/AzureStarz/LongPuzzleBench
+license: Apache-2.0
+version: 0.1.0
+date-released: 2026-09-28
+identifiers:
+  - type: doi
+    value: 10.48550/arXiv.2609.34769
+    description: arXiv DOI
