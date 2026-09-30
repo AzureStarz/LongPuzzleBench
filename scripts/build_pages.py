@@ -19,6 +19,7 @@ SITE_ASSETS = (
     ROOT / "assets" / "home.css",
     ROOT / "assets" / "home-data.js",
     ROOT / "assets" / "home.js",
+    ROOT / "assets" / "longpuzzlebench-trajectory.png",
 )
 PLAYGROUND = ROOT / "playground"
 RUNTIME = ROOT / "games" / "puzzle_suite" / "build" / "web-mobile"
