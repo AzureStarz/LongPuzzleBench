@@ -4,15 +4,41 @@
 
 **Evaluating GUI agents on long-horizon visual puzzles**
 
-[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-2563eb.svg)](LICENSE)
+[![Paper](https://img.shields.io/badge/Paper-arXiv%202609.34769-b31b1b.svg)](https://arxiv.org/abs/2609.34769)
+[![Project website](https://img.shields.io/badge/Website-live-0ea5e9.svg)](https://azurestarz.github.io/LongPuzzleBench/)
+[![Playground](https://img.shields.io/badge/Playground-try%20it-7c3aed.svg)](https://azurestarz.github.io/LongPuzzleBench/play/)
 [![CI](https://github.com/AzureStarz/LongPuzzleBench/actions/workflows/ci.yml/badge.svg)](https://github.com/AzureStarz/LongPuzzleBench/actions/workflows/ci.yml)
-[![Python 3.12](https://img.shields.io/badge/Python-3.12-3776ab.svg)](pyproject.toml)
+[![License](https://img.shields.io/badge/License-Apache--2.0-2563eb.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.12-3776ab.svg)](pyproject.toml)
+[![Games](https://img.shields.io/badge/Games-6-0f766e.svg)](#game-environments)
+[![Levels](https://img.shields.io/badge/Levels-114-f59e0b.svg)](#game-environments)
+[![Evaluation cells](https://img.shields.io/badge/Evaluation%20cells-16-8b5cf6.svg)](#evaluation-design)
+[![GitHub stars](https://img.shields.io/github/stars/AzureStarz/LongPuzzleBench?style=flat&logo=github)](https://github.com/AzureStarz/LongPuzzleBench/stargazers)
 
-[Paper](https://arxiv.org/abs/2609.34769) · [Project website](https://azurestarz.github.io/LongPuzzleBench/) · [Playground](https://azurestarz.github.io/LongPuzzleBench/play/) · [Leaderboard](leaderboard/results.json) · [Evaluation guide](docs/evaluation.md)
+<br />
+
+<a href="https://arxiv.org/abs/2609.34769">📄 Read the paper</a> · <a href="https://azurestarz.github.io/LongPuzzleBench/">🌐 Visit the website</a> · <a href="https://azurestarz.github.io/LongPuzzleBench/play/">🎮 Play the benchmark</a> · <a href="docs/evaluation.md">⚙️ Run an evaluation</a>
+
+<br /><br />
 
 <img src="assets/longpuzzlebench-trajectory.png" alt="LongPuzzleBench visual narrative: puzzle states and GUI actions form a branching trajectory that ends in evaluation" width="920" />
 
+<sub>Six browser puzzle families · 114 levels · long-horizon GUI evaluation · reproducible local runtime</sub>
+
 </div>
+
+## Project entry points
+
+<table>
+<tr>
+<td align="center" width="25%"><a href="https://arxiv.org/abs/2609.34769"><strong>📄 Paper</strong></a><br /><sub>Scientific reference and main findings</sub></td>
+<td align="center" width="25%"><a href="https://azurestarz.github.io/LongPuzzleBench/"><strong>🌐 Website</strong></a><br /><sub>Benchmark overview and results</sub></td>
+<td align="center" width="25%"><a href="https://azurestarz.github.io/LongPuzzleBench/play/"><strong>🎮 Playground</strong></a><br /><sub>Try curated levels in your browser</sub></td>
+<td align="center" width="25%"><a href="docs/evaluation.md"><strong>⚙️ Evaluation</strong></a><br /><sub>Protocols, agents, and commands</sub></td>
+</tr>
+</table>
+
+> **Release snapshot** · 6 deterministic games · 114 levels · 16 evaluation cells · Autonomous Evaluation as the recommended paper-facing protocol.
 
 ## What is LongPuzzleBench?
 
@@ -22,7 +48,7 @@ The benchmark evaluates persistent state tracking, visual grounding, multi-step 
 
 The accompanying paper, [*LongPuzzleBench: Evaluating GUI Agents on Long-Horizon Visual Puzzles*](https://arxiv.org/abs/2609.34769), defines the research setting and reports the main findings. The release keeps the paper, code, catalog, browser environments, and machine-readable results aligned.
 
-## Benchmark at a glance
+## 🔭 Benchmark at a glance
 
 | Component | Release definition |
 | --- | --- |
@@ -33,7 +59,7 @@ The accompanying paper, [*LongPuzzleBench: Evaluating GUI Agents on Long-Horizon
 | Score | Normalized per-level score in `[0, 100]`; unweighted macro average over 16 cells |
 | Reproducibility | Bundled browser build, versioned catalog, fixed seed `0` |
 
-## Evaluation design
+## 🧪 Evaluation design
 
 **Autonomous Evaluation is the recommended and paper-facing protocol.** The agent starts at the native game hub, selects the target game and difficulty, plays the complete cell, and recovers through the interface. The paper's main results use this full-lifecycle setting.
 
@@ -60,7 +86,7 @@ flowchart LR
     S --> R[Per-level, cell, and benchmark results]
 ```
 
-## Quick start
+## 🚀 Quick start
 
 Requirements: Python 3.12, [`uv`](https://docs.astral.sh/uv/), and Chromium installed through Playwright.
 
@@ -94,7 +120,7 @@ uv run longpuzzlebench eval --game bolt_unscrew --difficulty easy --dry-run --ou
 
 Use `uv run longpuzzlebench autonomous --help` and [`docs/evaluation.md`](docs/evaluation.md) for provider profiles, structured GUI settings, batch runs, custom `BaseAgent` integrations, and regrading.
 
-## Game environments
+## 🎮 Game environments
 
 | Environment | Core challenge | Difficulties | Levels |
 | --- | --- | ---: | ---: |
@@ -108,11 +134,11 @@ Use `uv run longpuzzlebench autonomous --help` and [`docs/evaluation.md`](docs/e
 
 Try curated human levels in the [browser playground](https://azurestarz.github.io/LongPuzzleBench/play/). The exhibit uses the same checked-in game runtime and mechanics while omitting evaluator-only state, agent limits, and private diagnostics.
 
-## Results
+## 📊 Results
 
 The public leaderboard is generated from complete runs with `prompt_setting=full`, `eval_mode=progressive`, seed `0`, and all 16 cells covered. The current snapshot includes 18 complete configurations; the primary metric is the unweighted macro average of cell scores. See [`leaderboard/results.json`](leaderboard/results.json) for per-game and per-cell values and the [project website](https://azurestarz.github.io/LongPuzzleBench/#benchmark) for a visual overview.
 
-## Repository structure
+## 🗂️ Repository structure
 
 ```text
 .
@@ -130,7 +156,7 @@ The public leaderboard is generated from complete runs with `prompt_setting=full
 
 Research process artifacts, local trajectories, caches, and generated outputs stay outside the release surface through `.gitignore`; benchmark catalogs, game source, scoring logic, tests, and sanitized result summaries remain versioned.
 
-## Development and contribution
+## 🛠️ Development and contribution
 
 ```bash
 uv run pytest -q
@@ -139,7 +165,7 @@ uv run ruff check src tests scripts
 
 New environments must expose stable game, difficulty, level, and seed parameters; implement the evaluator bridge and normalized score; add catalog entries and model-level tests; pass a browser launch check; and update the bundled runtime and previews. See [`CONTRIBUTING.md`](CONTRIBUTING.md) when present, or open an issue with a proposed task definition.
 
-## Citation
+## 📚 Citation
 
 ```bibtex
 @article{zhang2026longpuzzlebench,
@@ -153,7 +179,7 @@ New environments must expose stable game, difficulty, level, and seed parameters
 
 See [`CITATION.cff`](CITATION.cff) for machine-readable metadata.
 
-## License and acknowledgements
+## ⚖️ License and acknowledgements
 
 LongPuzzleBench-authored material is released under the [Apache License 2.0](LICENSE). Imported game material and runtime components retain their respective notices in [`games/puzzle_suite/NOTICE.md`](games/puzzle_suite/NOTICE.md), [`NOTICE`](NOTICE), and [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 
