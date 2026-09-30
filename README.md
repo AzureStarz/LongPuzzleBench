@@ -4,15 +4,16 @@
 
 **Evaluating GUI agents on long-horizon visual puzzles**
 
-[![Paper](https://img.shields.io/badge/Paper-arXiv%202609.34769-b31b1b.svg)](https://arxiv.org/abs/2609.34769)
-[![Project website](https://img.shields.io/badge/Website-live-0ea5e9.svg)](https://azurestarz.github.io/LongPuzzleBench/)
-[![Playground](https://img.shields.io/badge/Playground-try%20it-7c3aed.svg)](https://azurestarz.github.io/LongPuzzleBench/play/)
-[![CI](https://github.com/AzureStarz/LongPuzzleBench/actions/workflows/ci.yml/badge.svg)](https://github.com/AzureStarz/LongPuzzleBench/actions/workflows/ci.yml)
-[![License](https://img.shields.io/badge/License-Apache--2.0-2563eb.svg)](LICENSE)
-[![Python](https://img.shields.io/badge/Python-3.12-3776ab.svg)](pyproject.toml)
+[![arXiv](https://img.shields.io/badge/arXiv-2609.34769-b31b1b.svg?logo=arxiv&logoColor=white)](https://arxiv.org/abs/2609.34769)
+[![Project website](https://img.shields.io/badge/Website-live-0ea5e9.svg?logo=googlechrome&logoColor=white)](https://azurestarz.github.io/LongPuzzleBench/)
+[![Playground](https://img.shields.io/badge/Playground-try%20it-7c3aed.svg?logo=githubpages&logoColor=white)](https://azurestarz.github.io/LongPuzzleBench/play/)
+[![CI](https://img.shields.io/github/actions/workflow/status/AzureStarz/LongPuzzleBench/ci.yml?branch=main&logo=githubactions&logoColor=white&label=CI)](https://github.com/AzureStarz/LongPuzzleBench/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/License-Apache--2.0-2563eb.svg?logo=apache&logoColor=white)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.12-3776ab.svg?logo=python&logoColor=white)](pyproject.toml)
 [![Games](https://img.shields.io/badge/Games-6-0f766e.svg)](#game-environments)
 [![Levels](https://img.shields.io/badge/Levels-114-f59e0b.svg)](#game-environments)
 [![Evaluation cells](https://img.shields.io/badge/Evaluation%20cells-16-8b5cf6.svg)](#evaluation-design)
+[![GitHub](https://img.shields.io/badge/GitHub-AzureStarz%2FLongPuzzleBench-181717.svg?logo=github&logoColor=white)](https://github.com/AzureStarz/LongPuzzleBench)
 [![GitHub stars](https://img.shields.io/github/stars/AzureStarz/LongPuzzleBench?style=flat&logo=github)](https://github.com/AzureStarz/LongPuzzleBench/stargazers)
 
 <br />
