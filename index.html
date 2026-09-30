@@ -396,14 +396,28 @@
         <div class="site-container">
           <div class="results-heading reveal">
             <div>
-              <p class="home-kicker">Public results · 18 complete configurations</p>
-              <h2 id="benchmark-title">The leading configuration clears just over half the score scale.</h2>
+              <p class="home-kicker">Results · paper findings + public leaderboard snapshot</p>
+              <h2 id="benchmark-title">Long-horizon performance drops as the boards get harder.</h2>
             </div>
             <div class="results-heading__scope" aria-label="Benchmark scope">
               <span><strong>6</strong> games</span>
               <span><strong>114</strong> levels</span>
               <span><strong>16</strong> score cells</span>
+              <span><strong>28 Aug 2026</strong> public snapshot</span>
             </div>
+          </div>
+
+          <div class="paper-findings reveal" aria-labelledby="paper-findings-title">
+            <div class="paper-findings__heading">
+              <p class="home-kicker">What the paper finds</p>
+              <h3 id="paper-findings-title">The bottleneck is future actionability.</h3>
+              <a href="https://arxiv.org/abs/2609.34769">Read the full paper <span aria-hidden="true">↗</span></a>
+            </div>
+            <ol class="paper-findings__list">
+              <li><strong>7 / 10</strong><span>general-purpose agents solve nothing beyond Medium.</span></li>
+              <li><strong>0</strong><span>agents complete Bolt Unscrew Hard in the paper’s native GUI setting.</span></li>
+              <li><strong>1</strong><span>recurring failure pattern links the diagnostics: visible progress can consume future options.</span></li>
+            </ol>
           </div>
 
           <!-- LONGPUZZLEBENCH:RESULTS:START -->
@@ -676,8 +690,8 @@
 <!-- LONGPUZZLEBENCH:RESULTS:END -->
 
           <div class="result-links reveal">
-            <a class="project-button project-button--secondary" href="https://github.com/AzureStarz/LongPuzzleBench#leaderboard">
-              View evaluation details <span aria-hidden="true">↗</span>
+            <a class="project-button project-button--secondary" href="https://github.com/AzureStarz/LongPuzzleBench/blob/main/docs/evaluation.md">
+              Read evaluation details <span aria-hidden="true">↗</span>
             </a>
             <a class="home-text-action" href="https://github.com/AzureStarz/LongPuzzleBench/blob/main/leaderboard/results.json">
               Download canonical results JSON <span aria-hidden="true">↗</span>
